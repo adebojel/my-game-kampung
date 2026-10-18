@@ -97,7 +97,7 @@
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- GAME KAMPUNG: PUTAR BALIK 360 DERAJAT & PESAWAT TERBANG LELUASA ---
+        // --- GAME KAMPUNG: FINAL OPEN-WORLD G.T.A STYLE SYSTEM ---
         let scene, camera, renderer;
         let player, vehicleType = 0; // 0: Motor, 1: Angkot, 2: Pesawat
         let vehicles = [];
@@ -107,8 +107,9 @@
         let joyMove = { x: 0, y: 0, active: false };
         let isGas = false, isBrake = false;
         let speed = 0;
-        let playerAngle = 0; // Sudut arah putar kendaraan ala GTA (360 derajat)
-        let planeAltitude = 15; // Ketinggian bebas pesawat
+        let playerAngle = 0;
+        let turnSpeed = 0;
+        let planeAltitude = 15;
 
         function init() {
             const container = document.getElementById('canvas-container');
@@ -123,7 +124,6 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            // Lighting
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
             scene.add(ambientLight);
             const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -138,13 +138,12 @@
             window.addEventListener('resize', onWindowResize);
         }
 
-        // --- RUTE JALAN DENGAN TANJAKAN, TURUNAN, & TIKUNGAN MULUS ---
         function createElevationRouteNetwork() {
             const roadSegments = [
-                { x: 0, z: 0, length: 300, rotY: 0, rotX: 0 },
-                { x: -15, z: -320, length: 300, rotY: 0.15, rotX: 0.1 },
-                { x: -5, z: -640, length: 300, rotY: -0.1, rotX: -0.08 },
-                { x: 10, z: -960, length: 300, rotY: 0.05, rotX: 0.05 }
+                { x: 0, z: 0, length: 350, rotY: 0, rotX: 0 },
+                { x: -18, z: -350, length: 350, rotY: 0.15, rotX: 0.1 },
+                { x: -5, z: -700, length: 350, rotY: -0.1, rotX: -0.08 },
+                { x: 12, z: -1050, length: 350, rotY: 0.05, rotX: 0.05 }
             ];
 
             roadSegments.forEach(pt => {
@@ -174,19 +173,19 @@
                 }
             });
 
-            // Panorama Gunung Salak di Latar Belakang
-            const mountainGeo = new THREE.ConeGeometry(250, 130, 8);
+            // Panorama Gunung Salak
+            const mountainGeo = new THREE.ConeGeometry(280, 140, 8);
             const mountainMat = new THREE.MeshStandardMaterial({ color: 0x234e35, roughness: 0.9 });
             const mountain = new THREE.Mesh(mountainGeo, mountainMat);
-            mountain.position.set(-150, 60, -1100);
+            mountain.position.set(-150, 60, -1200);
             scene.add(mountain);
 
-            // Danau Gunung (Spot Mancing)
-            const lakeGeo = new THREE.PlaneGeometry(80, 80);
+            // Danau Gunung
+            const lakeGeo = new THREE.PlaneGeometry(90, 90);
             const lakeMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff, roughness: 0.2 });
             const lake = new THREE.Mesh(lakeGeo, lakeMat);
             lake.rotation.x = -Math.PI / 2;
-            lake.position.set(-45, 1.5, -500);
+            lake.position.set(-50, 1.5, -550);
             scene.add(lake);
         }
 
@@ -233,8 +232,8 @@
 
         function createNPCs() {
             const npcPositions = [
-                { x: -5, z: -50 }, { x: 5, z: -150 }, 
-                { x: -25, z: -400 }, { x: 15, z: -700 }
+                { x: -5, z: -60 }, { x: 6, z: -180 }, 
+                { x: -25, z: -450 }, { x: 15, z: -800 }
             ];
 
             npcPositions.forEach(pos => {
@@ -258,7 +257,6 @@
         }
 
         function createPlayerVehicles() {
-            // 0: Motor
             const motorGroup = new THREE.Group();
             const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 2), new THREE.MeshStandardMaterial({ color: 0xd32f2f }));
             mBody.position.y = 0.6;
@@ -266,7 +264,6 @@
             scene.add(motorGroup);
             vehicles.push(motorGroup);
 
-            // 1: Angkot
             const angkotGroup = new THREE.Group();
             const aBody = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 4.5), new THREE.MeshStandardMaterial({ color: 0x00a86b }));
             aBody.position.y = 1.2;
@@ -275,7 +272,6 @@
             scene.add(angkotGroup);
             vehicles.push(angkotGroup);
 
-            // 2: Pesawat
             const planeGroup = new THREE.Group();
             const pBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 5), new THREE.MeshStandardMaterial({ color: 0xf5f5f5 }));
             const pWings = new THREE.Mesh(new THREE.BoxGeometry(7, 0.1, 1.5), new THREE.MeshStandardMaterial({ color: 0x333333 }));
@@ -371,43 +367,38 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // --- GAME LOOP: PUTAR BALIK 360 DERAJAT ALA GTA & PESAWAT TERBANG BEBAS ---
         function animate() {
             requestAnimationFrame(animate);
 
-            let maxSpeed = vehicleType === 2 ? 0.7 : 0.45;
+            let maxSpeed = vehicleType === 2 ? 0.75 : 0.48;
             if (isGas) {
-                speed += 0.02;
+                speed += 0.015;
                 if (speed > maxSpeed) speed = maxSpeed;
             } else if (isBrake) {
-                speed -= 0.03;
-                if (speed < 0) speed = 0; // Rem normal berhenti total
+                speed -= 0.035;
+                if (speed < 0) speed = 0;
             } else {
-                speed *= 0.92;
+                speed *= 0.93;
             }
 
-            // Kontrol Belok / Putar Balik Ala GTA (360 Derajat Rotasi Penuh)
-            if (Math.abs(joyMove.x) > 0.05 && speed > 0.01) {
-                playerAngle -= joyMove.x * 0.04; // Mengubah arah hadap kendaraan secara bebas
+            let targetTurnSpeed = -joyMove.x * 0.025;
+            turnSpeed += (targetTurnSpeed - turnSpeed) * 0.2;
+            if (speed > 0.01) {
+                playerAngle += turnSpeed * (speed / maxSpeed);
             }
             player.rotation.y = playerAngle;
 
-            // Gerak maju mengikuti arah sudut hadap (bisa putar balik menghadap ke mana saja)
             player.position.x += Math.sin(playerAngle) * speed;
             player.position.z -= Math.cos(playerAngle) * speed;
 
-            // Pengaturan Ketinggian & Kebebasan Pesawat Terbang
             if (vehicleType === 2) {
-                // Pesawat bisa naik/turun leluasa menggunakan joystick vertikal (joyMove.y)
-                planeAltitude -= joyMove.y * 0.3;
-                planeAltitude = Math.max(5, Math.min(100, planeAltitude)); // Bisa terbang rendah hingga tinggi ke awan
+                planeAltitude -= joyMove.y * 0.25;
+                planeAltitude = Math.max(5, Math.min(120, planeAltitude));
                 player.position.y = planeAltitude;
             } else {
-                // Kendaraan darat menempel di permukaan jalan sesuai elevasi tanjakan/turunan
                 player.position.y = getElevation(player.position.z);
             }
 
-            // Kamera Mengikuti Kendaraan Dari Belakang
             let camDistZ = vehicleType === 2 ? 18 : 8;
             let camDistY = vehicleType === 2 ? 8 : 4;
             camera.position.x = player.position.x - Math.sin(playerAngle) * camDistZ;
@@ -415,8 +406,7 @@
             camera.position.y = player.position.y + camDistY;
             camera.lookAt(player.position.x, player.position.y, player.position.z);
 
-            // Deteksi Jarak ke Danau Gunung
-            const distToLake = Math.hypot(player.position.x - (-45), player.position.z - (-500));
+            const distToLake = Math.hypot(player.position.x - (-50), player.position.z - (-550));
             const btnAction = document.getElementById('btn-action');
             if (distToLake < 35) {
                 btnAction.style.display = 'flex';
