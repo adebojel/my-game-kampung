@@ -1,0 +1,6 @@
+{
+  "appId": "com.cidadap.openworld.game",
+  "appName": "Game Cidadap Open World",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
