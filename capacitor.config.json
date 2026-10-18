@@ -1,6 +1,6 @@
 {
-  "appId": "com.cidadap.openworld.game",
-  "appName": "Game Cidadap Open World",
+  "appId": "com.gamekampung.openworld",
+  "appName": "Game Kampung",
   "webDir": "www",
   "bundledWebRuntime": false
 }
