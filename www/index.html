@@ -2,80 +2,407 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Game Open World Cidadap</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Game Kampung - Cidadap Open World</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #87CEEB; font-family: sans-serif; user-select: none; -webkit-user-select: none; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+        
+        /* UI Top Bar */
+        #ui-top {
+            position: absolute; top: 15px; left: 15px; right: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            pointer-events: none;
+        }
+        .ui-box {
+            background: rgba(0, 0, 0, 0.6); color: white; padding: 8px 12px;
+            border-radius: 8px; font-size: 13px; font-weight: bold; pointer-events: auto;
+        }
+        #minimap { width: 90px; height: 90px; border: 2px solid white; background: #2e4a32; position: relative; overflow: hidden; }
+        #minimap-player { width: 6px; height: 6px; background: #ffcc00; position: absolute; top: 42px; left: 42px; border-radius: 50%; }
+
+        /* Notification Banner */
+        #notification {
+            position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 20, 0.85); color: #ffeb3b; padding: 8px 16px;
+            border-radius: 6px; font-size: 13px; font-weight: bold; display: none; text-align: center;
+            border: 1px solid #ffeb3b;
+        }
+
+        /* Controls UI */
+        .control-btn {
+            position: absolute; width: 65px; height: 65px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25); border: 2px solid white; color: white;
+            font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center;
+            touch-action: manipulation; cursor: pointer;
+        }
+        #btn-gas { bottom: 20px; right: 20px; background: rgba(0, 200, 0, 0.5); width: 75px; height: 75px; font-size: 16px; }
+        #btn-rem { bottom: 20px; right: 105px; background: rgba(200, 0, 0, 0.5); width: 65px; height: 65px; }
+        #btn-switch { top: 75px; left: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(0, 120, 255, 0.7); font-size: 12px; }
+        #btn-action { bottom: 35px; right: 190px; background: rgba(255, 150, 0, 0.7); display: none; }
+        #btn-backpack { top: 120px; left: 15px; width: auto; height: 32px; padding: 0 10px; border-radius: 6px; background: rgba(180, 40, 40, 0.8); font-size: 12px; }
+
+        /* Joystick */
+        #joystick-base {
+            position: absolute; bottom: 25px; left: 25px; width: 110px; height: 110px;
+            background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%; touch-action: none;
+        }
+        #joystick-stick {
+            position: absolute; top: 30px; left: 30px; width: 50px; height: 50px;
+            background: rgba(255, 255, 255, 0.6); border-radius: 50%; pointer-events: none;
+        }
+
+        /* Backpack Modal */
+        #inventory-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 280px; background: rgba(20, 20, 20, 0.95); border: 2px solid #888;
+            border-radius: 10px; padding: 15px; color: white; display: none; z-index: 100;
+        }
+        .inv-item { background: #333; margin: 6px 0; padding: 8px; border-radius: 5px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .inv-btn { background: #ff9800; border: none; padding: 4px 8px; color: white; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <!-- Container Utama Game 3D -->
-    <div id="game-container"></div>
 
-    <!-- UI / Tombol Kontrol Mobile -->
-    <div id="ui-container">
-        <!-- Minimap di Pojok Kiri Atas -->
-        <div id="minimap">
-            <span>🗺️ Minimap Cidadap</span>
-        </div>
+    <div id="canvas-container"></div>
 
-        <!-- Tombol Kontrol di Kanan (Sudah Dirapikan) -->
-        <div id="controls-right">
-            <button id="btn-action" class="control-btn">Aksi</button>
-            <div class="pedal-container">
-                <button id="btn-brake" class="control-btn">Rem</button>
-                <button id="btn-gas" class="control-btn">Gas</button>
-            </div>
-        </div>
-
-        <!-- Joystick / Kontrol Arah di Kiri -->
-        <div id="controls-left">
-            <div id="joystick-base">
-                <div id="joystick-stick"></div>
-            </div>
-        </div>
+    <div id="ui-top">
+        <div id="minimap"><div id="minimap-player"></div></div>
+        <div class="ui-box" id="status-info">⏰ 16:27 | ⚡ Stamina: 100% | 🐟 Ikan: 0</div>
     </div>
 
-    <!-- Memuat Library Three.js dari CDN -->
+    <div id="notification">Pemberitahuan Sistem</div>
+
+    <button class="control-btn" id="btn-switch">Ganti: Motor</button>
+    <button class="control-btn" id="btn-backpack">🎒 Ransel</button>
+    <button class="control-btn" id="btn-action">Pancing</button>
+
+    <div id="joystick-base"><div id="joystick-stick"></div></div>
+    <button class="control-btn" id="btn-rem">Rem</button>
+    <button class="control-btn" id="btn-gas">Gas</button>
+
+    <div id="inventory-modal">
+        <h3 style="margin-top:0; font-size:16px; border-bottom:1px solid #555; padding-bottom:5px;">Tas Ransel Survival</h3>
+        <div class="inv-item"><span>🎒 Tas Besar (Kapasitas Luas)</span></div>
+        <div class="inv-item"><span>🔪 Survival Knife</span></div>
+        <div class="inv-item"><span>🔥 Kompor Portable & Korek</span></div>
+        <div class="inv-item">
+            <span id="fish-count-text">🐟 Ikan Tangkapan: 0</span>
+            <button class="inv-btn" id="btn-cook">Masak</button>
+        </div>
+        <button id="close-inv" style="width:100%; margin-top:10px; background:#d32f2f; border:none; padding:8px; color:white; border-radius:5px; font-weight:bold;">Tutup</button>
+    </div>
+
+    <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <!-- Skrip Inisialisasi Sentuh & Logika Dasar UI -->
     <script>
-        const stick = document.getElementById('joystick-stick');
-        const base = document.getElementById('joystick-base');
+        // --- GAME KAMPUNG: RUTE CIDADAP - CICURUG & NPC SYSTEM ---
+        let scene, camera, renderer;
+        let player, vehicleType = 0; // 0: Motor, 1: Angkot, 2: Pesawat
+        let vehicles = [];
+        let npcs = [];
+        let worldObjects = [];
         
-        let isTouching = false;
-        let centerX, centerY;
+        let stats = { time: "16:27", stamina: 100, fish: 0 };
+        let joyMove = { x: 0, y: 0, active: false };
+        let isGas = false, isBrake = false;
+        let speed = 0;
 
-        base.addEventListener('touchstart', (e) => {
-            isTouching = true;
-            const rect = base.getBoundingClientRect();
-            centerX = rect.left + rect.width / 2;
-            centerY = rect.top + rect.height / 2;
-        });
+        function init() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB);
+            scene.fog = new THREE.FogExp2(0x87CEEB, 0.008);
 
-        window.addEventListener('touchmove', (e) => {
-            if (!isTouching) return;
-            const touch = e.touches[0];
-            let dx = touch.clientX - centerX;
-            let dy = touch.clientY - centerY;
-            
-            const distance = Math.min(35, Math.sqrt(dx * dx + dy * dy));
-            const angle = Math.atan2(dy, dx);
-            
-            let x = Math.cos(angle) * distance;
-            let y = Math.sin(angle) * distance;
-            
-            stick.style.transform = `translate(${x}px, ${y}px)`;
-        });
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        window.addEventListener('touchend', () => {
-            if (isTouching) {
-                isTouching = false;
-                stick.style.transform = `translate(0px, 0px)`;
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(50, 100, 50);
+            scene.add(dirLight);
+
+            createRealRouteEnvironment();
+            createPlayerVehicles();
+            createNPCs();
+
+            setupControls();
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // --- PEMETAAN RUTE JALAN NYATA & LINGKUNGAN KAMPUNG ---
+        function createRealRouteEnvironment() {
+            // Jalan Raya Utama (Kontur Cidadap - Cicurug)
+            const roadGeo = new THREE.PlaneGeometry(12, 1000);
+            const roadMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
+            const road = new THREE.Mesh(roadGeo, roadMat);
+            road.rotation.x = -Math.PI / 2;
+            road.position.set(0, 0.01, -400);
+            scene.add(road);
+
+            // Garis Tengah Jalan
+            const lineGeo = new THREE.PlaneGeometry(0.4, 1000);
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffeb3b });
+            const line = new THREE.Mesh(lineGeo, lineMat);
+            line.rotation.x = -Math.PI / 2;
+            line.position.set(0, 0.02, -400);
+            scene.add(line);
+
+            // Panorama Gunung Salak di Kejauhan
+            const mountainGeo = new THREE.ConeGeometry(180, 90, 8);
+            const mountainMat = new THREE.MeshStandardMaterial({ color: 0x2e5a42, roughness: 0.9 });
+            const mountain = new THREE.Mesh(mountainGeo, mountainMat);
+            mountain.position.set(-250, 40, -700);
+            scene.add(mountain);
+
+            // Rumah Khas Sunda & Pohon Sepanjang Rute
+            for (let i = -400; i <= 0; i += 30) {
+                createSundaneseHouse(-14, i);
+                createSundaneseHouse(14, i - 15);
+                createTree(-9, i - 5);
+                createTree(9, i - 10);
             }
-        });
-    </script>
 
-    <!-- Logika Game Utama -->
-    <script src="game.js"></script>
+            // Danau Gunung (Spot Mancing)
+            const lakeGeo = new THREE.PlaneGeometry(60, 60);
+            const lakeMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff, roughness: 0.2 });
+            const lake = new THREE.Mesh(lakeGeo, lakeMat);
+            lake.rotation.x = -Math.PI / 2;
+            lake.position.set(-45, 0.05, -120);
+            scene.add(lake);
+        }
+
+        function createSundaneseHouse(x, z) {
+            const houseGroup = new THREE.Group();
+            
+            // Dinding Kayu
+            const baseGeo = new THREE.BoxGeometry(6, 4, 6);
+            const baseMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B });
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.y = 2;
+            houseGroup.add(base);
+
+            // Atap Segitiga Khas
+            const roofGeo = new THREE.ConeGeometry(5, 3, 4);
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x5C4033 });
+            const roof = new THREE.Mesh(roofGeo, roofMat);
+            roof.position.y = 5.5;
+            roof.rotation.y = Math.PI / 4;
+            houseGroup.add(roof);
+
+            houseGroup.position.set(x, 0, z);
+            scene.add(houseGroup);
+        }
+
+        function createTree(x, z) {
+            const treeGroup = new THREE.Group();
+            const trunkGeo = new THREE.CylinderGeometry(0.4, 0.6, 3);
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+            trunk.position.y = 1.5;
+
+            const leavesGeo = new THREE.ConeGeometry(2.5, 5, 5);
+            const leavesMat = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+            const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+            leaves.position.y = 4.5;
+
+            treeGroup.add(trunk);
+            treeGroup.add(leaves);
+            treeGroup.position.set(x, 0, z);
+            scene.add(treeGroup);
+        }
+
+        // --- SISTEM NPC Warga & Pangkalan Ojek ala GTA ---
+        function createNPCs() {
+            // Membuat beberapa NPC warga / tukang ojek di pinggir jalan
+            const npcPositions = [
+                { x: -5, z: -30 }, { x: 5, z: -60 }, 
+                { x: -6, z: -100 }, { x: 6, z: -150 }
+            ];
+
+            npcPositions.forEach(pos => {
+                const npcGroup = new THREE.Group();
+
+                // Badan NPC
+                const bodyGeo = new THREE.CylinderGeometry(0.5, 0.3, 2);
+                const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff5722 });
+                const body = new THREE.Mesh(bodyGeo, bodyMat);
+                body.position.y = 1;
+                npcGroup.add(body);
+
+                // Kepala NPC
+                const headGeo = new THREE.SphereGeometry(0.35, 8, 8);
+                const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
+                const head = new THREE.Mesh(headGeo, headMat);
+                head.position.y = 2.2;
+                npcGroup.add(head);
+
+                npcGroup.position.set(pos.x, 0, pos.z);
+                scene.add(npcGroup);
+                npcs.push(npcGroup);
+            });
+        }
+
+        // --- KENDARAAN (Motor, Angkot, Pesawat) ---
+        function createPlayerVehicles() {
+            // 0: Motor (Ojek)
+            const motorGroup = new THREE.Group();
+            const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 2), new THREE.MeshStandardMaterial({ color: 0xd32f2f }));
+            mBody.position.y = 0.6;
+            motorGroup.add(mBody);
+            scene.add(motorGroup);
+            vehicles.push(motorGroup);
+
+            // 1: Angkot (Angkutan Umum Khas Bogor/Sukabumi)
+            const angkotGroup = new THREE.Group();
+            const aBody = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 4.5), new THREE.MeshStandardMaterial({ color: 0x00a86b }));
+            aBody.position.y = 1.2;
+            angkotGroup.add(aBody);
+            angkotGroup.visible = false;
+            scene.add(angkotGroup);
+            vehicles.push(angkotGroup);
+
+            // 2: Pesawat Kecil
+            const planeGroup = new THREE.Group();
+            const pBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 5), new THREE.MeshStandardMaterial({ color: 0xf5f5f5 }));
+            const pWings = new THREE.Mesh(new THREE.BoxGeometry(7, 0.1, 1.5), new THREE.MeshStandardMaterial({ color: 0x333333 }));
+            pBody.position.y = 1; pWings.position.y = 1;
+            planeGroup.add(pBody); planeGroup.add(pWings);
+            planeGroup.visible = false;
+            scene.add(planeGroup);
+            vehicles.push(planeGroup);
+
+            player = vehicles[0];
+        }
+
+        // --- KONTROL & INTERAKSI ---
+        function setupControls() {
+            const stick = document.getElementById('joystick-stick');
+            const base = document.getElementById('joystick-base');
+
+            base.addEventListener('pointerdown', (e) => { joyMove.active = true; updateJoystick(e); });
+            window.addEventListener('pointermove', (e) => { if (joyMove.active) updateJoystick(e); });
+            window.addEventListener('pointerup', () => { 
+                joyMove.active = false; joyMove.x = 0; joyMove.y = 0;
+                stick.style.transform = `translate(0px, 0px)`;
+            });
+
+            function updateJoystick(e) {
+                const rect = base.getBoundingClientRect();
+                let x = e.clientX - (rect.left + rect.width / 2);
+                let y = e.clientY - (rect.top + rect.height / 2);
+                const dist = Math.sqrt(x*x + y*y);
+                const maxDist = 35;
+                if (dist > maxDist) { x *= maxDist / dist; y *= maxDist / dist; }
+                stick.style.transform = `translate(${x}px, ${y}px)`;
+                joyMove.x = x / maxDist; joyMove.y = y / maxDist;
+            }
+
+            // Gas & Rem
+            document.getElementById('btn-gas').addEventListener('pointerdown', () => isGas = true);
+            document.getElementById('btn-gas').addEventListener('pointerup', () => isGas = false);
+            document.getElementById('btn-rem').addEventListener('pointerdown', () => isBrake = true);
+            document.getElementById('btn-rem').addEventListener('pointerup', () => isBrake = false);
+
+            // Tombol Ganti Kendaraan
+            const btnSwitch = document.getElementById('btn-switch');
+            const vehicleNames = ["Motor", "Angkot", "Pesawat"];
+            btnSwitch.addEventListener('click', () => {
+                player.visible = false;
+                vehicleType = (vehicleType + 1) % 3;
+                player = vehicles[vehicleType];
+                player.visible = true;
+                btnSwitch.innerText = `Ganti: ${vehicleNames[vehicleType]}`;
+                showNotification(`Berganti Kendaraan ke ${vehicleNames[vehicleType]}`);
+            });
+
+            // Tombol Ransel & Menu Survival
+            document.getElementById('btn-backpack').addEventListener('click', () => {
+                document.getElementById('inventory-modal').style.display = 'block';
+            });
+            document.getElementById('close-inv').addEventListener('click', () => {
+                document.getElementById('inventory-modal').style.display = 'none';
+            });
+
+            // Fitur Mancing & Masak Kompor Portable
+            const btnAction = document.getElementById('btn-action');
+            btnAction.addEventListener('click', () => {
+                stats.fish++;
+                document.getElementById('fish-count-text').innerText = `🐟 Ikan Tangkapan: ${stats.fish}`;
+                updateStatsUI();
+                showNotification("Berhasil Menangkap 1 Ikan di Danau Gunung!");
+            });
+
+            document.getElementById('btn-cook').addEventListener('click', () => {
+                if (stats.fish > 0) {
+                    stats.fish--;
+                    stats.stamina = Math.min(100, stats.stamina + 15);
+                    document.getElementById('fish-count-text').innerText = `🐟 Ikan Tangkapan: ${stats.fish}`;
+                    updateStatsUI();
+                    showNotification("🍳 Memasak Ikan dengan Kompor Portable! Stamina Pulih (+15%)");
+                } else {
+                    showNotification("Ikan di ransel habis! Mancing dulu ke danau.");
+                }
+            });
+        }
+
+        function showNotification(text) {
+            const notif = document.getElementById('notification');
+            notif.innerText = text;
+            notif.style.display = 'block';
+            setTimeout(() => { notif.style.display = 'none'; }, 3000);
+        }
+
+        function updateStatsUI() {
+            document.getElementById('status-info').innerText = `⏰ ${stats.time} | ⚡ Stamina: ${stats.stamina}% | 🐟 Ikan: ${stats.fish}`;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- GAME LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Kontrol Gerak Kendaraan
+            if (isGas) speed = vehicleType === 2 ? 0.8 : 0.4;
+            else if (isBrake) speed = -0.2;
+            else speed *= 0.92;
+
+            player.position.z -= speed;
+            player.rotation.y = -joyMove.x * 0.8;
+            player.position.x += joyMove.x * 0.3;
+
+            // Kamera Mengikuti Pemain
+            camera.position.x = player.position.x;
+            camera.position.y = player.position.y + (vehicleType === 2 ? 8 : 4);
+            camera.position.z = player.position.z + (vehicleType === 2 ? 16 : 8);
+            camera.lookAt(player.position.x, player.position.y, player.position.z - 5);
+
+            // Deteksi Jarak ke Danau Gunung (Untuk Tombol Mancing)
+            const distToLake = Math.hypot(player.position.x - (-45), player.position.z - (-120));
+            const btnAction = document.getElementById('btn-action');
+            if (distToLake < 25) {
+                btnAction.style.display = 'flex';
+            } else {
+                btnAction.style.display = 'none';
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+        animate();
+    </script>
 </body>
 </html>
