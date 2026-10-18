@@ -26,7 +26,7 @@
             position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
             background: rgba(20, 20, 20, 0.85); color: #ffeb3b; padding: 8px 16px;
             border-radius: 6px; font-size: 13px; font-weight: bold; display: none; text-align: center;
-            border: 1px solid #ffeb3b;
+            border: 1px solid #ffeb3b; z-index: 200;
         }
 
         /* Controls UI */
@@ -57,7 +57,7 @@
         #inventory-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 280px; background: rgba(20, 20, 20, 0.95); border: 2px solid #888;
-            border-radius: 10px; padding: 15px; color: white; display: none; z-index: 100;
+            border-radius: 10px; padding: 15px; color: white; display: none; z-index: 300;
         }
         .inv-item { background: #333; margin: 6px 0; padding: 8px; border-radius: 5px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
         .inv-btn { background: #ff9800; border: none; padding: 4px 8px; color: white; border-radius: 4px; font-weight: bold; cursor: pointer; }
@@ -97,23 +97,23 @@
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- GAME KAMPUNG: RUTE CIDADAP - CICURUG & NPC SYSTEM ---
+        // --- GAME KAMPUNG: ALUR RUTE NYATA CIDADAP - TENJOLAYA - CIPARI - CICURUG ---
         let scene, camera, renderer;
         let player, vehicleType = 0; // 0: Motor, 1: Angkot, 2: Pesawat
         let vehicles = [];
         let npcs = [];
-        let worldObjects = [];
         
         let stats = { time: "16:27", stamina: 100, fish: 0 };
         let joyMove = { x: 0, y: 0, active: false };
         let isGas = false, isBrake = false;
         let speed = 0;
+        let worldZ = 0;
 
         function init() {
             const container = document.getElementById('canvas-container');
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.FogExp2(0x87CEEB, 0.008);
+            scene.fog = new THREE.FogExp2(0x87CEEB, 0.006);
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -129,7 +129,7 @@
             dirLight.position.set(50, 100, 50);
             scene.add(dirLight);
 
-            createRealRouteEnvironment();
+            createRealRouteNetwork();
             createPlayerVehicles();
             createNPCs();
 
@@ -137,59 +137,66 @@
             window.addEventListener('resize', onWindowResize);
         }
 
-        // --- PEMETAAN RUTE JALAN NYATA & LINGKUNGAN KAMPUNG ---
-        function createRealRouteEnvironment() {
-            // Jalan Raya Utama (Kontur Cidadap - Cicurug)
-            const roadGeo = new THREE.PlaneGeometry(12, 1000);
-            const roadMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
-            const road = new THREE.Mesh(roadGeo, roadMat);
-            road.rotation.x = -Math.PI / 2;
-            road.position.set(0, 0.01, -400);
-            scene.add(road);
+        // --- PEMETAAN ALUR RUTE NYATA (BERKELOK & BERSEKAT WILAYAH) ---
+        function createRealRouteNetwork() {
+            // Segmen Jalan Raya Panjang dengan Titik Alur Wilayah
+            const roadSegments = [
+                { zStart: 0, zEnd: -300, curve: 0 },         // Jalur Cidadap
+                { zStart: -300, zEnd: -600, curve: -15 },    // Tikungan Tenjolaya
+                { zStart: -600, zEnd: -900, curve: 10 },     // Jalur Cipari
+                { zStart: -900, zEnd: -1200, curve: 0 }      // Mendekati Cicurug
+            ];
 
-            // Garis Tengah Jalan
-            const lineGeo = new THREE.PlaneGeometry(0.4, 1000);
-            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffeb3b });
-            const line = new THREE.Mesh(lineGeo, lineMat);
-            line.rotation.x = -Math.PI / 2;
-            line.position.set(0, 0.02, -400);
-            scene.add(line);
+            roadSegments.forEach(seg => {
+                const length = Math.abs(seg.zEnd - seg.zStart);
+                const roadGeo = new THREE.PlaneGeometry(12, length);
+                const roadMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
+                const road = new THREE.Mesh(roadGeo, roadMat);
+                road.rotation.x = -Math.PI / 2;
+                road.position.set(seg.curve, 0.01, (seg.zStart + seg.zEnd) / 2);
+                scene.add(road);
 
-            // Panorama Gunung Salak di Kejauhan
-            const mountainGeo = new THREE.ConeGeometry(180, 90, 8);
-            const mountainMat = new THREE.MeshStandardMaterial({ color: 0x2e5a42, roughness: 0.9 });
+                // Garis Tengah Kuning
+                const lineGeo = new THREE.PlaneGeometry(0.4, length);
+                const lineMat = new THREE.MeshBasicMaterial({ color: 0xffeb3b });
+                const line = new THREE.Mesh(lineGeo, lineMat);
+                line.rotation.x = -Math.PI / 2;
+                line.position.set(seg.curve, 0.02, (seg.zStart + seg.zEnd) / 2);
+                scene.add(line);
+
+                // Spawn Rumah & Pohon di sepanjang segmen rute
+                for (let z = seg.zStart; z > seg.zEnd; z -= 35) {
+                    createSundaneseHouse(seg.curve - 14, z);
+                    createSundaneseHouse(seg.curve + 14, z - 15);
+                    createTree(seg.curve - 9, z - 10);
+                    createTree(seg.curve + 9, z - 5);
+                }
+            });
+
+            // Panorama Gunung Salak Megah di Latar Belakang
+            const mountainGeo = new THREE.ConeGeometry(220, 110, 8);
+            const mountainMat = new THREE.MeshStandardMaterial({ color: 0x234e35, roughness: 0.9 });
             const mountain = new THREE.Mesh(mountainGeo, mountainMat);
-            mountain.position.set(-250, 40, -700);
+            mountain.position.set(-200, 50, -1000);
             scene.add(mountain);
 
-            // Rumah Khas Sunda & Pohon Sepanjang Rute
-            for (let i = -400; i <= 0; i += 30) {
-                createSundaneseHouse(-14, i);
-                createSundaneseHouse(14, i - 15);
-                createTree(-9, i - 5);
-                createTree(9, i - 10);
-            }
-
-            // Danau Gunung (Spot Mancing)
-            const lakeGeo = new THREE.PlaneGeometry(60, 60);
+            // Danau Gunung (Spot Mancing di Wilayah Tenjolaya/Cipari)
+            const lakeGeo = new THREE.PlaneGeometry(70, 70);
             const lakeMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff, roughness: 0.2 });
             const lake = new THREE.Mesh(lakeGeo, lakeMat);
             lake.rotation.x = -Math.PI / 2;
-            lake.position.set(-45, 0.05, -120);
+            lake.position.set(-55, 0.05, -450);
             scene.add(lake);
         }
 
         function createSundaneseHouse(x, z) {
             const houseGroup = new THREE.Group();
-            
-            // Dinding Kayu
             const baseGeo = new THREE.BoxGeometry(6, 4, 6);
             const baseMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B });
             const base = new THREE.Mesh(baseGeo, baseMat);
             base.position.y = 2;
             houseGroup.add(base);
 
-            // Atap Segitiga Khas
             const roofGeo = new THREE.ConeGeometry(5, 3, 4);
             const roofMat = new THREE.MeshStandardMaterial({ color: 0x5C4033 });
             const roof = new THREE.Mesh(roofGeo, roofMat);
@@ -219,25 +226,24 @@
             scene.add(treeGroup);
         }
 
-        // --- SISTEM NPC Warga & Pangkalan Ojek ala GTA ---
+        // --- SISTEM NPC AKTIF DI SEPANJANG RUTE ---
         function createNPCs() {
-            // Membuat beberapa NPC warga / tukang ojek di pinggir jalan
             const npcPositions = [
-                { x: -5, z: -30 }, { x: 5, z: -60 }, 
-                { x: -6, z: -100 }, { x: 6, z: -150 }
+                { x: -5, z: -50, name: "Warga Cidadap" },
+                { x: 5, z: -150, name: "Tukang Ojek Pangkalan" },
+                { x: -20, z: -350, name: "Warga Tenjolaya" },
+                { x: 15, z: -650, name: "Warga Cipari" },
+                { x: -5, z: -950, name: "Warga Cicurug" }
             ];
 
             npcPositions.forEach(pos => {
                 const npcGroup = new THREE.Group();
-
-                // Badan NPC
                 const bodyGeo = new THREE.CylinderGeometry(0.5, 0.3, 2);
                 const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff5722 });
                 const body = new THREE.Mesh(bodyGeo, bodyMat);
                 body.position.y = 1;
                 npcGroup.add(body);
 
-                // Kepala NPC
                 const headGeo = new THREE.SphereGeometry(0.35, 8, 8);
                 const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
                 const head = new THREE.Mesh(headGeo, headMat);
@@ -250,9 +256,9 @@
             });
         }
 
-        // --- KENDARAAN (Motor, Angkot, Pesawat) ---
+        // --- KENDARAAN PEMAIN ---
         function createPlayerVehicles() {
-            // 0: Motor (Ojek)
+            // 0: Motor
             const motorGroup = new THREE.Group();
             const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 2), new THREE.MeshStandardMaterial({ color: 0xd32f2f }));
             mBody.position.y = 0.6;
@@ -260,7 +266,7 @@
             scene.add(motorGroup);
             vehicles.push(motorGroup);
 
-            // 1: Angkot (Angkutan Umum Khas Bogor/Sukabumi)
+            // 1: Angkot
             const angkotGroup = new THREE.Group();
             const aBody = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 4.5), new THREE.MeshStandardMaterial({ color: 0x00a86b }));
             aBody.position.y = 1.2;
@@ -269,7 +275,7 @@
             scene.add(angkotGroup);
             vehicles.push(angkotGroup);
 
-            // 2: Pesawat Kecil
+            // 2: Pesawat
             const planeGroup = new THREE.Group();
             const pBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 5), new THREE.MeshStandardMaterial({ color: 0xf5f5f5 }));
             const pWings = new THREE.Mesh(new THREE.BoxGeometry(7, 0.1, 1.5), new THREE.MeshStandardMaterial({ color: 0x333333 }));
@@ -305,13 +311,11 @@
                 joyMove.x = x / maxDist; joyMove.y = y / maxDist;
             }
 
-            // Gas & Rem
             document.getElementById('btn-gas').addEventListener('pointerdown', () => isGas = true);
             document.getElementById('btn-gas').addEventListener('pointerup', () => isGas = false);
             document.getElementById('btn-rem').addEventListener('pointerdown', () => isBrake = true);
             document.getElementById('btn-rem').addEventListener('pointerup', () => isBrake = false);
 
-            // Tombol Ganti Kendaraan
             const btnSwitch = document.getElementById('btn-switch');
             const vehicleNames = ["Motor", "Angkot", "Pesawat"];
             btnSwitch.addEventListener('click', () => {
@@ -323,7 +327,6 @@
                 showNotification(`Berganti Kendaraan ke ${vehicleNames[vehicleType]}`);
             });
 
-            // Tombol Ransel & Menu Survival
             document.getElementById('btn-backpack').addEventListener('click', () => {
                 document.getElementById('inventory-modal').style.display = 'block';
             });
@@ -331,7 +334,6 @@
                 document.getElementById('inventory-modal').style.display = 'none';
             });
 
-            // Fitur Mancing & Masak Kompor Portable
             const btnAction = document.getElementById('btn-action');
             btnAction.addEventListener('click', () => {
                 stats.fish++;
@@ -374,8 +376,7 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Kontrol Gerak Kendaraan
-            if (isGas) speed = vehicleType === 2 ? 0.8 : 0.4;
+            if (isGas) speed = vehicleType === 2 ? 0.8 : 0.45;
             else if (isBrake) speed = -0.2;
             else speed *= 0.92;
 
@@ -383,16 +384,16 @@
             player.rotation.y = -joyMove.x * 0.8;
             player.position.x += joyMove.x * 0.3;
 
-            // Kamera Mengikuti Pemain
+            // Kamera Mengikuti Kendaraan
             camera.position.x = player.position.x;
             camera.position.y = player.position.y + (vehicleType === 2 ? 8 : 4);
             camera.position.z = player.position.z + (vehicleType === 2 ? 16 : 8);
             camera.lookAt(player.position.x, player.position.y, player.position.z - 5);
 
-            // Deteksi Jarak ke Danau Gunung (Untuk Tombol Mancing)
-            const distToLake = Math.hypot(player.position.x - (-45), player.position.z - (-120));
+            // Deteksi Jarak ke Danau Gunung (Spot Mancing Tenjolaya)
+            const distToLake = Math.hypot(player.position.x - (-55), player.position.z - (-450));
             const btnAction = document.getElementById('btn-action');
-            if (distToLake < 25) {
+            if (distToLake < 30) {
                 btnAction.style.display = 'flex';
             } else {
                 btnAction.style.display = 'none';
