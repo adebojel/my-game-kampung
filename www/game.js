@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87ceeb); // Langit cerah pegunungan
+    scene.background = new THREE.Color(0x87ceeb);
 
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 5, -10);
@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
     directionalLight.position.set(15, 30, 15);
     scene.add(directionalLight);
 
-    // --- LINGKUNGAN KAMPUNG & DANAU SURVIVAL ---
+    // --- LINGKUNGAN KAMPUNG & DANAU GUNUNG ---
     const roadGeometry = new THREE.PlaneGeometry(12, 1000);
     const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
     const road = new THREE.Mesh(roadGeometry, roadMaterial);
@@ -34,7 +34,6 @@ window.addEventListener('DOMContentLoaded', () => {
     road.position.z = 500;
     scene.add(road);
 
-    // Area Danau Gunung (Warna Biru Air) di sisi jalan
     const lakeGeometry = new THREE.PlaneGeometry(40, 60);
     const lakeMaterial = new THREE.MeshStandardMaterial({ color: 0x2288cc, roughness: 0.1 });
     const mountainLake = new THREE.Mesh(lakeGeometry, lakeMaterial);
@@ -42,7 +41,6 @@ window.addEventListener('DOMContentLoaded', () => {
     mountainLake.position.set(25, 0.05, 200);
     scene.add(mountainLake);
 
-    // Pohon-pohon rimbun
     for (let i = 0; i < 25; i++) {
         const treeGeo = new THREE.ConeGeometry(1.5, 4, 6);
         const treeMat = new THREE.MeshStandardMaterial({ color: 0x228b22 });
@@ -95,17 +93,52 @@ window.addEventListener('DOMContentLoaded', () => {
     const deceleration = 0.015;
     let vehicleAngle = 0;
 
+    // --- UI INFORMASI, JAM & NOTIFIKASI SURVIVAL ---
+    let gameHours = 16;
+    let gameMinutes = 27;
+    let survivalStamina = 100;
+    let fishCount = 0;
+
+    let infoPanel = document.createElement('div');
+    infoPanel.style.position = 'absolute';
+    infoPanel.style.top = '15px';
+    infoPanel.style.right = '15px';
+    infoPanel.style.background = 'rgba(0, 0, 0, 0.6)';
+    infoPanel.style.color = 'white';
+    infoPanel.style.padding = '8px 12px';
+    infoPanel.style.borderRadius = '10px';
+    infoPanel.style.fontSize = '12px';
+    infoPanel.style.border = '2px solid rgba(255,255,255,0.5)';
+    infoPanel.style.zIndex = '100';
+    document.body.appendChild(infoPanel);
+
+    // Panel Notifikasi Interaksi Survival di Layar
+    let notifPanel = document.createElement('div');
+    notifPanel.style.position = 'absolute';
+    notifPanel.style.top = '25%';
+    notifPanel.style.left = '50%';
+    notifPanel.style.transform = 'translate(-50%, -50%)';
+    notifPanel.style.background = 'rgba(0, 0, 0, 0.8)';
+    notifPanel.style.color = '#FFEB3B';
+    notifPanel.style.padding = '10px 20px';
+    notifPanel.style.borderRadius = '10px';
+    notifPanel.style.fontSize = '14px';
+    notifPanel.style.fontWeight = 'bold';
+    notifPanel.style.display = 'none';
+    notifPanel.style.zIndex = '150';
+    notifPanel.style.border = '2px solid #FFEB3B';
+    document.body.appendChild(notifPanel);
+
     // --- SISTEM INVENTARIS SURVIVAL (Ransel) ---
     let backpackOpen = false;
     const survivalItems = [
         "🎒 Tas Ransel Besar",
         "🔪 Pisau Survival",
-        "🔥 Korek Api",
+        "🔥 Korek Api & Kayu Bakar",
         "⛺ Kompor Portable",
         "🎣 Alat Pancing & Umpan"
     ];
 
-    // Tambahkan Tombol Tas Ransel di UI secara otomatis jika belum ada
     let bagBtn = document.getElementById('btn-backpack');
     if (!bagBtn) {
         bagBtn = document.createElement('button');
@@ -124,7 +157,6 @@ window.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(bagBtn);
     }
 
-    // Panel Tampilan Isi Ransel
     let bagPanel = document.getElementById('bag-panel');
     if (!bagPanel) {
         bagPanel = document.createElement('div');
@@ -133,16 +165,16 @@ window.addEventListener('DOMContentLoaded', () => {
         bagPanel.style.top = '50%';
         bagPanel.style.left = '50%';
         bagPanel.style.transform = 'translate(-50%, -50%)';
-        bagPanel.style.width = '250px';
-        bagPanel.style.background = 'rgba(0, 0, 0, 0.85)';
+        bagPanel.style.width = '260px';
+        bagPanel.style.background = 'rgba(0, 0, 0, 0.9)';
         bagPanel.style.border = '2px solid #4CAF50';
         bagPanel.style.borderRadius = '15px';
         bagPanel.style.color = 'white';
         bagPanel.style.padding = '15px';
         bagPanel.style.display = 'none';
         bagPanel.style.zIndex = '200';
-        bagPanel.innerHTML = `<h3 style="margin-top:0; text-align:center; color:#4CAF50;">🎒 Tas Ransel Survival</h3><ul style="padding-left:20px; line-height:1.6;">` + 
-            survivalItems.map(item => `<li>${item}</li>`).join('') + `</ul><p style="font-size:11px; text-align:center; color:#aaa; margin-bottom:0;">Klik Ransel untuk menutup</p>`;
+        bagPanel.innerHTML = `<h3 style="margin-top:0; text-align:center; color:#4CAF50;">🎒 Tas Ransel Survival</h3><ul id="bag-list" style="padding-left:20px; line-height:1.6;">` + 
+            survivalItems.map(item => `<li>${item}</li>`).join('') + `</ul><p style="font-size:11px; text-align:center; color:#aaa; margin-bottom:0;">Klik untuk menutup</p>`;
         document.body.appendChild(bagPanel);
     }
 
@@ -209,10 +241,21 @@ window.addEventListener('DOMContentLoaded', () => {
         btnBrake.addEventListener('touchend', () => { moveBackward = false; });
     }
 
-    // Tombol Ganti Kendaraan
+    // Tombol Aksi: Ganti Kendaraan atau Memancing saat di dekat Danau
     if (btnAction) {
         btnAction.innerText = "Ganti";
         btnAction.addEventListener('touchstart', () => {
+            // Cek apakah posisi dekat dengan danau gunung
+            const distToLake = activeVehicle.position.distanceTo(new THREE.Vector3(25, 0, 200));
+            if (distToLake < 25) {
+                fishCount++;
+                notifPanel.innerText = `🎣 Berhasil Mendapatkan Ikan Danau! (Total: ${fishCount})`;
+                notifPanel.style.display = 'block';
+                setTimeout(() => { notifPanel.style.display = 'none'; }, 2500);
+                return;
+            }
+
+            // Logika Ganti Kendaraan Normal
             if (currentVehicleType === 'motor') {
                 currentVehicleType = 'angkot';
                 angkotGroup.position.copy(motorGroup.position);
@@ -241,7 +284,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Loop Animasi
+    // Loop Animasi Utama
     function animate() {
         requestAnimationFrame(animate);
 
@@ -272,6 +315,19 @@ window.addEventListener('DOMContentLoaded', () => {
                 activeVehicle.position.y -= 0.03;
             }
         }
+
+        // Cek kedekatan dengan Danau untuk mengubah fungsi Tombol Aksi
+        const distToLake = activeVehicle.position.distanceTo(new THREE.Vector3(25, 0, 200));
+        if (distToLake < 25) {
+            btnAction.innerText = "Pancing";
+            btnAction.style.background = "rgba(255, 152, 0, 0.8)"; // Oranye
+        } else {
+            btnAction.innerText = "Ganti";
+            btnAction.style.background = "rgba(0, 100, 255, 0.6)"; // Biru
+        }
+
+        // Update Panel Informasi UI
+        infoPanel.innerHTML = `🕒 16:27 | ⚡ Stamina: ${Math.floor(survivalStamina)}% | 🐟 Ikan: ${fishCount}`;
 
         const cameraOffset = new THREE.Vector3(
             Math.sin(vehicleAngle) * -9,
