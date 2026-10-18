@@ -97,7 +97,7 @@
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- GAME KAMPUNG: ALUR RUTE NYATA CIDADAP - TENJOLAYA - CIPARI - CICURUG ---
+        // --- GAME KAMPUNG: PUTAR BALIK 360 DERAJAT & PESAWAT TERBANG LELUASA ---
         let scene, camera, renderer;
         let player, vehicleType = 0; // 0: Motor, 1: Angkot, 2: Pesawat
         let vehicles = [];
@@ -107,13 +107,14 @@
         let joyMove = { x: 0, y: 0, active: false };
         let isGas = false, isBrake = false;
         let speed = 0;
-        let worldZ = 0;
+        let playerAngle = 0; // Sudut arah putar kendaraan ala GTA (360 derajat)
+        let planeAltitude = 15; // Ketinggian bebas pesawat
 
         function init() {
             const container = document.getElementById('canvas-container');
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.FogExp2(0x87CEEB, 0.006);
+            scene.fog = new THREE.FogExp2(0x87CEEB, 0.005);
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -129,7 +130,7 @@
             dirLight.position.set(50, 100, 50);
             scene.add(dirLight);
 
-            createRealRouteNetwork();
+            createElevationRouteNetwork();
             createPlayerVehicles();
             createNPCs();
 
@@ -137,56 +138,60 @@
             window.addEventListener('resize', onWindowResize);
         }
 
-        // --- PEMETAAN ALUR RUTE NYATA (BERKELOK & BERSEKAT WILAYAH) ---
-        function createRealRouteNetwork() {
-            // Segmen Jalan Raya Panjang dengan Titik Alur Wilayah
+        // --- RUTE JALAN DENGAN TANJAKAN, TURUNAN, & TIKUNGAN MULUS ---
+        function createElevationRouteNetwork() {
             const roadSegments = [
-                { zStart: 0, zEnd: -300, curve: 0 },         // Jalur Cidadap
-                { zStart: -300, zEnd: -600, curve: -15 },    // Tikungan Tenjolaya
-                { zStart: -600, zEnd: -900, curve: 10 },     // Jalur Cipari
-                { zStart: -900, zEnd: -1200, curve: 0 }      // Mendekati Cicurug
+                { x: 0, z: 0, length: 300, rotY: 0, rotX: 0 },
+                { x: -15, z: -320, length: 300, rotY: 0.15, rotX: 0.1 },
+                { x: -5, z: -640, length: 300, rotY: -0.1, rotX: -0.08 },
+                { x: 10, z: -960, length: 300, rotY: 0.05, rotX: 0.05 }
             ];
 
-            roadSegments.forEach(seg => {
-                const length = Math.abs(seg.zEnd - seg.zStart);
-                const roadGeo = new THREE.PlaneGeometry(12, length);
+            roadSegments.forEach(pt => {
+                const roadGroup = new THREE.Group();
+                const roadGeo = new THREE.PlaneGeometry(14, pt.length);
                 const roadMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
                 const road = new THREE.Mesh(roadGeo, roadMat);
-                road.rotation.x = -Math.PI / 2;
-                road.position.set(seg.curve, 0.01, (seg.zStart + seg.zEnd) / 2);
-                scene.add(road);
+                road.rotation.x = -Math.PI / 2 + pt.rotX;
+                roadGroup.add(road);
 
-                // Garis Tengah Kuning
-                const lineGeo = new THREE.PlaneGeometry(0.4, length);
+                const lineGeo = new THREE.PlaneGeometry(0.4, pt.length);
                 const lineMat = new THREE.MeshBasicMaterial({ color: 0xffeb3b });
                 const line = new THREE.Mesh(lineGeo, lineMat);
-                line.rotation.x = -Math.PI / 2;
-                line.position.set(seg.curve, 0.02, (seg.zStart + seg.zEnd) / 2);
-                scene.add(line);
+                line.rotation.x = -Math.PI / 2 + pt.rotX;
+                line.position.y = 0.01;
+                roadGroup.add(line);
 
-                // Spawn Rumah & Pohon di sepanjang segmen rute
-                for (let z = seg.zStart; z > seg.zEnd; z -= 35) {
-                    createSundaneseHouse(seg.curve - 14, z);
-                    createSundaneseHouse(seg.curve + 14, z - 15);
-                    createTree(seg.curve - 9, z - 10);
-                    createTree(seg.curve + 9, z - 5);
+                roadGroup.position.set(pt.x, getElevation(pt.z), pt.z);
+                roadGroup.rotation.y = pt.rotY;
+                scene.add(roadGroup);
+
+                for (let zLocal = -pt.length/2; zLocal < pt.length/2; zLocal += 35) {
+                    createSundaneseHouse(pt.x - 16, pt.z + zLocal);
+                    createSundaneseHouse(pt.x + 16, pt.z + zLocal - 10);
+                    createTree(pt.x - 10, pt.z + zLocal - 5);
+                    createTree(pt.x + 10, pt.z + zLocal - 15);
                 }
             });
 
-            // Panorama Gunung Salak Megah di Latar Belakang
-            const mountainGeo = new THREE.ConeGeometry(220, 110, 8);
+            // Panorama Gunung Salak di Latar Belakang
+            const mountainGeo = new THREE.ConeGeometry(250, 130, 8);
             const mountainMat = new THREE.MeshStandardMaterial({ color: 0x234e35, roughness: 0.9 });
             const mountain = new THREE.Mesh(mountainGeo, mountainMat);
-            mountain.position.set(-200, 50, -1000);
+            mountain.position.set(-150, 60, -1100);
             scene.add(mountain);
 
-            // Danau Gunung (Spot Mancing di Wilayah Tenjolaya/Cipari)
-            const lakeGeo = new THREE.PlaneGeometry(70, 70);
+            // Danau Gunung (Spot Mancing)
+            const lakeGeo = new THREE.PlaneGeometry(80, 80);
             const lakeMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff, roughness: 0.2 });
             const lake = new THREE.Mesh(lakeGeo, lakeMat);
             lake.rotation.x = -Math.PI / 2;
-            lake.position.set(-55, 0.05, -450);
+            lake.position.set(-45, 1.5, -500);
             scene.add(lake);
+        }
+
+        function getElevation(z) {
+            return Math.sin(z * 0.007) * 4.5;
         }
 
         function createSundaneseHouse(x, z) {
@@ -204,7 +209,7 @@
             roof.rotation.y = Math.PI / 4;
             houseGroup.add(roof);
 
-            houseGroup.position.set(x, 0, z);
+            houseGroup.position.set(x, getElevation(z), z);
             scene.add(houseGroup);
         }
 
@@ -222,18 +227,14 @@
 
             treeGroup.add(trunk);
             treeGroup.add(leaves);
-            treeGroup.position.set(x, 0, z);
+            treeGroup.position.set(x, getElevation(z), z);
             scene.add(treeGroup);
         }
 
-        // --- SISTEM NPC AKTIF DI SEPANJANG RUTE ---
         function createNPCs() {
             const npcPositions = [
-                { x: -5, z: -50, name: "Warga Cidadap" },
-                { x: 5, z: -150, name: "Tukang Ojek Pangkalan" },
-                { x: -20, z: -350, name: "Warga Tenjolaya" },
-                { x: 15, z: -650, name: "Warga Cipari" },
-                { x: -5, z: -950, name: "Warga Cicurug" }
+                { x: -5, z: -50 }, { x: 5, z: -150 }, 
+                { x: -25, z: -400 }, { x: 15, z: -700 }
             ];
 
             npcPositions.forEach(pos => {
@@ -250,13 +251,12 @@
                 head.position.y = 2.2;
                 npcGroup.add(head);
 
-                npcGroup.position.set(pos.x, 0, pos.z);
+                npcGroup.position.set(pos.x, getElevation(pos.z), pos.z);
                 scene.add(npcGroup);
                 npcs.push(npcGroup);
             });
         }
 
-        // --- KENDARAAN PEMAIN ---
         function createPlayerVehicles() {
             // 0: Motor
             const motorGroup = new THREE.Group();
@@ -288,7 +288,6 @@
             player = vehicles[0];
         }
 
-        // --- KONTROL & INTERAKSI ---
         function setupControls() {
             const stick = document.getElementById('joystick-stick');
             const base = document.getElementById('joystick-base');
@@ -372,28 +371,54 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // --- GAME LOOP ---
+        // --- GAME LOOP: PUTAR BALIK 360 DERAJAT ALA GTA & PESAWAT TERBANG BEBAS ---
         function animate() {
             requestAnimationFrame(animate);
 
-            if (isGas) speed = vehicleType === 2 ? 0.8 : 0.45;
-            else if (isBrake) speed = -0.2;
-            else speed *= 0.92;
+            let maxSpeed = vehicleType === 2 ? 0.7 : 0.45;
+            if (isGas) {
+                speed += 0.02;
+                if (speed > maxSpeed) speed = maxSpeed;
+            } else if (isBrake) {
+                speed -= 0.03;
+                if (speed < 0) speed = 0; // Rem normal berhenti total
+            } else {
+                speed *= 0.92;
+            }
 
-            player.position.z -= speed;
-            player.rotation.y = -joyMove.x * 0.8;
-            player.position.x += joyMove.x * 0.3;
+            // Kontrol Belok / Putar Balik Ala GTA (360 Derajat Rotasi Penuh)
+            if (Math.abs(joyMove.x) > 0.05 && speed > 0.01) {
+                playerAngle -= joyMove.x * 0.04; // Mengubah arah hadap kendaraan secara bebas
+            }
+            player.rotation.y = playerAngle;
 
-            // Kamera Mengikuti Kendaraan
-            camera.position.x = player.position.x;
-            camera.position.y = player.position.y + (vehicleType === 2 ? 8 : 4);
-            camera.position.z = player.position.z + (vehicleType === 2 ? 16 : 8);
-            camera.lookAt(player.position.x, player.position.y, player.position.z - 5);
+            // Gerak maju mengikuti arah sudut hadap (bisa putar balik menghadap ke mana saja)
+            player.position.x += Math.sin(playerAngle) * speed;
+            player.position.z -= Math.cos(playerAngle) * speed;
 
-            // Deteksi Jarak ke Danau Gunung (Spot Mancing Tenjolaya)
-            const distToLake = Math.hypot(player.position.x - (-55), player.position.z - (-450));
+            // Pengaturan Ketinggian & Kebebasan Pesawat Terbang
+            if (vehicleType === 2) {
+                // Pesawat bisa naik/turun leluasa menggunakan joystick vertikal (joyMove.y)
+                planeAltitude -= joyMove.y * 0.3;
+                planeAltitude = Math.max(5, Math.min(100, planeAltitude)); // Bisa terbang rendah hingga tinggi ke awan
+                player.position.y = planeAltitude;
+            } else {
+                // Kendaraan darat menempel di permukaan jalan sesuai elevasi tanjakan/turunan
+                player.position.y = getElevation(player.position.z);
+            }
+
+            // Kamera Mengikuti Kendaraan Dari Belakang
+            let camDistZ = vehicleType === 2 ? 18 : 8;
+            let camDistY = vehicleType === 2 ? 8 : 4;
+            camera.position.x = player.position.x - Math.sin(playerAngle) * camDistZ;
+            camera.position.z = player.position.z + Math.cos(playerAngle) * camDistZ;
+            camera.position.y = player.position.y + camDistY;
+            camera.lookAt(player.position.x, player.position.y, player.position.z);
+
+            // Deteksi Jarak ke Danau Gunung
+            const distToLake = Math.hypot(player.position.x - (-45), player.position.z - (-500));
             const btnAction = document.getElementById('btn-action');
-            if (distToLake < 30) {
+            if (distToLake < 35) {
                 btnAction.style.display = 'flex';
             } else {
                 btnAction.style.display = 'none';
