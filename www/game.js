@@ -1,11 +1,9 @@
-// --- LOGIKA UTAMA & RENDERER THREE.JS AMAN MOBILE ---
 window.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('game-container');
     if (!container) return;
 
-    // Pastikan THREE sudah dimuat
     if (typeof THREE === 'undefined') {
-        container.innerHTML = "<div style='color:white; padding:20px; text-align:center;'>Gagal memuat pustaka 3D. Periksa koneksi internet saat pertama kali buka.</div>";
+        container.innerHTML = "<div style='color:white; padding:20px; text-align:center;'>Gagal memuat pustaka 3D.</div>";
         return;
     }
 
@@ -28,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
     directionalLight.position.set(15, 30, 15);
     scene.add(directionalLight);
 
-    // Jalan Raya
+    // Jalan Raya Rute Cidadap
     const roadGeometry = new THREE.PlaneGeometry(12, 500);
     const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
     const road = new THREE.Mesh(roadGeometry, roadMaterial);
@@ -36,24 +34,44 @@ window.addEventListener('DOMContentLoaded', () => {
     road.position.z = 250;
     scene.add(road);
 
-    // Objek Kendaraan Pemain
-    const playerGeometry = new THREE.BoxGeometry(1.6, 1.2, 3.2);
-    const playerMaterial = new THREE.MeshStandardMaterial({ color: 0xcc2222 });
-    const player = new THREE.Mesh(playerGeometry, playerMaterial);
-    player.position.set(0, 0.6, 5);
-    scene.add(player);
+    // --- KENDARAAN 1: MOTOR (Ojek Kampung) ---
+    const motorGroup = new THREE.Group();
+    const motorBody = new THREE.Mesh(
+        new THREE.BoxGeometry(0.8, 0.9, 2.2),
+        new THREE.MeshStandardMaterial({ color: 0xcc2222 }) // Merah
+    );
+    motorBody.position.y = 0.45;
+    motorGroup.add(motorBody);
+
+    // --- KENDARAAN 2: ANGKOT ---
+    const angkotGroup = new THREE.Group();
+    const angkotBody = new THREE.Mesh(
+        new THREE.BoxGeometry(1.8, 1.5, 3.8),
+        new THREE.MeshStandardMaterial({ color: 0x2266cc }) // Biru Angkot
+    );
+    angkotBody.position.y = 0.75;
+    angkotGroup.add(angkotBody);
+
+    // Masukkan ke Scene awal pakai Motor
+    let currentVehicleType = 'motor'; // 'motor' atau 'angkot'
+    scene.add(motorGroup);
+    scene.add(angkotGroup);
+    angkotGroup.visible = false; // Sembunyikan angkot di awal
+
+    let activeVehicle = motorGroup;
 
     let moveForward = false;
     let moveBackward = false;
     let turnLeft = false;
     let turnRight = false;
-    let playerSpeed = 0;
-    const maxSpeed = 0.6;
+    let vehicleSpeed = 0;
+    const maxSpeedMotor = 0.7;
+    const maxSpeedAngkot = 0.45;
     const acceleration = 0.012;
     const deceleration = 0.015;
-    let playerAngle = 0;
+    let vehicleAngle = 0;
 
-    // Kontrol Joystick
+    // Kontrol Joystick Kiri
     const stick = document.getElementById('joystick-stick');
     const base = document.getElementById('joystick-base');
     let isTouching = false;
@@ -91,9 +109,10 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Tombol Gas & Rem
+    // Tombol Gas & Rem di Kanan
     const btnGas = document.getElementById('btn-gas');
     const btnBrake = document.getElementById('btn-brake');
+    const btnAction = document.getElementById('btn-action');
 
     if (btnGas) {
         btnGas.addEventListener('touchstart', () => { moveForward = true; });
@@ -104,32 +123,60 @@ window.addEventListener('DOMContentLoaded', () => {
         btnBrake.addEventListener('touchend', () => { moveBackward = false; });
     }
 
-    // Loop Animasi
+    // --- TOMBOL AKSI SEBAGAI PENGGANTI KENDARAAN (SWITCH VEHICLE) ---
+    if (btnAction) {
+        btnAction.innerText = "Ganti";
+        btnAction.addEventListener('touchstart', () => {
+            // Pindahkan posisi saat ganti kendaraan
+            if (currentVehicleType === 'motor') {
+                currentVehicleType = 'angkot';
+                angkotGroup.position.copy(motorGroup.position);
+                angkotGroup.rotation.y = motorGroup.rotation.y;
+                motorGroup.visible = false;
+                angkotGroup.visible = true;
+                activeVehicle = angkotGroup;
+            } else {
+                currentVehicleType = 'motor';
+                motorGroup.position.copy(angkotGroup.position);
+                motorGroup.rotation.y = angkotGroup.rotation.y;
+                angkotGroup.visible = false;
+                motorGroup.visible = true;
+                activeVehicle = motorGroup;
+            }
+            vehicleSpeed = 0; // Reset kecepatan saat ganti
+        });
+    }
+
+    // Loop Animasi Utama
     function animate() {
         requestAnimationFrame(animate);
 
+        let currentMaxSpeed = (currentVehicleType === 'motor') ? maxSpeedMotor : maxSpeedAngkot;
+
         if (moveForward) {
-            playerSpeed = Math.min(playerSpeed + acceleration, maxSpeed);
+            vehicleSpeed = Math.min(vehicleSpeed + acceleration, currentMaxSpeed);
         } else if (moveBackward) {
-            playerSpeed = Math.max(playerSpeed - acceleration, -maxSpeed / 2);
+            vehicleSpeed = Math.max(vehicleSpeed - acceleration, -currentMaxSpeed / 2);
         } else {
-            if (playerSpeed > 0) playerSpeed = Math.max(playerSpeed - deceleration, 0);
-            if (playerSpeed < 0) playerSpeed = Math.min(playerSpeed + deceleration, 0);
+            if (vehicleSpeed > 0) vehicleSpeed = Math.max(vehicleSpeed - deceleration, 0);
+            if (vehicleSpeed < 0) vehicleSpeed = Math.min(vehicleSpeed + deceleration, 0);
         }
 
-        if (turnLeft) playerAngle += 0.035;
-        if (turnRight) playerAngle -= 0.035;
+        let turnSpeed = (currentVehicleType === 'motor') ? 0.04 : 0.025;
+        if (turnLeft) vehicleAngle += turnSpeed;
+        if (turnRight) vehicleAngle -= turnSpeed;
 
-        player.rotation.y = playerAngle;
-        player.translateZ(playerSpeed);
+        activeVehicle.rotation.y = vehicleAngle;
+        activeVehicle.translateZ(vehicleSpeed);
 
+        // Kamera Mengikuti Kendaraan Aktif
         const cameraOffset = new THREE.Vector3(
-            Math.sin(playerAngle) * -8,
+            Math.sin(vehicleAngle) * -8,
             4,
-            Math.cos(playerAngle) * -8
+            Math.cos(vehicleAngle) * -8
         );
-        camera.position.copy(player.position).add(cameraOffset);
-        camera.lookAt(player.position.clone().add(new THREE.Vector3(0, 1, 0)));
+        camera.position.copy(activeVehicle.position).add(cameraOffset);
+        camera.lookAt(activeVehicle.position.clone().add(new THREE.Vector3(0, 1, 0)));
 
         renderer.render(scene, camera);
     }
