@@ -1,17 +1,15 @@
-/* Pengaturan Dasar Layar Penuh */
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #111;
+    background-color: #000;
     font-family: sans-serif;
     user-select: none;
     -webkit-user-select: none;
 }
 
-/* Container Tampilan 3D Three.js */
 #game-container {
     width: 100%;
     height: 100%;
@@ -21,7 +19,6 @@ body, html {
     z-index: 1;
 }
 
-/* Container UI & Tombol Sentuh (Di atas canvas 3D) */
 #ui-container {
     position: absolute;
     top: 0;
@@ -29,47 +26,63 @@ body, html {
     width: 100%;
     height: 100%;
     z-index: 10;
-    pointer-events: none; /* Biar klik tembus ke game, kecuali tombol */
+    pointer-events: none;
 }
 
-/* Mengaktifkan kembali interaksi sentuh khusus pada tombol */
 #ui-container button, 
 #joystick-base {
     pointer-events: auto;
 }
 
-/* Minimap di Pojok Kiri Atas */
+/* Minimap Bulat Elegan di Kiri Atas */
 #minimap {
     position: absolute;
     top: 15px;
     left: 15px;
-    width: 120px;
-    height: 120px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    border-radius: 15px;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 11px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
 }
 
-/* Area Kontrol Kiri (Joystick) */
+/* Tombol Pause di Kanan Atas */
+#btn-pause {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    pointer-events: auto;
+}
+
+/* Joystick Kiri */
 #controls-left {
     position: absolute;
-    bottom: 30px;
-    left: 30px;
-    width: 120px;
-    height: 120px;
+    bottom: 25px;
+    left: 25px;
+    width: 110px;
+    height: 110px;
 }
 
 #joystick-base {
     width: 100px;
     height: 100px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
     border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 50%;
     position: relative;
@@ -79,69 +92,79 @@ body, html {
 #joystick-stick {
     width: 45px;
     height: 45px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 50%;
     position: absolute;
-    top: 27.5px;
-    left: 27.5px;
+    top: 25.5px;
+    left: 25.5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
 
-/* Area Kontrol Kanan (Tombol Aksi, Gas, Rem) */
-#controls-right {
+/* Tombol Aksi Samping Kiri (Lompat / Naik Motor) */
+#actions-left {
     position: absolute;
-    bottom: 30px;
-    right: 30px;
+    bottom: 145px;
+    left: 35px;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
-.control-btn {
-    background: rgba(0, 0, 0, 0.5);
+/* Tombol Ikon Bundar Kecil */
+.icon-btn {
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.4);
     border: 2px solid rgba(255, 255, 255, 0.6);
-    color: white;
-    font-weight: bold;
     border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    color: white;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: background 0.1s;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
 }
 
-.control-btn:active {
-    background: rgba(255, 255, 255, 0.4);
+/* Panel Kanan Bawah (Aksi Atas & Pedal Gas/Rem Bawah) */
+#controls-right {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
 }
 
-/* Ukuran spesifik tombol kanan */
-#btn-action {
-    width: 65px;
-    height: 65px;
-    font-size: 11px;
-    align-self: flex-end;
-    margin-bottom: 5px;
+.action-row {
+    display: flex;
+    gap: 10px;
+    margin-right: 10px;
+}
+
+.pedal-row {
+    display: flex;
+    gap: 15px;
+}
+
+/* Tombol Pedal Gas & Rem */
+.pedal-btn {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
 #btn-gas {
-    width: 75px;
-    height: 75px;
-    font-size: 14px;
-    background: rgba(0, 150, 0, 0.5);
-    border-color: rgba(0, 255, 0, 0.7);
-    position: absolute;
-    right: 80px;
-    bottom: 0;
+    background: rgba(0, 180, 0, 0.6);
 }
 
 #btn-brake {
-    width: 65px;
-    height: 65px;
-    font-size: 14px;
-    background: rgba(150, 0, 0, 0.5);
-    border-color: rgba(255, 0, 0, 0.7);
-    position: absolute;
-    right: 0;
-    bottom: 0;
+    background: rgba(200, 0, 0, 0.6);
 }
