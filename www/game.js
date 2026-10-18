@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87ceeb);
+    scene.background = new THREE.Color(0x87ceeb); // Langit biru cerah khas pegunungan
 
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 5, -10);
@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Pencahayaan
+    // Pencahayaan Alami
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
@@ -26,19 +26,33 @@ window.addEventListener('DOMContentLoaded', () => {
     directionalLight.position.set(15, 30, 15);
     scene.add(directionalLight);
 
-    // Jalan Raya Rute Cidadap
-    const roadGeometry = new THREE.PlaneGeometry(12, 500);
+    // --- LINGKUNGAN KAMPUNG & RUTE JALAN ---
+    const roadGeometry = new THREE.PlaneGeometry(12, 1000);
     const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
     const road = new THREE.Mesh(roadGeometry, roadMaterial);
     road.rotation.x = -Math.PI / 2;
-    road.position.z = 250;
+    road.position.z = 500;
     scene.add(road);
+
+    // Dekorasi Sederhana: Pohon/Rumah di Pinggir Jalan Kampung
+    for (let i = 0; i < 20; i++) {
+        const treeGeo = new THREE.ConeGeometry(1.5, 4, 6);
+        const treeMat = new THREE.MeshStandardMaterial({ color: 0x228b22 }); // Hijau daun
+        
+        const treeLeft = new THREE.Mesh(treeGeo, treeMat);
+        treeLeft.position.set(-8, 2, i * 40);
+        scene.add(treeLeft);
+
+        const treeRight = new THREE.Mesh(treeGeo, treeMat);
+        treeRight.position.set(8, 2, i * 40 + 20);
+        scene.add(treeRight);
+    }
 
     // --- KENDARAAN 1: MOTOR (Ojek Kampung) ---
     const motorGroup = new THREE.Group();
     const motorBody = new THREE.Mesh(
         new THREE.BoxGeometry(0.8, 0.9, 2.2),
-        new THREE.MeshStandardMaterial({ color: 0xcc2222 }) // Merah
+        new THREE.MeshStandardMaterial({ color: 0xcc2222 })
     );
     motorBody.position.y = 0.45;
     motorGroup.add(motorBody);
@@ -47,16 +61,36 @@ window.addEventListener('DOMContentLoaded', () => {
     const angkotGroup = new THREE.Group();
     const angkotBody = new THREE.Mesh(
         new THREE.BoxGeometry(1.8, 1.5, 3.8),
-        new THREE.MeshStandardMaterial({ color: 0x2266cc }) // Biru Angkot
+        new THREE.MeshStandardMaterial({ color: 0x2266cc })
     );
     angkotBody.position.y = 0.75;
     angkotGroup.add(angkotBody);
 
-    // Masukkan ke Scene awal pakai Motor
-    let currentVehicleType = 'motor'; // 'motor' atau 'angkot'
+    // --- KENDARAAN 3: PESAWAT (Eksplorasi Udara) ---
+    const planeGroup = new THREE.Group();
+    const planeBody = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 1, 4.5),
+        new THREE.MeshStandardMaterial({ color: 0xffffff }) // Pesawat Putih
+    );
+    planeBody.position.y = 0.5;
+    planeGroup.add(planeBody);
+    
+    // Sayap Pesawat
+    const wing = new THREE.Mesh(
+        new THREE.BoxGeometry(6, 0.1, 1.5),
+        new THREE.MeshStandardMaterial({ color: 0xcc3333 })
+    );
+    wing.position.set(0, 0.6, 0);
+    planeGroup.add(wing);
+
+    // Pengaturan Grup Kendaraan Aktif
+    let currentVehicleType = 'motor'; // 'motor', 'angkot', 'pesawat'
     scene.add(motorGroup);
     scene.add(angkotGroup);
-    angkotGroup.visible = false; // Sembunyikan angkot di awal
+    scene.add(planeGroup);
+    
+    angkotGroup.visible = false;
+    planeGroup.visible = false;
 
     let activeVehicle = motorGroup;
 
@@ -65,11 +99,15 @@ window.addEventListener('DOMContentLoaded', () => {
     let turnLeft = false;
     let turnRight = false;
     let vehicleSpeed = 0;
+    
     const maxSpeedMotor = 0.7;
     const maxSpeedAngkot = 0.45;
+    const maxSpeedPlane = 1.2;
+    
     const acceleration = 0.012;
     const deceleration = 0.015;
     let vehicleAngle = 0;
+    let vehicleAltitude = 0; // Ketinggian khusus pesawat
 
     // Kontrol Joystick Kiri
     const stick = document.getElementById('joystick-stick');
@@ -123,11 +161,10 @@ window.addEventListener('DOMContentLoaded', () => {
         btnBrake.addEventListener('touchend', () => { moveBackward = false; });
     }
 
-    // --- TOMBOL AKSI SEBAGAI PENGGANTI KENDARAAN (SWITCH VEHICLE) ---
+    // Tombol "Ganti" untuk Bergilir Kendaraan (Motor -> Angkot -> Pesawat)
     if (btnAction) {
         btnAction.innerText = "Ganti";
         btnAction.addEventListener('touchstart', () => {
-            // Pindahkan posisi saat ganti kendaraan
             if (currentVehicleType === 'motor') {
                 currentVehicleType = 'angkot';
                 angkotGroup.position.copy(motorGroup.position);
@@ -135,15 +172,24 @@ window.addEventListener('DOMContentLoaded', () => {
                 motorGroup.visible = false;
                 angkotGroup.visible = true;
                 activeVehicle = angkotGroup;
+            } else if (currentVehicleType === 'angkot') {
+                currentVehicleType = 'pesawat';
+                planeGroup.position.copy(angkotGroup.position);
+                planeGroup.position.y = 2; // Naik sedikit ke udara
+                planeGroup.rotation.y = angkotGroup.rotation.y;
+                angkotGroup.visible = false;
+                planeGroup.visible = true;
+                activeVehicle = planeGroup;
             } else {
                 currentVehicleType = 'motor';
-                motorGroup.position.copy(angkotGroup.position);
-                motorGroup.rotation.y = angkotGroup.rotation.y;
-                angkotGroup.visible = false;
+                motorGroup.position.copy(planeGroup.position);
+                motorGroup.position.y = 0;
+                motorGroup.rotation.y = planeGroup.rotation.y;
+                planeGroup.visible = false;
                 motorGroup.visible = true;
                 activeVehicle = motorGroup;
             }
-            vehicleSpeed = 0; // Reset kecepatan saat ganti
+            vehicleSpeed = 0;
         });
     }
 
@@ -151,7 +197,9 @@ window.addEventListener('DOMContentLoaded', () => {
     function animate() {
         requestAnimationFrame(animate);
 
-        let currentMaxSpeed = (currentVehicleType === 'motor') ? maxSpeedMotor : maxSpeedAngkot;
+        let currentMaxSpeed = maxSpeedMotor;
+        if (currentVehicleType === 'angkot') currentMaxSpeed = maxSpeedAngkot;
+        if (currentVehicleType === 'pesawat') currentMaxSpeed = maxSpeedPlane;
 
         if (moveForward) {
             vehicleSpeed = Math.min(vehicleSpeed + acceleration, currentMaxSpeed);
@@ -162,18 +210,27 @@ window.addEventListener('DOMContentLoaded', () => {
             if (vehicleSpeed < 0) vehicleSpeed = Math.min(vehicleSpeed + deceleration, 0);
         }
 
-        let turnSpeed = (currentVehicleType === 'motor') ? 0.04 : 0.025;
+        let turnSpeed = (currentVehicleType === 'pesawat') ? 0.05 : ((currentVehicleType === 'motor') ? 0.04 : 0.025);
         if (turnLeft) vehicleAngle += turnSpeed;
         if (turnRight) vehicleAngle -= turnSpeed;
 
         activeVehicle.rotation.y = vehicleAngle;
         activeVehicle.translateZ(vehicleSpeed);
 
-        // Kamera Mengikuti Kendaraan Aktif
+        // Jika pesawat, bisa naik ke atas jika ngebut
+        if (currentVehicleType === 'pesawat') {
+            if (moveForward && activeVehicle.position.y < 30) {
+                activeVehicle.position.y += 0.05;
+            } else if (!moveForward && activeVehicle.position.y > 2) {
+                activeVehicle.position.y -= 0.03;
+            }
+        }
+
+        // Posisi Kamera Mengikuti Kendaraan
         const cameraOffset = new THREE.Vector3(
-            Math.sin(vehicleAngle) * -8,
-            4,
-            Math.cos(vehicleAngle) * -8
+            Math.sin(vehicleAngle) * -9,
+            4.5,
+            Math.cos(vehicleAngle) * -9
         );
         camera.position.copy(activeVehicle.position).add(cameraOffset);
         camera.lookAt(activeVehicle.position.clone().add(new THREE.Vector3(0, 1, 0)));
