@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87ceeb); // Langit biru cerah khas pegunungan
+    scene.background = new THREE.Color(0x87ceeb); // Langit cerah pegunungan
 
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 5, -10);
@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Pencahayaan Alami
+    // Pencahayaan
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
     directionalLight.position.set(15, 30, 15);
     scene.add(directionalLight);
 
-    // --- LINGKUNGAN KAMPUNG & RUTE JALAN ---
+    // --- LINGKUNGAN KAMPUNG & DANAU SURVIVAL ---
     const roadGeometry = new THREE.PlaneGeometry(12, 1000);
     const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
     const road = new THREE.Mesh(roadGeometry, roadMaterial);
@@ -34,64 +34,53 @@ window.addEventListener('DOMContentLoaded', () => {
     road.position.z = 500;
     scene.add(road);
 
-    // Dekorasi Sederhana: Pohon/Rumah di Pinggir Jalan Kampung
-    for (let i = 0; i < 20; i++) {
+    // Area Danau Gunung (Warna Biru Air) di sisi jalan
+    const lakeGeometry = new THREE.PlaneGeometry(40, 60);
+    const lakeMaterial = new THREE.MeshStandardMaterial({ color: 0x2288cc, roughness: 0.1 });
+    const mountainLake = new THREE.Mesh(lakeGeometry, lakeMaterial);
+    mountainLake.rotation.x = -Math.PI / 2;
+    mountainLake.position.set(25, 0.05, 200);
+    scene.add(mountainLake);
+
+    // Pohon-pohon rimbun
+    for (let i = 0; i < 25; i++) {
         const treeGeo = new THREE.ConeGeometry(1.5, 4, 6);
-        const treeMat = new THREE.MeshStandardMaterial({ color: 0x228b22 }); // Hijau daun
+        const treeMat = new THREE.MeshStandardMaterial({ color: 0x228b22 });
         
         const treeLeft = new THREE.Mesh(treeGeo, treeMat);
-        treeLeft.position.set(-8, 2, i * 40);
+        treeLeft.position.set(-10, 2, i * 40);
         scene.add(treeLeft);
 
         const treeRight = new THREE.Mesh(treeGeo, treeMat);
-        treeRight.position.set(8, 2, i * 40 + 20);
+        treeRight.position.set(15, 2, i * 40 + 20);
         scene.add(treeRight);
     }
 
-    // --- KENDARAAN 1: MOTOR (Ojek Kampung) ---
+    // --- KENDARAAN (Motor, Angkot, Pesawat) ---
     const motorGroup = new THREE.Group();
-    const motorBody = new THREE.Mesh(
-        new THREE.BoxGeometry(0.8, 0.9, 2.2),
-        new THREE.MeshStandardMaterial({ color: 0xcc2222 })
-    );
+    const motorBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.9, 2.2), new THREE.MeshStandardMaterial({ color: 0xcc2222 }));
     motorBody.position.y = 0.45;
     motorGroup.add(motorBody);
 
-    // --- KENDARAAN 2: ANGKOT ---
     const angkotGroup = new THREE.Group();
-    const angkotBody = new THREE.Mesh(
-        new THREE.BoxGeometry(1.8, 1.5, 3.8),
-        new THREE.MeshStandardMaterial({ color: 0x2266cc })
-    );
+    const angkotBody = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.5, 3.8), new THREE.MeshStandardMaterial({ color: 0x2266cc }));
     angkotBody.position.y = 0.75;
     angkotGroup.add(angkotBody);
 
-    // --- KENDARAAN 3: PESAWAT (Eksplorasi Udara) ---
     const planeGroup = new THREE.Group();
-    const planeBody = new THREE.Mesh(
-        new THREE.BoxGeometry(1.2, 1, 4.5),
-        new THREE.MeshStandardMaterial({ color: 0xffffff }) // Pesawat Putih
-    );
+    const planeBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1, 4.5), new THREE.MeshStandardMaterial({ color: 0xffffff }));
     planeBody.position.y = 0.5;
     planeGroup.add(planeBody);
-    
-    // Sayap Pesawat
-    const wing = new THREE.Mesh(
-        new THREE.BoxGeometry(6, 0.1, 1.5),
-        new THREE.MeshStandardMaterial({ color: 0xcc3333 })
-    );
+    const wing = new THREE.Mesh(new THREE.BoxGeometry(6, 0.1, 1.5), new THREE.MeshStandardMaterial({ color: 0xcc3333 }));
     wing.position.set(0, 0.6, 0);
     planeGroup.add(wing);
 
-    // Pengaturan Grup Kendaraan Aktif
-    let currentVehicleType = 'motor'; // 'motor', 'angkot', 'pesawat'
+    let currentVehicleType = 'motor';
     scene.add(motorGroup);
     scene.add(angkotGroup);
     scene.add(planeGroup);
-    
     angkotGroup.visible = false;
     planeGroup.visible = false;
-
     let activeVehicle = motorGroup;
 
     let moveForward = false;
@@ -99,15 +88,74 @@ window.addEventListener('DOMContentLoaded', () => {
     let turnLeft = false;
     let turnRight = false;
     let vehicleSpeed = 0;
-    
     const maxSpeedMotor = 0.7;
     const maxSpeedAngkot = 0.45;
     const maxSpeedPlane = 1.2;
-    
     const acceleration = 0.012;
     const deceleration = 0.015;
     let vehicleAngle = 0;
-    let vehicleAltitude = 0; // Ketinggian khusus pesawat
+
+    // --- SISTEM INVENTARIS SURVIVAL (Ransel) ---
+    let backpackOpen = false;
+    const survivalItems = [
+        "🎒 Tas Ransel Besar",
+        "🔪 Pisau Survival",
+        "🔥 Korek Api",
+        "⛺ Kompor Portable",
+        "🎣 Alat Pancing & Umpan"
+    ];
+
+    // Tambahkan Tombol Tas Ransel di UI secara otomatis jika belum ada
+    let bagBtn = document.getElementById('btn-backpack');
+    if (!bagBtn) {
+        bagBtn = document.createElement('button');
+        bagBtn.id = 'btn-backpack';
+        bagBtn.innerText = "🎒 Ransel";
+        bagBtn.style.position = 'absolute';
+        bagBtn.style.top = '145px';
+        bagBtn.style.left = '15px';
+        bagBtn.style.padding = '8px 12px';
+        bagBtn.style.background = 'rgba(0,0,0,0.7)';
+        bagBtn.style.color = 'white';
+        bagBtn.style.border = '2px solid white';
+        bagBtn.style.borderRadius = '10px';
+        bagBtn.style.zIndex = '100';
+        bagBtn.style.fontWeight = 'bold';
+        document.body.appendChild(bagBtn);
+    }
+
+    // Panel Tampilan Isi Ransel
+    let bagPanel = document.getElementById('bag-panel');
+    if (!bagPanel) {
+        bagPanel = document.createElement('div');
+        bagPanel.id = 'bag-panel';
+        bagPanel.style.position = 'absolute';
+        bagPanel.style.top = '50%';
+        bagPanel.style.left = '50%';
+        bagPanel.style.transform = 'translate(-50%, -50%)';
+        bagPanel.style.width = '250px';
+        bagPanel.style.background = 'rgba(0, 0, 0, 0.85)';
+        bagPanel.style.border = '2px solid #4CAF50';
+        bagPanel.style.borderRadius = '15px';
+        bagPanel.style.color = 'white';
+        bagPanel.style.padding = '15px';
+        bagPanel.style.display = 'none';
+        bagPanel.style.zIndex = '200';
+        bagPanel.innerHTML = `<h3 style="margin-top:0; text-align:center; color:#4CAF50;">🎒 Tas Ransel Survival</h3><ul style="padding-left:20px; line-height:1.6;">` + 
+            survivalItems.map(item => `<li>${item}</li>`).join('') + `</ul><p style="font-size:11px; text-align:center; color:#aaa; margin-bottom:0;">Klik Ransel untuk menutup</p>`;
+        document.body.appendChild(bagPanel);
+    }
+
+    bagBtn.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        backpackOpen = !backpackOpen;
+        bagPanel.style.display = backpackOpen ? 'block' : 'none';
+    });
+
+    bagPanel.addEventListener('touchstart', () => {
+        backpackOpen = false;
+        bagPanel.style.display = 'none';
+    });
 
     // Kontrol Joystick Kiri
     const stick = document.getElementById('joystick-stick');
@@ -161,7 +209,7 @@ window.addEventListener('DOMContentLoaded', () => {
         btnBrake.addEventListener('touchend', () => { moveBackward = false; });
     }
 
-    // Tombol "Ganti" untuk Bergilir Kendaraan (Motor -> Angkot -> Pesawat)
+    // Tombol Ganti Kendaraan
     if (btnAction) {
         btnAction.innerText = "Ganti";
         btnAction.addEventListener('touchstart', () => {
@@ -175,7 +223,7 @@ window.addEventListener('DOMContentLoaded', () => {
             } else if (currentVehicleType === 'angkot') {
                 currentVehicleType = 'pesawat';
                 planeGroup.position.copy(angkotGroup.position);
-                planeGroup.position.y = 2; // Naik sedikit ke udara
+                planeGroup.position.y = 2;
                 planeGroup.rotation.y = angkotGroup.rotation.y;
                 angkotGroup.visible = false;
                 planeGroup.visible = true;
@@ -193,7 +241,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Loop Animasi Utama
+    // Loop Animasi
     function animate() {
         requestAnimationFrame(animate);
 
@@ -217,7 +265,6 @@ window.addEventListener('DOMContentLoaded', () => {
         activeVehicle.rotation.y = vehicleAngle;
         activeVehicle.translateZ(vehicleSpeed);
 
-        // Jika pesawat, bisa naik ke atas jika ngebut
         if (currentVehicleType === 'pesawat') {
             if (moveForward && activeVehicle.position.y < 30) {
                 activeVehicle.position.y += 0.05;
@@ -226,7 +273,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Posisi Kamera Mengikuti Kendaraan
         const cameraOffset = new THREE.Vector3(
             Math.sin(vehicleAngle) * -9,
             4.5,
