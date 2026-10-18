@@ -10,43 +10,72 @@
     <!-- Container Utama Game 3D -->
     <div id="game-container"></div>
 
-    <!-- UI / Tombol Kontrol Mobile Modern -->
+    <!-- UI / Tombol Kontrol Mobile -->
     <div id="ui-container">
-        <!-- Minimap Bulat di Pojok Kiri Atas -->
+        <!-- Minimap di Pojok Kiri Atas -->
         <div id="minimap">
-            <span class="minimap-text">🗺️ Cidadap</span>
+            <span>🗺️ Minimap Cidadap</span>
         </div>
 
-        <!-- Tombol Pause di Pojok Kanan Atas -->
-        <div id="btn-pause">⏸</div>
+        <!-- Tombol Kontrol di Kanan (Sudah Dirapikan) -->
+        <div id="controls-right">
+            <button id="btn-action" class="control-btn">Aksi</button>
+            <div class="pedal-container">
+                <button id="btn-brake" class="control-btn">Rem</button>
+                <button id="btn-gas" class="control-btn">Gas</button>
+            </div>
+        </div>
 
-        <!-- Kontrol Kiri: Joystick Setang / Gerak -->
+        <!-- Joystick / Kontrol Arah di Kiri -->
         <div id="controls-left">
             <div id="joystick-base">
                 <div id="joystick-stick"></div>
             </div>
         </div>
-
-        <!-- Panel Tombol Aksi di Kiri Bawah (Tambahan: Klakson/Lompat) -->
-        <div id="actions-left">
-            <button class="icon-btn" id="btn-jump">🏃</button>
-            <button class="icon-btn" id="btn-vehicle">🏍️</button>
-        </div>
-
-        <!-- Panel Tombol Aksi & Gas/Rem di Kanan Bawah -->
-        <div id="controls-right">
-            <div class="action-row">
-                <button class="icon-btn" id="btn-inventory">🎒</button>
-                <button class="icon-btn" id="btn-camera">📷</button>
-            </div>
-            <div class="pedal-row">
-                <button class="pedal-btn" id="btn-brake">Rem</button>
-                <button class="pedal-btn" id="btn-gas">Gas</button>
-            </div>
-        </div>
     </div>
 
+    <!-- Memuat Library Three.js dari CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Skrip Inisialisasi Sentuh & Logika Dasar UI -->
+    <script>
+        const stick = document.getElementById('joystick-stick');
+        const base = document.getElementById('joystick-base');
+        
+        let isTouching = false;
+        let centerX, centerY;
+
+        base.addEventListener('touchstart', (e) => {
+            isTouching = true;
+            const rect = base.getBoundingClientRect();
+            centerX = rect.left + rect.width / 2;
+            centerY = rect.top + rect.height / 2;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isTouching) return;
+            const touch = e.touches[0];
+            let dx = touch.clientX - centerX;
+            let dy = touch.clientY - centerY;
+            
+            const distance = Math.min(35, Math.sqrt(dx * dx + dy * dy));
+            const angle = Math.atan2(dy, dx);
+            
+            let x = Math.cos(angle) * distance;
+            let y = Math.sin(angle) * distance;
+            
+            stick.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        window.addEventListener('touchend', () => {
+            if (isTouching) {
+                isTouching = false;
+                stick.style.transform = `translate(0px, 0px)`;
+            }
+        });
+    </script>
+
+    <!-- Logika Game Utama -->
     <script src="game.js"></script>
 </body>
 </html>
