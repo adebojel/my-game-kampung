@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Game Kampung - Cidadap Open World</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #87CEEB; font-family: sans-serif; user-select: none; -webkit-user-select: none; }
+        body { margin: 0; overflow: hidden; background-color: #87CEEB; font-family: sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
         
         /* UI Top Bar */
         #ui-top {
             position: absolute; top: 15px; left: 15px; right: 15px;
             display: flex; justify-content: space-between; align-items: center;
-            pointer-events: none;
+            pointer-events: none; z-index: 100;
         }
         .ui-box {
             background: rgba(0, 0, 0, 0.6); color: white; padding: 8px 12px;
@@ -26,31 +26,32 @@
             position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
             background: rgba(20, 20, 20, 0.85); color: #ffeb3b; padding: 8px 16px;
             border-radius: 6px; font-size: 13px; font-weight: bold; display: none; text-align: center;
-            border: 1px solid #ffeb3b; z-index: 200;
+            border: 1px solid #ffeb3b; z-index: 200; pointer-events: none;
         }
 
         /* Controls UI */
         .control-btn {
-            position: absolute; width: 65px; height: 65px; border-radius: 50%;
+            position: absolute; width: 75px; height: 75px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.25); border: 2px solid white; color: white;
-            font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center;
-            touch-action: manipulation; cursor: pointer;
+            font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center;
+            touch-action: manipulation; cursor: pointer; z-index: 100;
         }
-        #btn-gas { bottom: 20px; right: 20px; background: rgba(0, 200, 0, 0.5); width: 75px; height: 75px; font-size: 16px; }
-        #btn-rem { bottom: 20px; right: 105px; background: rgba(200, 0, 0, 0.5); width: 65px; height: 65px; }
-        #btn-switch { top: 75px; left: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(0, 120, 255, 0.7); font-size: 12px; }
-        #btn-action { bottom: 35px; right: 190px; background: rgba(255, 150, 0, 0.7); display: none; }
-        #btn-backpack { top: 120px; left: 15px; width: auto; height: 32px; padding: 0 10px; border-radius: 6px; background: rgba(180, 40, 40, 0.8); font-size: 12px; }
+        #btn-gas { bottom: 25px; right: 25px; background: rgba(0, 200, 0, 0.6); width: 85px; height: 85px; font-size: 18px; }
+        #btn-rem { bottom: 25px; right: 125px; background: rgba(200, 0, 0, 0.6); width: 75px; height: 75px; }
+        #btn-switch { top: 75px; left: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(0, 120, 255, 0.7); font-size: 12px; z-index: 100; }
+        #btn-camera { top: 75px; right: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(120, 50, 200, 0.8); font-size: 12px; z-index: 100; }
+        #btn-action { bottom: 45px; right: 215px; background: rgba(255, 150, 0, 0.8); display: none; z-index: 100; }
+        #btn-backpack { top: 120px; left: 15px; width: auto; height: 32px; padding: 0 10px; border-radius: 6px; background: rgba(180, 40, 40, 0.8); font-size: 12px; z-index: 100; }
 
         /* Joystick */
         #joystick-base {
-            position: absolute; bottom: 25px; left: 25px; width: 110px; height: 110px;
+            position: absolute; bottom: 25px; left: 25px; width: 120px; height: 120px;
             background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 50%; touch-action: none;
+            border-radius: 50%; touch-action: none; z-index: 100;
         }
         #joystick-stick {
-            position: absolute; top: 30px; left: 30px; width: 50px; height: 50px;
-            background: rgba(255, 255, 255, 0.6); border-radius: 50%; pointer-events: none;
+            position: absolute; top: 35px; left: 35px; width: 50px; height: 50px;
+            background: rgba(255, 255, 255, 0.7); border-radius: 50%; pointer-events: none;
         }
 
         /* Backpack Modal */
@@ -75,6 +76,7 @@
     <div id="notification">Pemberitahuan Sistem</div>
 
     <button class="control-btn" id="btn-switch">Ganti: Motor</button>
+    <button class="control-btn" id="btn-camera">📷 Kamera: Standar</button>
     <button class="control-btn" id="btn-backpack">🎒 Ransel</button>
     <button class="control-btn" id="btn-action">Pancing</button>
 
@@ -97,19 +99,22 @@
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- GAME KAMPUNG: PERBAIKAN ELEVASI TANAH & KENDARAAN MENAPAK UTUH ---
+        // --- GAME KAMPUNG: FISIKA KENDARAAN LURUS KE DEPAN ALA GTA ---
         let scene, camera, renderer;
         let player, vehicleType = 0; // 0: Motor, 1: Angkot, 2: Pesawat
         let vehicles = [];
         let npcs = [];
         
         let stats = { time: "16:27", stamina: 100, fish: 0 };
-        let joyMove = { x: 0, y: 0, active: false };
+        let joyMove = { x: 0, y: 0, active: false, pointerId: null };
         let isGas = false, isBrake = false;
         let speed = 0;
-        let playerAngle = 0;
-        let turnSpeed = 0;
+        let playerAngle = 0; // Sudut arah hadap kendaraan
         let planeAltitude = 15;
+
+        // Kamera GTA (0: Dekat, 1: Standar, 2: Jauh)
+        let cameraMode = 1; 
+        let cameraAngleOffset = 0;
 
         function init() {
             const container = document.getElementById('canvas-container');
@@ -130,29 +135,27 @@
             dirLight.position.set(50, 100, 50);
             scene.add(dirLight);
 
-            createSeamlessRouteNetwork();
+            createGroundAndEnvironment();
             createPlayerVehicles();
             createNPCs();
 
-            setupControls();
+            setupMultiTouchControls();
             window.addEventListener('resize', onWindowResize);
         }
 
-        // --- RUTE JALAN MENYATU TANPA TERPOTONG & ELEVASI SOLID ---
-        function createSeamlessRouteNetwork() {
-            // Membuat bidang tanah dasar (Ground) sebagai fondasi agar tidak ada ruang kosong/tembus pandang
-            const groundGeo = new THREE.PlaneGeometry(300, 2000);
-            const groundMat = new THREE.MeshStandardMaterial({ color: 0x3b7a57, roughness: 0.9 });
+        function createGroundAndEnvironment() {
+            const groundGeo = new THREE.PlaneGeometry(500, 3000);
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x2e6f40, roughness: 0.95 });
             const ground = new THREE.Mesh(groundGeo, groundMat);
             ground.rotation.x = -Math.PI / 2;
-            ground.position.set(0, -0.1, -600);
+            ground.position.set(0, 0, -1000);
             scene.add(ground);
 
             const roadSegments = [
-                { x: 0, z: 0, length: 400, rotY: 0 },
-                { x: -15, z: -380, length: 400, rotY: 0.12 },
-                { x: -5, z: -760, length: 400, rotY: -0.08 },
-                { x: 10, z: -1140, length: 400, rotY: 0.05 }
+                { x: 0, z: 0, length: 450, rotY: 0 },
+                { x: -18, z: -425, length: 450, rotY: 0.12 },
+                { x: -5, z: -850, length: 450, rotY: -0.08 },
+                { x: 12, z: -1275, length: 450, rotY: 0.05 }
             ];
 
             roadSegments.forEach(pt => {
@@ -170,37 +173,34 @@
                 line.position.y = 0.02;
                 roadGroup.add(line);
 
-                roadGroup.position.set(pt.x, getElevation(pt.z), pt.z);
+                roadGroup.position.set(pt.x, getElevation(pt.z) + 0.05, pt.z);
                 roadGroup.rotation.y = pt.rotY;
                 scene.add(roadGroup);
 
-                for (let zLocal = -pt.length/2; zLocal < pt.length/2; zLocal += 35) {
+                for (let zLocal = -pt.length/2; zLocal < pt.length/2; zLocal += 40) {
                     createSundaneseHouse(pt.x - 16, pt.z + zLocal);
-                    createSundaneseHouse(pt.x + 16, pt.z + zLocal - 10);
-                    createTree(pt.x - 10, pt.z + zLocal - 5);
-                    createTree(pt.x + 10, pt.z + zLocal - 15);
+                    createSundaneseHouse(pt.x + 16, pt.z + zLocal - 12);
+                    createTree(pt.x - 10, pt.z + zLocal - 6);
+                    createTree(pt.x + 10, pt.z + zLocal - 18);
                 }
             });
 
-            // Panorama Gunung Salak
-            const mountainGeo = new THREE.ConeGeometry(300, 150, 8);
-            const mountainMat = new THREE.MeshStandardMaterial({ color: 0x234e35, roughness: 0.9 });
+            const mountainGeo = new THREE.ConeGeometry(350, 160, 8);
+            const mountainMat = new THREE.MeshStandardMaterial({ color: 0x1e3f28, roughness: 0.9 });
             const mountain = new THREE.Mesh(mountainGeo, mountainMat);
-            mountain.position.set(-150, 75, -1400);
+            mountain.position.set(-150, 80, -1600);
             scene.add(mountain);
 
-            // Danau Gunung
-            const lakeGeo = new THREE.PlaneGeometry(100, 100);
+            const lakeGeo = new THREE.PlaneGeometry(110, 110);
             const lakeMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff, roughness: 0.2 });
             const lake = new THREE.Mesh(lakeGeo, lakeMat);
             lake.rotation.x = -Math.PI / 2;
-            lake.position.set(-50, 0.05, -600);
+            lake.position.set(-55, 0.08, -650);
             scene.add(lake);
         }
 
-        // Fungsi Ketinggian Elevasi Tanah & Jalan yang Mulus
         function getElevation(z) {
-            return Math.sin(z * 0.005) * 3.5;
+            return Math.sin(z * 0.005) * 3.0;
         }
 
         function createSundaneseHouse(x, z) {
@@ -242,8 +242,8 @@
 
         function createNPCs() {
             const npcPositions = [
-                { x: -5, z: -60 }, { x: 6, z: -180 }, 
-                { x: -25, z: -450 }, { x: 15, z: -800 }
+                { x: -5, z: -60 }, { x: 6, z: -200 }, 
+                { x: -25, z: -500 }, { x: 15, z: -900 }
             ];
 
             npcPositions.forEach(pos => {
@@ -269,14 +269,14 @@
         function createPlayerVehicles() {
             const motorGroup = new THREE.Group();
             const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 2), new THREE.MeshStandardMaterial({ color: 0xd32f2f }));
-            mBody.position.y = 0.6;
+            mBody.position.y = 0.5;
             motorGroup.add(mBody);
             scene.add(motorGroup);
             vehicles.push(motorGroup);
 
             const angkotGroup = new THREE.Group();
             const aBody = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 4.5), new THREE.MeshStandardMaterial({ color: 0x00a86b }));
-            aBody.position.y = 1.2;
+            aBody.position.y = 1.1;
             angkotGroup.add(aBody);
             angkotGroup.visible = false;
             scene.add(angkotGroup);
@@ -294,15 +294,33 @@
             player = vehicles[0];
         }
 
-        function setupControls() {
+        function setupMultiTouchControls() {
             const stick = document.getElementById('joystick-stick');
             const base = document.getElementById('joystick-base');
 
-            base.addEventListener('pointerdown', (e) => { joyMove.active = true; updateJoystick(e); });
-            window.addEventListener('pointermove', (e) => { if (joyMove.active) updateJoystick(e); });
-            window.addEventListener('pointerup', () => { 
-                joyMove.active = false; joyMove.x = 0; joyMove.y = 0;
-                stick.style.transform = `translate(0px, 0px)`;
+            base.addEventListener('pointerdown', (e) => {
+                joyMove.active = true;
+                joyMove.pointerId = e.pointerId;
+                updateJoystick(e);
+            });
+
+            window.addEventListener('pointermove', (e) => {
+                if (joyMove.active && e.pointerId === joyMove.pointerId) {
+                    updateJoystick(e);
+                } else if (!joyMove.active && e.clientX > window.innerWidth * 0.3 && e.clientY < window.innerHeight * 0.7) {
+                    if (e.buttons > 0 || e.pressure > 0) {
+                        cameraAngleOffset -= e.movementX * 0.005;
+                    }
+                }
+            });
+
+            window.addEventListener('pointerup', (e) => {
+                if (e.pointerId === joyMove.pointerId) {
+                    joyMove.active = false;
+                    joyMove.pointerId = null;
+                    joyMove.x = 0; joyMove.y = 0;
+                    stick.style.transform = `translate(0px, 0px)`;
+                }
             });
 
             function updateJoystick(e) {
@@ -316,10 +334,16 @@
                 joyMove.x = x / maxDist; joyMove.y = y / maxDist;
             }
 
-            document.getElementById('btn-gas').addEventListener('pointerdown', () => isGas = true);
-            document.getElementById('btn-gas').addEventListener('pointerup', () => isGas = false);
-            document.getElementById('btn-rem').addEventListener('pointerdown', () => isBrake = true);
-            document.getElementById('btn-rem').addEventListener('pointerup', () => isBrake = false);
+            const btnGas = document.getElementById('btn-gas');
+            const btnRem = document.getElementById('btn-rem');
+
+            btnGas.addEventListener('pointerdown', (e) => { e.preventDefault(); isGas = true; });
+            btnGas.addEventListener('pointerup', (e) => { e.preventDefault(); isGas = false; });
+            btnGas.addEventListener('pointercancel', () => { isGas = false; });
+
+            btnRem.addEventListener('pointerdown', (e) => { e.preventDefault(); isBrake = true; });
+            btnRem.addEventListener('pointerup', (e) => { e.preventDefault(); isBrake = false; });
+            btnRem.addEventListener('pointercancel', () => { isBrake = false; });
 
             const btnSwitch = document.getElementById('btn-switch');
             const vehicleNames = ["Motor", "Angkot", "Pesawat"];
@@ -330,6 +354,14 @@
                 player.visible = true;
                 btnSwitch.innerText = `Ganti: ${vehicleNames[vehicleType]}`;
                 showNotification(`Berganti Kendaraan ke ${vehicleNames[vehicleType]}`);
+            });
+
+            const btnCamera = document.getElementById('btn-camera');
+            const cameraNames = ["Dekat", "Standar", "Jauh"];
+            btnCamera.addEventListener('click', () => {
+                cameraMode = (cameraMode + 1) % 3;
+                btnCamera.innerText = `📷 Kamera: ${cameraNames[cameraMode]}`;
+                showNotification(`Sudah beralih ke Sudut Pandang Kamera ${cameraNames[cameraMode]}`);
             });
 
             document.getElementById('btn-backpack').addEventListener('click', () => {
@@ -391,13 +423,13 @@
                 speed *= 0.93;
             }
 
-            let targetTurnSpeed = -joyMove.x * 0.025;
-            turnSpeed += (targetTurnSpeed - turnSpeed) * 0.2;
-            if (speed > 0.01) {
-                playerAngle += turnSpeed * (speed / maxSpeed);
+            // Fisika Setir GTA: Kendaraan berbelok saat berjalan lurus ke depan
+            if (Math.abs(joyMove.x) > 0.05 && speed > 0.005) {
+                playerAngle -= joyMove.x * 0.03 * (speed / maxSpeed);
             }
             player.rotation.y = playerAngle;
 
+            // Kendaraan meluncur lurus ke depan sesuai arah hadap bodinya (Anti-menyamping / anti-strafe)
             player.position.x += Math.sin(playerAngle) * speed;
             player.position.z -= Math.cos(playerAngle) * speed;
 
@@ -406,18 +438,23 @@
                 planeAltitude = Math.max(5, Math.min(120, planeAltitude));
                 player.position.y = planeAltitude;
             } else {
-                // Kendaraan darat dikunci pas menapak di atas permukaan jalan sesuai elevasi tanah
-                player.position.y = getElevation(player.position.z) + 0.35;
+                player.position.y = getElevation(player.position.z) + 0.3;
             }
 
-            let camDistZ = vehicleType === 2 ? 18 : 8;
-            let camDistY = vehicleType === 2 ? 8 : 4;
-            camera.position.x = player.position.x - Math.sin(playerAngle) * camDistZ;
-            camera.position.z = player.position.z + Math.cos(playerAngle) * camDistZ;
-            camera.position.y = player.position.y + camDistY;
+            let distZ = 9, distY = 4.5;
+            if (cameraMode === 0) { distZ = 4.5; distY = 2.2; }       // Dekat
+            else if (cameraMode === 1) { distZ = 9; distY = 4.5; }  // Standar
+            else if (cameraMode === 2) { distZ = 16; distY = 8; }   // Jauh
+
+            if (vehicleType === 2) { distZ += 8; distY += 4; }
+
+            let totalAngle = playerAngle + cameraAngleOffset;
+            camera.position.x = player.position.x - Math.sin(totalAngle) * distZ;
+            camera.position.z = player.position.z + Math.cos(totalAngle) * distZ;
+            camera.position.y = player.position.y + distY;
             camera.lookAt(player.position.x, player.position.y, player.position.z);
 
-            const distToLake = Math.hypot(player.position.x - (-50), player.position.z - (-600));
+            const distToLake = Math.hypot(player.position.x - (-55), player.position.z - (-650));
             const btnAction = document.getElementById('btn-action');
             if (distToLake < 35) {
                 btnAction.style.display = 'flex';
