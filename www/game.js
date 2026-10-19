@@ -76,7 +76,6 @@ for (let i = -3; i <= 3; i++) {
 // 4. Karakter Utama (Player Kasual Masa Kini) & NPC Warga Lokal
 const playerGroup = new THREE.Group();
 
-// Tubuh Kasual (Hoodie/Kaos)
 const bodyGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
 const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff });
 const body = new THREE.Mesh(bodyGeo, bodyMat);
@@ -84,7 +83,6 @@ body.position.y = 1.1;
 body.castShadow = true;
 playerGroup.add(body);
 
-// Kepala
 const headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
 const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
 const head = new THREE.Mesh(headGeo, headMat);
@@ -98,7 +96,7 @@ scene.add(playerGroup);
 // Sistem NPC Warga Pedesaan, Petani, & Polisi Patroli
 const npcs = [];
 const npcMat = new THREE.MeshStandardMaterial({ color: 0xff6347 });
-const policeMat = new THREE.MeshStandardMaterial({ color: 0x00008b }); // Polisi Koramil/Polsek
+const policeMat = new THREE.MeshStandardMaterial({ color: 0x00008b });
 
 for (let i = 0; i < 25; i++) {
   const isPolice = i > 20;
@@ -112,43 +110,71 @@ for (let i = 0; i < 25; i++) {
   npcs.push({ mesh: npc, speed: 0.04, direction: 1, isPolice: isPolice });
 }
 
-// 5. Manajemen Multi-Kendaraan & Pembebanan Model .GLB Aset Nyata
-let currentVehicleType = 'foot'; // 'foot', 'car', 'motor', 'tank', 'heli', 'jetpack', 'train'
+// 5. Manajemen Multi-Kendaraan & Pembebanan Otomatis via models.json
+let currentVehicleType = 'foot';
 let playerCash = 500000;
 let wantedStars = 0;
 
 let worldVehicle = null;
 const loader = new THREE.GLTFLoader();
 
-// Memuat model mobil nyata dari folder assets/models/
-loader.load('assets/models/Car.glb', (gltf) => {
-  worldVehicle = gltf.scene;
-  worldVehicle.scale.set(1.5, 1.5, 1.5);
-  worldVehicle.position.set(12, 0, 30);
-  worldVehicle.traverse((node) => {
-    if (node.isMesh) {
-      node.castShadow = true;
-      node.receiveShadow = true;
-    }
+// Fungsi Otomatis Membaca Model dari models.json (Cukup diatur sekali ini saja untuk selamanya)
+function loadDynamicVehicle() {
+  fetch('assets/models/models.json')
+    .then(response => response.json())
+    .then(modelFiles => {
+      if (modelFiles && modelFiles.length > 0) {
+        // Otomatis mengambil model pertama dari daftar models.json
+        const targetModel = 'assets/models/' + modelFiles[0];
+        loadModelFile(targetModel);
+      } else {
+        createFallbackVehicle();
+      }
+    })
+    .catch(error => {
+      console.warn('Gagal membaca models.json, menggunakan fallback:', error);
+      createFallbackVehicle();
+    });
+}
+
+function loadModelFile(filePath) {
+  loader.load(filePath, (gltf) => {
+    worldVehicle = gltf.scene;
+    worldVehicle.scale.set(1.5, 1.5, 1.5);
+    worldVehicle.position.set(12, 0, 30);
+    worldVehicle.traverse((node) => {
+      if (node.isMesh) {
+        node.castShadow = true;
+        node.receiveShadow = true;
+      }
+    });
+    scene.add(worldVehicle);
+    console.log('Berhasil memuat model:', filePath);
+  }, undefined, (error) => {
+    console.warn('Gagal memuat file .glb, beralih ke fallback.');
+    createFallbackVehicle();
   });
-  scene.add(worldVehicle);
-}, undefined, (error) => {
-  console.warn('Gagal memuat Car.glb, menggunakan kotak fallback:', error);
+}
+
+function createFallbackVehicle() {
   const carGeo = new THREE.BoxGeometry(2.2, 1.3, 4.5);
   const carMat = new THREE.MeshStandardMaterial({ color: 0xdc143c, roughness: 0.3 });
   worldVehicle = new THREE.Mesh(carGeo, carMat);
   worldVehicle.position.set(12, 0.65, 30);
   scene.add(worldVehicle);
-});
+}
 
-// Objek Helikopter / Jetpack Khusus
+// Jalankan pemuatan model otomatis
+loadDynamicVehicle();
+
+// Objek Helikopter Khusus
 const heliGeo = new THREE.ConeGeometry(2, 4, 8);
 const heliMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
 const worldHeli = new THREE.Mesh(heliGeo, heliMat);
 worldHeli.position.set(-20, 2, -100);
 scene.add(worldHeli);
 
-// 6. Sistem Kamera Orbit 360° ala GTA San Andreas & Sentuhan Layar (Aman dari error e.touches[0])
+// 6. Sistem Kamera Orbit 360° & Sentuhan Layar
 let cameraDistance = 9;
 let cameraHeight = 3.2;
 let cameraAngle = 0;
@@ -190,7 +216,7 @@ function updateCamera() {
   camera.lookAt(targetX, targetY, targetZ);
 }
 
-// 7. Kontrol Dinamis UI Tombol & Interaksi Lengkap
+// 7. Kontrol Dinamis UI Tombol & Interaksi
 const btnAction = document.getElementById('btn-action');
 const btnJump = document.getElementById('btn-jump');
 const minimapPointer = document.getElementById('minimap-pointer');
@@ -212,60 +238,61 @@ function updateDynamicUI() {
     btnAction.innerText = 'Tembak';
     btnJump.innerText = 'Mundur';
   }
-  cashDisplay.innerText = `Rp ${playerCash.toLocaleString()}`;
-  starsDisplay.innerText = `⭐ ${wantedStars}`;
+  if (cashDisplay) cashDisplay.innerText = `Rp ${playerCash.toLocaleString()}`;
+  if (starsDisplay) starsDisplay.innerText = `⭐ ${wantedStars}`;
 }
 updateDynamicUI();
 
-// Event Listener Tombol Aksi (Naik/Turun Kendaraan)
-btnAction.addEventListener('click', () => {
-  if (!worldVehicle) return;
-  const distanceToCar = playerGroup.position.distanceTo(worldVehicle.position);
-  const distanceToHeli = playerGroup.position.distanceTo(worldHeli.position);
+if (btnAction) {
+  btnAction.addEventListener('click', () => {
+    if (!worldVehicle) return;
+    const distanceToCar = playerGroup.position.distanceTo(worldVehicle.position);
+    const distanceToHeli = playerGroup.position.distanceTo(worldHeli.position);
 
-  if (currentVehicleType === 'foot' && distanceToCar < 6) {
-    currentVehicleType = 'car';
-    playerGroup.visible = false;
-    missionDisplay.innerText = 'Misi: Berkendara menyusuri Cipari - Beber';
-    updateDynamicUI();
-  } else if (currentVehicleType === 'foot' && distanceToHeli < 6) {
-    currentVehicleType = 'heli';
-    playerGroup.visible = false;
-    missionDisplay.innerText = 'Misi: Terbang bebas melintasi Puncak Gunung Salak';
-    updateDynamicUI();
-  } else if (currentVehicleType !== 'foot') {
-    currentVehicleType = 'foot';
-    playerGroup.position.copy(worldVehicle.position).add(new THREE.Vector3(3, 0, 0));
-    playerGroup.visible = true;
-    missionDisplay.innerText = 'Misi: Jelajahi Rute Cidadap - Cicurug';
-    updateDynamicUI();
-  }
-});
+    if (currentVehicleType === 'foot' && distanceToCar < 6) {
+      currentVehicleType = 'car';
+      playerGroup.visible = false;
+      if (missionDisplay) missionDisplay.innerText = 'Misi: Berkendara menyusuri Cipari - Beber';
+      updateDynamicUI();
+    } else if (currentVehicleType === 'foot' && distanceToHeli < 6) {
+      currentVehicleType = 'heli';
+      playerGroup.visible = false;
+      if (missionDisplay) missionDisplay.innerText = 'Misi: Terbang bebas melintasi Puncak Gunung Salak';
+      updateDynamicUI();
+    } else if (currentVehicleType !== 'foot') {
+      currentVehicleType = 'foot';
+      playerGroup.position.copy(worldVehicle.position).add(new THREE.Vector3(3, 0, 0));
+      playerGroup.visible = true;
+      if (missionDisplay) missionDisplay.innerText = 'Misi: Jelajahi Rute Cidadap - Cicurug';
+      updateDynamicUI();
+    }
+  });
+}
 
-btnJump.addEventListener('click', () => {
-  if (currentVehicleType === 'foot') {
-    playerGroup.position.y += 1.2;
-    setTimeout(() => { playerGroup.position.y = 0; }, 300);
-  } else if (currentVehicleType === 'heli') {
-    worldHeli.position.y += 3;
-  }
-});
+if (btnJump) {
+  btnJump.addEventListener('click', () => {
+    if (currentVehicleType === 'foot') {
+      playerGroup.position.y += 1.2;
+      setTimeout(() => { playerGroup.position.y = 0; }, 300);
+    } else if (currentVehicleType === 'heli') {
+      worldHeli.position.y += 3;
+    }
+  });
+}
 
-// 8. Penyesuaian Ukuran Layar HP
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// 9. Loop Animasi & Game Engine Tick 100% Berjalan Penuh
+// 8. Loop Animasi & Game Engine Tick
 const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
 
-  // Pergerakan Otomatis Karakter / Kendaraan Menyusuri Rute Cidadap-Cicurug
   if (currentVehicleType === 'foot') {
     playerGroup.position.z -= 0.12;
     if (playerGroup.position.z < -900) playerGroup.position.z = 900;
@@ -279,7 +306,6 @@ function animate() {
     if (worldHeli.position.z < -900) worldHeli.position.z = 900;
   }
 
-  // Animasi Warga / NPC Lokal & Polisi Bergerak
   npcs.forEach(npc => {
     npc.mesh.position.z += npc.speed * npc.direction;
     const activeZ = currentVehicleType === 'foot' ? playerGroup.position.z : (worldVehicle ? worldVehicle.position.z : 0);
@@ -288,7 +314,6 @@ function animate() {
     }
   });
 
-  // Sinkronisasi Jarum Minimap Radar
   if (minimapPointer) {
     minimapPointer.style.transform = `translate(-50%, -50%) rotate(${cameraAngle * (180 / Math.PI)}deg)`;
   }
