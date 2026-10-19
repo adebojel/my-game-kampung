@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Game Kampung - Cidadap Open World</title>
+    <title>Game Kampung - Cidadap Open World (HD Edition)</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #87CEEB; font-family: sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
+        body { margin: 0; overflow: hidden; background: linear-gradient(to bottom, #4a90e2, #87CEEB); font-family: sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
         
         /* UI Top Bar */
@@ -15,16 +15,17 @@
             pointer-events: none; z-index: 100;
         }
         .ui-box {
-            background: rgba(0, 0, 0, 0.6); color: white; padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.7); color: white; padding: 8px 12px;
             border-radius: 8px; font-size: 13px; font-weight: bold; pointer-events: auto;
+            border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        #minimap { width: 90px; height: 90px; border: 2px solid white; background: #2e4a32; position: relative; overflow: hidden; }
+        #minimap { width: 90px; height: 90px; border: 2px solid white; background: #2e4a32; position: relative; overflow: hidden; border-radius: 6px; }
         #minimap-player { width: 6px; height: 6px; background: #ffcc00; position: absolute; top: 42px; left: 42px; border-radius: 50%; }
 
         /* Notification Banner */
         #notification {
             position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
-            background: rgba(20, 20, 20, 0.85); color: #ffeb3b; padding: 8px 16px;
+            background: rgba(20, 20, 20, 0.92); color: #ffeb3b; padding: 8px 18px;
             border-radius: 6px; font-size: 13px; font-weight: bold; display: none; text-align: center;
             border: 1px solid #ffeb3b; z-index: 200; pointer-events: none;
         }
@@ -34,14 +35,15 @@
             position: absolute; width: 75px; height: 75px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.25); border: 2px solid white; color: white;
             font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center;
-            touch-action: manipulation; cursor: pointer; z-index: 100;
+            touch-action: manipulation; cursor: pointer; z-index: 100; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
-        #btn-gas { bottom: 25px; right: 25px; background: rgba(0, 200, 0, 0.6); width: 85px; height: 85px; font-size: 18px; }
-        #btn-rem { bottom: 25px; right: 125px; background: rgba(200, 0, 0, 0.6); width: 75px; height: 75px; }
-        #btn-switch { top: 75px; left: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(0, 120, 255, 0.7); font-size: 12px; z-index: 100; }
-        #btn-camera { top: 75px; right: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(120, 50, 200, 0.8); font-size: 12px; z-index: 100; }
-        #btn-action { bottom: 45px; right: 215px; background: rgba(255, 150, 0, 0.8); display: none; z-index: 100; }
-        #btn-backpack { top: 120px; left: 15px; width: auto; height: 32px; padding: 0 10px; border-radius: 6px; background: rgba(180, 40, 40, 0.8); font-size: 12px; z-index: 100; }
+        #btn-gas { bottom: 25px; right: 25px; background: rgba(0, 200, 0, 0.7); width: 85px; height: 85px; font-size: 18px; }
+        #btn-rem { bottom: 25px; right: 125px; background: rgba(200, 0, 0, 0.7); width: 75px; height: 75px; }
+        #btn-switch { top: 75px; left: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(0, 120, 255, 0.85); font-size: 12px; z-index: 100; }
+        #btn-camera { top: 75px; right: 15px; width: auto; height: 35px; padding: 0 12px; border-radius: 6px; background: rgba(120, 50, 200, 0.9); font-size: 12px; z-index: 100; }
+        #btn-uturn { top: 120px; right: 15px; width: auto; height: 32px; padding: 0 10px; border-radius: 6px; background: rgba(220, 120, 0, 0.9); font-size: 12px; z-index: 100; }
+        #btn-action { bottom: 45px; right: 215px; background: rgba(255, 150, 0, 0.9); display: none; z-index: 100; }
+        #btn-backpack { top: 120px; left: 15px; width: auto; height: 32px; padding: 0 10px; border-radius: 6px; background: rgba(180, 40, 40, 0.9); font-size: 12px; z-index: 100; }
 
         /* Joystick */
         #joystick-base {
@@ -51,7 +53,7 @@
         }
         #joystick-stick {
             position: absolute; top: 35px; left: 35px; width: 50px; height: 50px;
-            background: rgba(255, 255, 255, 0.7); border-radius: 50%; pointer-events: none;
+            background: rgba(255, 255, 255, 0.8); border-radius: 50%; pointer-events: none;
         }
 
         /* Backpack Modal */
@@ -70,13 +72,14 @@
 
     <div id="ui-top">
         <div id="minimap"><div id="minimap-player"></div></div>
-        <div class="ui-box" id="status-info">⏰ 16:27 | ⚡ Stamina: 100% | 🐟 Ikan: 0</div>
+        <div class="ui-box" id="status-info">⏰ 16:27 | ⚡ 100% | 🚗 0 km/h</div>
     </div>
 
     <div id="notification">Pemberitahuan Sistem</div>
 
     <button class="control-btn" id="btn-switch">Ganti: Motor</button>
     <button class="control-btn" id="btn-camera">📷 Kamera: Standar</button>
+    <button class="control-btn" id="btn-uturn">🔄 Putar Balik</button>
     <button class="control-btn" id="btn-backpack">🎒 Ransel</button>
     <button class="control-btn" id="btn-action">Pancing</button>
 
@@ -99,7 +102,7 @@
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- GAME KAMPUNG: FISIKA KENDARAAN LURUS KE DEPAN ALA GTA ---
+        // --- GAME KAMPUNG: TAHAP 4 & 5 (HD VISUALS + GTA PHYSICS) ---
         let scene, camera, renderer;
         let player, vehicleType = 0; // 0: Motor, 1: Angkot, 2: Pesawat
         let vehicles = [];
@@ -109,33 +112,33 @@
         let joyMove = { x: 0, y: 0, active: false, pointerId: null };
         let isGas = false, isBrake = false;
         let speed = 0;
-        let playerAngle = 0; // Sudut arah hadap kendaraan
+        let playerAngle = 0; 
         let planeAltitude = 15;
 
-        // Kamera GTA (0: Dekat, 1: Standar, 2: Jauh)
-        let cameraMode = 1; 
+        let cameraMode = 1; // 0: Dekat, 1: Standar, 2: Jauh
         let cameraAngleOffset = 0;
 
         function init() {
             const container = document.getElementById('canvas-container');
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.FogExp2(0x87CEEB, 0.005);
+            scene.background = new THREE.Color(0x6ba4e8); // Gradasi langit sore cerah
+            scene.fog = new THREE.FogExp2(0x6ba4e8, 0.004);
 
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1200);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            // Pencahayaan HD Alami
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
             scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(50, 100, 50);
+            const dirLight = new THREE.DirectionalLight(0xfffaed, 0.95);
+            dirLight.position.set(100, 150, 100);
             scene.add(dirLight);
 
-            createGroundAndEnvironment();
+            createHDEnvironment();
             createPlayerVehicles();
             createNPCs();
 
@@ -143,78 +146,82 @@
             window.addEventListener('resize', onWindowResize);
         }
 
-        function createGroundAndEnvironment() {
-            const groundGeo = new THREE.PlaneGeometry(500, 3000);
-            const groundMat = new THREE.MeshStandardMaterial({ color: 0x2e6f40, roughness: 0.95 });
+        // --- TAHAP 5: LINGKUNGAN HD & TEKSTUR REALISTIS ---
+        function createHDEnvironment() {
+            // Tanah Rumput Utama
+            const groundGeo = new THREE.PlaneGeometry(800, 4500);
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x275d34, roughness: 0.9 });
             const ground = new THREE.Mesh(groundGeo, groundMat);
             ground.rotation.x = -Math.PI / 2;
-            ground.position.set(0, 0, -1000);
+            ground.position.set(0, 0, -1400);
             scene.add(ground);
 
             const roadSegments = [
-                { x: 0, z: 0, length: 450, rotY: 0 },
-                { x: -18, z: -425, length: 450, rotY: 0.12 },
-                { x: -5, z: -850, length: 450, rotY: -0.08 },
-                { x: 12, z: -1275, length: 450, rotY: 0.05 }
+                { x: 0, z: 0, length: 550, rotY: 0 },
+                { x: -18, z: -525, length: 550, rotY: 0.12 },
+                { x: -5, z: -1050, length: 550, rotY: -0.08 },
+                { x: 12, z: -1575, length: 550, rotY: 0.05 }
             ];
 
             roadSegments.forEach(pt => {
                 const roadGroup = new THREE.Group();
-                const roadGeo = new THREE.PlaneGeometry(14, pt.length);
-                const roadMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
+                const roadGeo = new THREE.PlaneGeometry(15, pt.length);
+                const roadMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.75 }); // Aspal lebih pekat
                 const road = new THREE.Mesh(roadGeo, roadMat);
                 road.rotation.x = -Math.PI / 2;
                 roadGroup.add(road);
 
-                const lineGeo = new THREE.PlaneGeometry(0.4, pt.length);
-                const lineMat = new THREE.MeshBasicMaterial({ color: 0xffeb3b });
+                const lineGeo = new THREE.PlaneGeometry(0.45, pt.length);
+                const lineMat = new THREE.MeshBasicMaterial({ color: 0xffd700 }); // Garis kuning terang
                 const line = new THREE.Mesh(lineGeo, lineMat);
                 line.rotation.x = -Math.PI / 2;
                 line.position.y = 0.02;
                 roadGroup.add(line);
 
-                roadGroup.position.set(pt.x, getElevation(pt.z) + 0.05, pt.z);
+                roadGroup.position.set(pt.x, getElevation(pt.z) + 0.02, pt.z);
                 roadGroup.rotation.y = pt.rotY;
                 scene.add(roadGroup);
 
-                for (let zLocal = -pt.length/2; zLocal < pt.length/2; zLocal += 40) {
-                    createSundaneseHouse(pt.x - 16, pt.z + zLocal);
-                    createSundaneseHouse(pt.x + 16, pt.z + zLocal - 12);
-                    createTree(pt.x - 10, pt.z + zLocal - 6);
-                    createTree(pt.x + 10, pt.z + zLocal - 18);
+                for (let zLocal = -pt.length/2; zLocal < pt.length/2; zLocal += 45) {
+                    createSundaneseHouse(pt.x - 17, pt.z + zLocal);
+                    createSundaneseHouse(pt.x + 17, pt.z + zLocal - 15);
+                    createTree(pt.x - 11, pt.z + zLocal - 8);
+                    createTree(pt.x + 11, pt.z + zLocal - 20);
                 }
             });
 
-            const mountainGeo = new THREE.ConeGeometry(350, 160, 8);
-            const mountainMat = new THREE.MeshStandardMaterial({ color: 0x1e3f28, roughness: 0.9 });
+            // Gunung Salak HD
+            const mountainGeo = new THREE.ConeGeometry(450, 200, 10);
+            const mountainMat = new THREE.MeshStandardMaterial({ color: 0x163320, roughness: 0.85 });
             const mountain = new THREE.Mesh(mountainGeo, mountainMat);
-            mountain.position.set(-150, 80, -1600);
+            mountain.position.set(-180, 100, -2000);
             scene.add(mountain);
 
-            const lakeGeo = new THREE.PlaneGeometry(110, 110);
-            const lakeMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff, roughness: 0.2 });
+            // Danau Gunung
+            const lakeGeo = new THREE.PlaneGeometry(130, 130);
+            const lakeMat = new THREE.MeshStandardMaterial({ color: 0x1c86ee, roughness: 0.15 });
             const lake = new THREE.Mesh(lakeGeo, lakeMat);
             lake.rotation.x = -Math.PI / 2;
-            lake.position.set(-55, 0.08, -650);
+            lake.position.set(-55, 0.05, -750);
             scene.add(lake);
         }
 
         function getElevation(z) {
-            return Math.sin(z * 0.005) * 3.0;
+            return Math.sin(z * 0.005) * 2.5;
         }
 
         function createSundaneseHouse(x, z) {
             const houseGroup = new THREE.Group();
-            const baseGeo = new THREE.BoxGeometry(6, 4, 6);
-            const baseMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B });
+            const baseGeo = new THREE.BoxGeometry(6.5, 4.2, 6.5);
+            const baseMat = new THREE.MeshStandardMaterial({ color: 0x7c471b, roughness: 0.8 });
             const base = new THREE.Mesh(baseGeo, baseMat);
-            base.position.y = 2;
+            base.position.y = 2.1;
             houseGroup.add(base);
 
-            const roofGeo = new THREE.ConeGeometry(5, 3, 4);
-            const roofMat = new THREE.MeshStandardMaterial({ color: 0x5C4033 });
+            const roofGeo = new THREE.ConeGeometry(5.2, 3.2, 4);
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x4a3222, roughness: 0.8 });
             const roof = new THREE.Mesh(roofGeo, roofMat);
-            roof.position.y = 5.5;
+            roof.position.y = 5.7;
             roof.rotation.y = Math.PI / 4;
             houseGroup.add(roof);
 
@@ -224,15 +231,15 @@
 
         function createTree(x, z) {
             const treeGroup = new THREE.Group();
-            const trunkGeo = new THREE.CylinderGeometry(0.4, 0.6, 3);
-            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+            const trunkGeo = new THREE.CylinderGeometry(0.45, 0.65, 3.2);
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4e3629 });
             const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-            trunk.position.y = 1.5;
+            trunk.position.y = 1.6;
 
-            const leavesGeo = new THREE.ConeGeometry(2.5, 5, 5);
-            const leavesMat = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+            const leavesGeo = new THREE.ConeGeometry(2.8, 5.2, 6);
+            const leavesMat = new THREE.MeshStandardMaterial({ color: 0x1e6b27 });
             const leaves = new THREE.Mesh(leavesGeo, leavesMat);
-            leaves.position.y = 4.5;
+            leaves.position.y = 4.8;
 
             treeGroup.add(trunk);
             treeGroup.add(leaves);
@@ -242,14 +249,14 @@
 
         function createNPCs() {
             const npcPositions = [
-                { x: -5, z: -60 }, { x: 6, z: -200 }, 
-                { x: -25, z: -500 }, { x: 15, z: -900 }
+                { x: -5, z: -70 }, { x: 6, z: -220 }, 
+                { x: -25, z: -550 }, { x: 15, z: -950 }
             ];
 
             npcPositions.forEach(pos => {
                 const npcGroup = new THREE.Group();
                 const bodyGeo = new THREE.CylinderGeometry(0.5, 0.3, 2);
-                const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff5722 });
+                const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff4500 });
                 const body = new THREE.Mesh(bodyGeo, bodyMat);
                 body.position.y = 1;
                 npcGroup.add(body);
@@ -266,25 +273,31 @@
             });
         }
 
+        // --- PENYEMPURNAAN BENTUK MODEL KENDARAAN (TAHAP 5) ---
         function createPlayerVehicles() {
+            // Model Motor (Ojek) Lebih Detail
             const motorGroup = new THREE.Group();
-            const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 2), new THREE.MeshStandardMaterial({ color: 0xd32f2f }));
-            mBody.position.y = 0.5;
-            motorGroup.add(mBody);
+            const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 2.1), new THREE.MeshStandardMaterial({ color: 0xb22222, roughness: 0.4 }));
+            const mSeat = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.2, 1), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+            mBody.position.y = 0.45; mSeat.position.set(0, 0.85, 0.1);
+            motorGroup.add(mBody); motorGroup.add(mSeat);
             scene.add(motorGroup);
             vehicles.push(motorGroup);
 
+            // Model Angkot Lebih Detail
             const angkotGroup = new THREE.Group();
-            const aBody = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 4.5), new THREE.MeshStandardMaterial({ color: 0x00a86b }));
-            aBody.position.y = 1.1;
-            angkotGroup.add(aBody);
+            const aBody = new THREE.Mesh(new THREE.BoxGeometry(2.1, 2.1, 4.6), new THREE.MeshStandardMaterial({ color: 0x008b45, roughness: 0.4 }));
+            const aTop = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.4, 3.8), new THREE.MeshStandardMaterial({ color: 0xcccccc }));
+            aBody.position.y = 1.05; aTop.position.y = 2.25;
+            angkotGroup.add(aBody); angkotGroup.add(aTop);
             angkotGroup.visible = false;
             scene.add(angkotGroup);
             vehicles.push(angkotGroup);
 
+            // Model Pesawat
             const planeGroup = new THREE.Group();
             const pBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 5), new THREE.MeshStandardMaterial({ color: 0xf5f5f5 }));
-            const pWings = new THREE.Mesh(new THREE.BoxGeometry(7, 0.1, 1.5), new THREE.MeshStandardMaterial({ color: 0x333333 }));
+            const pWings = new THREE.Mesh(new THREE.BoxGeometry(7, 0.1, 1.5), new THREE.MeshStandardMaterial({ color: 0x222222 }));
             pBody.position.y = 1; pWings.position.y = 1;
             planeGroup.add(pBody); planeGroup.add(pWings);
             planeGroup.visible = false;
@@ -364,6 +377,11 @@
                 showNotification(`Sudah beralih ke Sudut Pandang Kamera ${cameraNames[cameraMode]}`);
             });
 
+            document.getElementById('btn-uturn').addEventListener('click', () => {
+                playerAngle += Math.PI;
+                showNotification("🔄 Putar Balik 180° Berhasil!");
+            });
+
             document.getElementById('btn-backpack').addEventListener('click', () => {
                 document.getElementById('inventory-modal').style.display = 'block';
             });
@@ -400,7 +418,8 @@
         }
 
         function updateStatsUI() {
-            document.getElementById('status-info').innerText = `⏰ ${stats.time} | ⚡ Stamina: ${stats.stamina}% | 🐟 Ikan: ${stats.fish}`;
+            let kmh = Math.round(Math.abs(speed) * 220);
+            document.getElementById('status-info').innerText = `⏰ ${stats.time} | ⚡ ${stats.stamina}% | 🚗 ${kmh} km/h`;
         }
 
         function onWindowResize() {
@@ -417,19 +436,17 @@
                 speed += 0.015;
                 if (speed > maxSpeed) speed = maxSpeed;
             } else if (isBrake) {
-                speed -= 0.035;
+                speed -= 0.04;
                 if (speed < 0) speed = 0;
             } else {
-                speed *= 0.93;
+                speed *= 0.94;
             }
 
-            // Fisika Setir GTA: Kendaraan berbelok saat berjalan lurus ke depan
-            if (Math.abs(joyMove.x) > 0.05 && speed > 0.005) {
-                playerAngle -= joyMove.x * 0.03 * (speed / maxSpeed);
+            if (Math.abs(joyMove.x) > 0.05 && speed > 0.003) {
+                playerAngle += joyMove.x * 0.04 * (speed / maxSpeed);
             }
             player.rotation.y = playerAngle;
 
-            // Kendaraan meluncur lurus ke depan sesuai arah hadap bodinya (Anti-menyamping / anti-strafe)
             player.position.x += Math.sin(playerAngle) * speed;
             player.position.z -= Math.cos(playerAngle) * speed;
 
@@ -438,13 +455,15 @@
                 planeAltitude = Math.max(5, Math.min(120, planeAltitude));
                 player.position.y = planeAltitude;
             } else {
-                player.position.y = getElevation(player.position.z) + 0.3;
+                player.position.y = getElevation(player.position.z) + 0.25;
             }
 
+            updateStatsUI();
+
             let distZ = 9, distY = 4.5;
-            if (cameraMode === 0) { distZ = 4.5; distY = 2.2; }       // Dekat
-            else if (cameraMode === 1) { distZ = 9; distY = 4.5; }  // Standar
-            else if (cameraMode === 2) { distZ = 16; distY = 8; }   // Jauh
+            if (cameraMode === 0) { distZ = 4.5; distY = 2.2; }       
+            else if (cameraMode === 1) { distZ = 9; distY = 4.5; }  
+            else if (cameraMode === 2) { distZ = 16; distY = 8; }   
 
             if (vehicleType === 2) { distZ += 8; distY += 4; }
 
@@ -454,7 +473,7 @@
             camera.position.y = player.position.y + distY;
             camera.lookAt(player.position.x, player.position.y, player.position.z);
 
-            const distToLake = Math.hypot(player.position.x - (-55), player.position.z - (-650));
+            const distToLake = Math.hypot(player.position.x - (-55), player.position.z - (-750));
             const btnAction = document.getElementById('btn-action');
             if (distToLake < 35) {
                 btnAction.style.display = 'flex';
