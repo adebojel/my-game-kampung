@@ -1,5 +1,5 @@
 // =========================================================================
-// GAME OPEN WORLD CIDADAP - MASTER ENGINE (FASE 1, 2, & 3 LENGKAP)
+// GAME OPEN WORLD CIDADAP - MASTER ENGINE (AUTO-LOADER DINAMIS PERMANEN)
 // =========================================================================
 
 const container = document.getElementById('game-container');
@@ -47,7 +47,7 @@ mainRoad.position.set(0, 0.05, 0);
 mainRoad.receiveShadow = true;
 scene.add(mainRoad);
 
-// 4. Grup Karakter Utama (Player & Model GLB Niko Bellic)
+// 4. Grup Karakter Utama & Placeholder Kotak
 const playerGroup = new THREE.Group();
 playerGroup.position.set(0, 0, 0);
 scene.add(playerGroup);
@@ -65,51 +65,66 @@ let playerSpeed = 0.15;
 let playerCash = 500000;
 let wantedStars = 0;
 
-// Load Model Niko Bellic
-const loader = new THREE.GLTFLoader();
-function loadPlayerModel() {
-  const filePath = 'assets/models/nicoBellic_GTA_IV-v1.glb';
-  
-  loader.load(filePath, (gltf) => {
-    const model = gltf.scene;
-    model.scale.set(1.2, 1.2, 1.2);
-    model.position.set(0, 0, 0);
-    model.traverse((node) => {
-      if (node.isMesh) {
-        node.castShadow = true;
-        node.receiveShadow = true;
-      }
-    });
-    playerGroup.remove(placeholderBody);
-    playerGroup.add(model);
-    console.log('Berhasil memuat karakter Niko Bellic:', filePath);
-  }, undefined, (error) => {
-    console.warn('Gagal memuat model glb utama, mencoba alternatif...', error);
-    loader.load('./assets/models/nicoBellic_GTA_IV-v1.glb', (gltf) => {
-      const model = gltf.scene;
-      model.scale.set(1.2, 1.2, 1.2);
-      playerGroup.remove(placeholderBody);
-      playerGroup.add(model);
-    });
-  });
-}
-loadPlayerModel();
-
-// FASE 3: Sistem Kendaraan & Variabel Mobil
+// 5. Sistem Kendaraan & Placeholder Mobil
 let isInVehicle = false;
 let vehicleSpeed = 0;
 
 const vehicleGroup = new THREE.Group();
 vehicleGroup.position.set(12, 0, 0);
-const carBodyGeo = new THREE.BoxGeometry(2.2, 1.2, 4.5);
-const carBodyMat = new THREE.MeshStandardMaterial({ color: 0xcc0000, roughness: 0.4 });
-const carMesh = new THREE.Mesh(carBodyGeo, carBodyMat);
-carMesh.position.y = 0.8;
-carMesh.castShadow = true;
-vehicleGroup.add(carMesh);
 scene.add(vehicleGroup);
 
-// 5. Virtual Joystick Implementation
+const carBodyGeo = new THREE.BoxGeometry(2.2, 1.2, 4.5);
+const carBodyMat = new THREE.MeshStandardMaterial({ color: 0xcc0000, roughness: 0.4 });
+const placeholderCar = new THREE.Mesh(carBodyGeo, carBodyMat);
+placeholderCar.position.y = 0.8;
+placeholderCar.castShadow = true;
+vehicleGroup.add(placeholderCar);
+
+// 6. AUTO-LOADER OTOMATIS BERBASIS JSON (Membaca file di folder tanpa ubah kode lagi)
+const loader = new THREE.GLTFLoader();
+
+fetch('assets/models/models.json')
+  .then(response => response.json())
+  .then(fileList => {
+    console.log('Daftar aset terdeteksi otomatis:', fileList);
+    
+    fileList.forEach(fileName => {
+      const filePath = `assets/models/${fileName}`;
+      
+      // Jika file mengandung nama karakter (Nico Bellic)
+      if (fileName.toLowerCase().includes('nico') || fileName.toLowerCase().includes('bellic')) {
+        loader.load(filePath, (gltf) => {
+          const model = gltf.scene;
+          model.scale.set(1.2, 1.2, 1.2);
+          model.traverse((node) => {
+            if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
+          });
+          playerGroup.remove(placeholderBody);
+          playerGroup.add(model);
+          console.log('Otomatis muat karakter:', fileName);
+        });
+      }
+      
+      // Jika file mengandung nama kendaraan (Police Car, GTR, dll)
+      if (fileName.toLowerCase().includes('police') || fileName.toLowerCase().includes('car') || fileName.toLowerCase().includes('gtr')) {
+        loader.load(filePath, (gltf) => {
+          const carModel = gltf.scene;
+          carModel.scale.set(1.5, 1.5, 1.5);
+          carModel.traverse((node) => {
+            if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
+          });
+          vehicleGroup.remove(placeholderCar);
+          vehicleGroup.add(carModel);
+          console.log('Otomatis muat kendaraan:', fileName);
+        });
+      }
+    });
+  })
+  .catch(err => {
+    console.warn('models.json belum terbaca, menggunakan placeholder bawaan.', err);
+  });
+
+// 7. Virtual Joystick Implementation
 const joystickBase = document.getElementById('joystick-base');
 const joystickStick = document.getElementById('joystick-stick');
 let joystickTouchId = null;
@@ -162,7 +177,7 @@ if (joystickBase) {
   joystickBase.addEventListener('touchcancel', resetJoystick);
 }
 
-// 6. Kamera Orbit 360°
+// 8. Kamera Orbit 360°
 let cameraDistance = 9;
 let cameraHeight = 3.0;
 let cameraAngle = 0;
@@ -189,14 +204,13 @@ window.addEventListener('touchend', () => {
 });
 
 function updateCamera() {
-  // Kamera mengikuti target yang sedang aktif (Player atau Kendaraan)
   const activeTarget = isInVehicle ? vehicleGroup : playerGroup;
   const targetX = activeTarget.position.x;
   const targetY = activeTarget.position.y + 1;
   const targetZ = activeTarget.position.z;
 
-  const offsetX = Math.sin(cameraAngle) * (isInVehicle ? cameraDistance * 1.3 : cameraDistance);
-  const offsetZ = Math.cos(cameraAngle) * (isInVehicle ? cameraDistance * 1.3 : cameraDistance);
+  const offsetX = Math.sin(cameraAngle) * (isInVehicle ? cameraDistance * 1.4 : cameraDistance);
+  const offsetZ = Math.cos(cameraAngle) * (isInVehicle ? cameraDistance * 1.4 : cameraDistance);
 
   camera.position.set(
     targetX - offsetX,
@@ -206,7 +220,7 @@ function updateCamera() {
   camera.lookAt(targetX, targetY, targetZ);
 }
 
-// 7. Tombol Aksi & Loncat UI (Integrasi Masuk/Keluar Mobil)
+// 9. Tombol Aksi & Loncat UI (Masuk/Keluar Kendaraan)
 const btnAction = document.getElementById('btn-action');
 const btnJump = document.getElementById('btn-jump');
 const cashDisplay = document.getElementById('player-cash');
@@ -216,15 +230,13 @@ if (btnAction) {
   btnAction.innerText = "🚗";
   btnAction.addEventListener('click', () => {
     const distanceToCar = playerGroup.position.distanceTo(vehicleGroup.position);
-    if (!isInVehicle && distanceToCar < 7) {
+    if (!isInVehicle && distanceToCar < 8) {
       isInVehicle = true;
       playerGroup.visible = false;
-      console.log('Masuk kendaraan.');
     } else if (isInVehicle) {
       isInVehicle = false;
       playerGroup.position.set(vehicleGroup.position.x + 3, vehicleGroup.position.y, vehicleGroup.position.z);
       playerGroup.visible = true;
-      console.log('Keluar kendaraan.');
     }
   });
 }
@@ -238,7 +250,7 @@ if (btnJump) {
   });
 }
 
-// FASE 2: Pembatas Area (Collision)
+// Pembatas Area (Collision)
 function checkPlayerBounds() {
   const maxBoundary = 1900;
   if (playerGroup.position.x > maxBoundary) playerGroup.position.x = maxBoundary;
@@ -247,9 +259,7 @@ function checkPlayerBounds() {
   if (playerGroup.position.z < -maxBoundary) playerGroup.position.z = -maxBoundary;
 }
 
-// 8. Loop Animasi & Pergerakan (Karakter & Kendaraan)
-const clock = new THREE.Clock();
-
+// 10. Loop Animasi & Pergerakan
 function animate() {
   requestAnimationFrame(animate);
 
@@ -264,7 +274,7 @@ function animate() {
       checkPlayerBounds();
     } else {
       vehicleGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
-      vehicleSpeed = playerSpeed * 2.8;
+      vehicleSpeed = playerSpeed * 3.0;
       
       const moveX = Math.sin(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
       const moveZ = Math.cos(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
