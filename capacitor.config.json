@@ -1,6 +1,9 @@
 {
-  "appId": "com.gamekampung.openworld",
-  "appName": "Game Kampung",
+  "appId": "com.cidadap.openworld.game",
+  "appName": "Game Cidadap Open World",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "android": {
+    "orientation": "landscape"
+  }
 }
