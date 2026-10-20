@@ -1,9 +1,11 @@
 {
-  "appId": "com.cidadap.openworld.game",
-  "appName": "Game Cidadap Open World",
+  "appId": "com.adebojel.mygamekampung",
+  "appName": "Cidadap Open World",
   "webDir": "www",
   "bundledWebRuntime": false,
-  "android": {
-    "orientation": "landscape"
+  "plugins": {
+    "ScreenOrientation": {
+      "initialOrientation": "landscape"
+    }
   }
 }
