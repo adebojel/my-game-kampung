@@ -1,5 +1,5 @@
 // =========================================================================
-// GAME OPEN WORLD CIDADAP - MASTER ENGINE FASE 4 FULL FEATURES
+// GAME OPEN WORLD CIDADAP - MASTER ENGINE FINAL FASE 4 (FIX AUTO-LOADER & RUTE)
 // =========================================================================
 
 const container = document.getElementById('game-container');
@@ -36,7 +36,7 @@ sunLight.shadow.mapSize.width = 1024;
 sunLight.shadow.mapSize.height = 1024;
 scene.add(sunLight);
 
-// 3. Topografi Tanah & Jalan Raya
+// 3. Topografi Tanah & Jalan Raya Utama Cidadap - Cicurug
 const groundGeo = new THREE.PlaneGeometry(5000, 5000);
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x2e8b57, roughness: 0.9 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -45,7 +45,7 @@ ground.position.y = 0;
 ground.receiveShadow = true;
 scene.add(ground);
 
-const mainRoadGeo = new THREE.PlaneGeometry(18, 3000);
+const mainRoadGeo = new THREE.PlaneGeometry(18, 4000);
 const roadMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 });
 const mainRoad = new THREE.Mesh(mainRoadGeo, roadMat);
 mainRoad.rotation.x = -Math.PI / 2;
@@ -53,7 +53,24 @@ mainRoad.position.set(0, 0.02, 0);
 mainRoad.receiveShadow = true;
 scene.add(mainRoad);
 
-// 4. Grup Karakter Utama (Pemain)
+// 4. Jalur Rel Kereta & KRL Commuter Line
+const railGeo = new THREE.PlaneGeometry(4, 4000);
+const railMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
+const railway = new THREE.Mesh(railGeo, railMat);
+railway.rotation.x = -Math.PI / 2;
+railway.position.set(-35, 0.03, 0);
+scene.add(railway);
+
+const trainGroup = new THREE.Group();
+trainGroup.position.set(-35, 1.0, -800);
+scene.add(trainGroup);
+const trainGeo = new THREE.BoxGeometry(3, 2.5, 20);
+const trainMat = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
+const trainMesh = new THREE.Mesh(trainGeo, trainMat);
+trainMesh.castShadow = true;
+trainGroup.add(trainMesh);
+
+// 5. Grup Karakter Utama (Pemain)
 const playerGroup = new THREE.Group();
 playerGroup.position.set(0, 0.5, 0);
 scene.add(playerGroup);
@@ -71,11 +88,11 @@ let playerSpeed = 0.15;
 let playerCash = 500000;
 let wantedStars = 0;
 
-// 5. Sistem Kendaraan (Mobil & Motor)
+// 6. Sistem Kendaraan (Spawn Terpisah & Tidak Bertumpuk)
 let isInVehicle = false;
 let vehicleSpeed = 0;
 const vehicleGroup = new THREE.Group();
-vehicleGroup.position.set(12, 0.5, 15);
+vehicleGroup.position.set(12, 0.5, 15); // Posisi spawn mobil utama yang aman
 scene.add(vehicleGroup);
 
 const carBodyGeo = new THREE.BoxGeometry(2.2, 1.2, 4.5);
@@ -85,27 +102,7 @@ placeholderCar.position.y = 0.6;
 placeholderCar.castShadow = true;
 vehicleGroup.add(placeholderCar);
 
-// Rel & KRL Commuter Line
-const railGeo = new THREE.PlaneGeometry(4, 4000);
-const railMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
-const railway = new THREE.Mesh(railGeo, railMat);
-railway.rotation.x = -Math.PI / 2;
-railway.position.set(-35, 0.03, 0);
-scene.add(railway);
-
-const trainGroup = new THREE.Group();
-trainGroup.position.set(-35, 1.0, -800);
-scene.add(trainGroup);
-const trainGeo = new THREE.BoxGeometry(3, 2.5, 20);
-const trainMat = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
-const trainMesh = new THREE.Mesh(trainGeo, trainMat);
-trainGroup.add(trainMesh);
-
-// =========================================================================
-// FITUR FASE 4: FASE 4 - TOKO LOKAL, GARASI, & CHECKPOINT MISI
-// =========================================================================
-
-// A. Zona Toko / Warung Lokal (Interaksi Ekonomi)
+// Zona Toko & Checkpoint Misi
 const shopPosition = new THREE.Vector3(25, 0, 50);
 const shopGeo = new THREE.BoxGeometry(6, 4, 6);
 const shopMat = new THREE.MeshStandardMaterial({ color: 0xd2b48c });
@@ -114,7 +111,6 @@ shopMesh.position.copy(shopPosition);
 shopMesh.position.y = 2;
 scene.add(shopMesh);
 
-// B. Checkpoint Misi Rute Cidadap - Cicurug
 const checkpointPosition = new THREE.Vector3(0, 0, -400);
 const cpGeo = new THREE.CylinderGeometry(4, 4, 0.5, 16);
 const cpMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.6 });
@@ -122,7 +118,7 @@ const checkpointMesh = new THREE.Mesh(cpGeo, cpMat);
 checkpointMesh.position.copy(checkpointPosition);
 scene.add(checkpointMesh);
 
-// 6. AUTO-LOADER BERBASIS JSON (Memuat Aset Fase 1, 2, dan 3)
+// 7. AUTO-LOADER BERBASIS JSON (Pemetaan Nama Aset Fase 1, 2, dan 3)
 const loader = new THREE.GLTFLoader();
 
 fetch('assets/models/models.json')
@@ -139,23 +135,35 @@ fetch('assets/models/models.json')
         });
 
         // Karakter Utama (Adventurer / Nico)
-        if (lowerName.includes('nico') || lowerName.includes('bellic') || lowerName.includes('adventurer') || lowerName.includes('player')) {
+        if (lowerName.includes('adventurer') || lowerName.includes('nico') || lowerName.includes('bellic') || lowerName.includes('casual character')) {
           model.scale.set(1.0, 1.0, 1.0);
           playerGroup.remove(placeholderBody);
           playerGroup.add(model);
         }
         // Kendaraan Utama / Mobil
-        else if (lowerName.includes('car') || lowerName.includes('police') || lowerName.includes('gtr') || lowerName.includes('pickup')) {
+        else if (lowerName.includes('car') || lowerName.includes('pickup') || lowerName.includes('gtr') || lowerName.includes('police')) {
           model.scale.set(1.0, 1.0, 1.0);
           vehicleGroup.remove(placeholderCar);
           vehicleGroup.add(model);
+        }
+        // Bangunan, Rumah, Warung, Toko (Disebar di pinggir jalan)
+        else if (lowerName.includes('house') || lowerName.includes('shop') || lowerName.includes('store') || lowerName.includes('building') || lowerName.includes('rural')) {
+          model.scale.set(1.2, 1.2, 1.2);
+          model.position.set((Math.random() > 0.5 ? 1 : -1) * (25 + Math.random() * 20), 0, (Math.random() - 0.5) * 2000);
+          scene.add(model);
+        }
+        // Elemen Alam & Pohon (Disebar di luar jalan raya)
+        else if (lowerName.includes('tree') || lowerName.includes('pine') || lowerName.includes('rock') || lowerName.includes('mountain')) {
+          model.scale.set(1.0, 1.0, 1.0);
+          model.position.set((Math.random() > 0.5 ? 1 : -1) * (35 + Math.random() * 50), 0, (Math.random() - 0.5) * 2500);
+          scene.add(model);
         }
       });
     });
   })
   .catch(() => {});
 
-// 7. Kontrol Virtual Joystick
+// 8. Kontrol Virtual Joystick
 const joystickBase = document.getElementById('joystick-base');
 const joystickStick = document.getElementById('joystick-stick');
 let joystickTouchId = null;
@@ -241,7 +249,7 @@ function updateCamera() {
   camera.lookAt(targetX, targetY, targetZ);
 }
 
-// 8. Tombol UI Aksi & Loncat (Interaksi Toko & Kendaraan)
+// 9. Tombol UI Aksi & Loncat (Interaksi Toko & Kendaraan)
 const btnAction = document.getElementById('btn-action');
 const btnJump = document.getElementById('btn-jump');
 const cashDisplay = document.getElementById('player-cash');
@@ -253,14 +261,12 @@ if (btnAction) {
     const distanceToCar = playerGroup.position.distanceTo(vehicleGroup.position);
     const distanceToShop = playerGroup.position.distanceTo(shopPosition);
 
-    // Interaksi Toko / Warung Lokal
     if (distanceToShop < 6) {
       playerCash += 50000;
-      alert("Belanja/Transaksi Berhasil! Uang bertambah Rp 50.000");
+      alert("Transaksi Warung Berhasil! Uang bertambah Rp 50.000");
       return;
     }
 
-    // Interaksi Masuk/Keluar Kendaraan
     if (!isInVehicle && distanceToCar < 8) {
       isInVehicle = true;
       playerGroup.visible = false;
@@ -281,7 +287,7 @@ if (btnJump) {
   });
 }
 
-// 9. Master Loop Animasi & Pembatas Wilayah (Boundary Collision)
+// 10. Master Loop Animasi & Pembatas Wilayah (Boundary Collision)
 function animate() {
   requestAnimationFrame(animate);
 
@@ -293,8 +299,6 @@ function animate() {
       
       playerGroup.position.x += moveX;
       playerGroup.position.z += moveZ;
-
-      // Pembatas Jalan / Boundary (Agar tidak tembus ke luar batas ekstrem)
       playerGroup.position.x = Math.max(-50, Math.min(50, playerGroup.position.x));
     } else {
       vehicleGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
@@ -304,19 +308,18 @@ function animate() {
       
       vehicleGroup.position.x += moveX;
       vehicleGroup.position.z += moveZ;
-      
       vehicleGroup.position.x = Math.max(-50, Math.min(50, vehicleGroup.position.x));
       playerGroup.position.copy(vehicleGroup.position);
     }
   }
 
   // Pergerakan KRL Commuter Line
-  trainGroup.position.z += 1.0;
+  trainGroup.position.z += 1.2;
   if (trainGroup.position.z > 2000) trainGroup.position.z = -2000;
 
   // Cek Checkpoint Misi
   if (playerGroup.position.distanceTo(checkpointPosition) < 10) {
-    checkpointMesh.position.set(Math.random() * 30 - 15, 0, playerGroup.position.z - 500);
+    checkpointMesh.position.set((Math.random() - 0.5) * 30, 0, playerGroup.position.z - 500);
     playerCash += 100000;
   }
 
