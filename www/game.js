@@ -1,5 +1,5 @@
 // =========================================================================
-// GAME OPEN WORLD CIDADAP - MASTER ENGINE 100% GLB & JOYSTICK FIX
+// GAME OPEN WORLD CIDADAP - MASTER ENGINE (FASE 1, 2, & 3 LENGKAP)
 // =========================================================================
 
 const container = document.getElementById('game-container');
@@ -52,7 +52,6 @@ const playerGroup = new THREE.Group();
 playerGroup.position.set(0, 0, 0);
 scene.add(playerGroup);
 
-// Placeholder Kotak Sementara (akan disembunyikan jika .glb berhasil dimuat)
 const bodyGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
 const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff });
 const placeholderBody = new THREE.Mesh(bodyGeo, bodyMat);
@@ -60,50 +59,57 @@ placeholderBody.position.y = 1.1;
 placeholderBody.castShadow = true;
 playerGroup.add(placeholderBody);
 
-// Variabel Kontrol Gerak & Joystick
 let moveForward = 0;
 let moveTurn = 0;
 let playerSpeed = 0.15;
 let playerCash = 500000;
 let wantedStars = 0;
 
-// Load Model Niko Bellic (.glb) Langsung ke Karakter Utama
+// Load Model Niko Bellic
 const loader = new THREE.GLTFLoader();
 function loadPlayerModel() {
-  fetch('assets/models/models.json')
-    .then(response => response.json())
-    .then(modelFiles => {
-      if (modelFiles && modelFiles.length > 0) {
-        // Mencari file nico_bellic atau mengambil file pertama
-        let targetFile = modelFiles.find(f => f.includes('nico') || f.includes('Untitled')) || modelFiles[0];
-        const filePath = 'assets/models/' + targetFile;
-        
-        loader.load(filePath, (gltf) => {
-          const model = gltf.scene;
-          model.scale.set(1.2, 1.2, 1.2);
-          model.position.set(0, 0, 0);
-          model.traverse((node) => {
-            if (node.isMesh) {
-              node.castShadow = true;
-              node.receiveShadow = true;
-            }
-          });
-          // Hapus placeholder kotak, masukkan model glb Niko Bellic ke playerGroup
-          playerGroup.remove(placeholderBody);
-          playerGroup.add(model);
-          console.log('Berhasil memuat karakter Niko Bellic:', filePath);
-        }, undefined, (error) => {
-          console.warn('Gagal memuat model glb karakter, tetap pakai kotak placeholder.');
-        });
+  const filePath = 'assets/models/nicoBellic_GTA_IV-v1.glb';
+  
+  loader.load(filePath, (gltf) => {
+    const model = gltf.scene;
+    model.scale.set(1.2, 1.2, 1.2);
+    model.position.set(0, 0, 0);
+    model.traverse((node) => {
+      if (node.isMesh) {
+        node.castShadow = true;
+        node.receiveShadow = true;
       }
-    })
-    .catch(error => {
-      console.warn('Gagal membaca models.json:', error);
     });
+    playerGroup.remove(placeholderBody);
+    playerGroup.add(model);
+    console.log('Berhasil memuat karakter Niko Bellic:', filePath);
+  }, undefined, (error) => {
+    console.warn('Gagal memuat model glb utama, mencoba alternatif...', error);
+    loader.load('./assets/models/nicoBellic_GTA_IV-v1.glb', (gltf) => {
+      const model = gltf.scene;
+      model.scale.set(1.2, 1.2, 1.2);
+      playerGroup.remove(placeholderBody);
+      playerGroup.add(model);
+    });
+  });
 }
 loadPlayerModel();
 
-// 5. Virtual Joystick Implementation (Kontrol Sentuh Sisi Kiri)
+// FASE 3: Sistem Kendaraan & Variabel Mobil
+let isInVehicle = false;
+let vehicleSpeed = 0;
+
+const vehicleGroup = new THREE.Group();
+vehicleGroup.position.set(12, 0, 0);
+const carBodyGeo = new THREE.BoxGeometry(2.2, 1.2, 4.5);
+const carBodyMat = new THREE.MeshStandardMaterial({ color: 0xcc0000, roughness: 0.4 });
+const carMesh = new THREE.Mesh(carBodyGeo, carBodyMat);
+carMesh.position.y = 0.8;
+carMesh.castShadow = true;
+vehicleGroup.add(carMesh);
+scene.add(vehicleGroup);
+
+// 5. Virtual Joystick Implementation
 const joystickBase = document.getElementById('joystick-base');
 const joystickStick = document.getElementById('joystick-stick');
 let joystickTouchId = null;
@@ -135,8 +141,6 @@ if (joystickBase) {
         }
 
         joystickStick.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-
-        // Normalisasi arah gerak pemain
         moveTurn = -deltaX / maxJoystickRadius;
         moveForward = -deltaY / maxJoystickRadius;
       }
@@ -158,9 +162,9 @@ if (joystickBase) {
   joystickBase.addEventListener('touchcancel', resetJoystick);
 }
 
-// 6. Kamera Orbit 360° (Sentuhan Layar Sisi Kanan)
-let cameraDistance = 8;
-let cameraHeight = 2.5;
+// 6. Kamera Orbit 360°
+let cameraDistance = 9;
+let cameraHeight = 3.0;
 let cameraAngle = 0;
 let isDragging = false;
 let previousTouchX = 0;
@@ -185,12 +189,14 @@ window.addEventListener('touchend', () => {
 });
 
 function updateCamera() {
-  const targetX = playerGroup.position.x;
-  const targetY = playerGroup.position.y + 1;
-  const targetZ = playerGroup.position.z;
+  // Kamera mengikuti target yang sedang aktif (Player atau Kendaraan)
+  const activeTarget = isInVehicle ? vehicleGroup : playerGroup;
+  const targetX = activeTarget.position.x;
+  const targetY = activeTarget.position.y + 1;
+  const targetZ = activeTarget.position.z;
 
-  const offsetX = Math.sin(cameraAngle) * cameraDistance;
-  const offsetZ = Math.cos(cameraAngle) * cameraDistance;
+  const offsetX = Math.sin(cameraAngle) * (isInVehicle ? cameraDistance * 1.3 : cameraDistance);
+  const offsetZ = Math.cos(cameraAngle) * (isInVehicle ? cameraDistance * 1.3 : cameraDistance);
 
   camera.position.set(
     targetX - offsetX,
@@ -200,36 +206,73 @@ function updateCamera() {
   camera.lookAt(targetX, targetY, targetZ);
 }
 
-// 7. Tombol Aksi & Loncat UI
+// 7. Tombol Aksi & Loncat UI (Integrasi Masuk/Keluar Mobil)
 const btnAction = document.getElementById('btn-action');
 const btnJump = document.getElementById('btn-jump');
 const cashDisplay = document.getElementById('player-cash');
 const starsDisplay = document.getElementById('wanted-stars');
 
-if (btnJump) {
-  btnJump.addEventListener('click', () => {
-    // Efek Loncat Sederhana
-    playerGroup.position.y += 0.8;
-    setTimeout(() => { playerGroup.position.y = 0; }, 250);
+if (btnAction) {
+  btnAction.innerText = "🚗";
+  btnAction.addEventListener('click', () => {
+    const distanceToCar = playerGroup.position.distanceTo(vehicleGroup.position);
+    if (!isInVehicle && distanceToCar < 7) {
+      isInVehicle = true;
+      playerGroup.visible = false;
+      console.log('Masuk kendaraan.');
+    } else if (isInVehicle) {
+      isInVehicle = false;
+      playerGroup.position.set(vehicleGroup.position.x + 3, vehicleGroup.position.y, vehicleGroup.position.z);
+      playerGroup.visible = true;
+      console.log('Keluar kendaraan.');
+    }
   });
 }
 
-// 8. Loop Animasi & Pergerakan Karakter Berdasarkan Joystick
+if (btnJump) {
+  btnJump.addEventListener('click', () => {
+    if (!isInVehicle) {
+      playerGroup.position.y += 0.8;
+      setTimeout(() => { playerGroup.position.y = 0; }, 250);
+    }
+  });
+}
+
+// FASE 2: Pembatas Area (Collision)
+function checkPlayerBounds() {
+  const maxBoundary = 1900;
+  if (playerGroup.position.x > maxBoundary) playerGroup.position.x = maxBoundary;
+  if (playerGroup.position.x < -maxBoundary) playerGroup.position.x = -maxBoundary;
+  if (playerGroup.position.z > maxBoundary) playerGroup.position.z = maxBoundary;
+  if (playerGroup.position.z < -maxBoundary) playerGroup.position.z = -maxBoundary;
+}
+
+// 8. Loop Animasi & Pergerakan (Karakter & Kendaraan)
 const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
 
   if (moveForward !== 0 || moveTurn !== 0) {
-    // Putar arah hadap karakter sesuai arah joystick
-    playerGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
-    
-    // Gerakkan karakter maju/mundur sesuai arah hadap
-    const moveX = Math.sin(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
-    const moveZ = Math.cos(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
-    
-    playerGroup.position.x += moveX;
-    playerGroup.position.z += moveZ;
+    if (!isInVehicle) {
+      playerGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
+      const moveX = Math.sin(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
+      const moveZ = Math.cos(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
+      
+      playerGroup.position.x += moveX;
+      playerGroup.position.z += moveZ;
+      checkPlayerBounds();
+    } else {
+      vehicleGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
+      vehicleSpeed = playerSpeed * 2.8;
+      
+      const moveX = Math.sin(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
+      const moveZ = Math.cos(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
+      
+      vehicleGroup.position.x += moveX;
+      vehicleGroup.position.z += moveZ;
+      playerGroup.position.copy(vehicleGroup.position);
+    }
   }
 
   if (cashDisplay) cashDisplay.innerText = `Rp ${playerCash.toLocaleString()}`;
