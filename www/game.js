@@ -1,15 +1,13 @@
 // =========================================================================
-// GAME OPEN WORLD CIDADAP - MASTER ENGINE 100% GLB & ASSET INTEGRATION
-// Meliputi: Topografi Gunung Salak, Rute Nyata Cidadap-Cicurug, Multi-Kendaraan,
-// AI Warga (NPC), Minimap Aktif, Sistem Ekonomi, Polisi, & Kontrol Sentuh Aman.
+// GAME OPEN WORLD CIDADAP - MASTER ENGINE 100% GLB & JOYSTICK FIX
 // =========================================================================
 
 const container = document.getElementById('game-container');
 
 // 1. Scene, Camera, & Renderer Setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87ceeb); // Langit cerah pedesaan
-scene.fog = new THREE.FogExp2(0x87ceeb, 0.010); // Kabut vulkanik/pegunungan
+scene.background = new THREE.Color(0x87ceeb);
+scene.fog = new THREE.FogExp2(0x87ceeb, 0.010);
 
 const camera = new THREE.PerspectiveCamera(
   60,
@@ -24,18 +22,16 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 container.appendChild(renderer.domElement);
 
-// 2. Pencahayaan (Lighting & Atmosphere)
+// 2. Pencahayaan
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
 scene.add(ambientLight);
 
 const sunLight = new THREE.DirectionalLight(0xfffaf0, 1.2);
 sunLight.position.set(200, 300, 200);
 sunLight.castShadow = true;
-sunLight.shadow.mapSize.width = 1024;
-sunLight.shadow.mapSize.height = 1024;
 scene.add(sunLight);
 
-// 3. Topografi Gunung Salak & Rute Nyata (Cidadap - Cicurug & Jalur Pulang Cisaat/Bangbayang)
+// 3. Topografi Tanah & Jalan Raya
 const groundGeo = new THREE.PlaneGeometry(4000, 4000);
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x2e8b57, roughness: 0.9 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -43,7 +39,6 @@ ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-// Jalur Utama (Cidadap - Tenjolaya - Cipari - Beber - Cigadog - Sadamukti - Cimelati - Cicurug)
 const mainRoadGeo = new THREE.PlaneGeometry(18, 2000);
 const roadMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 });
 const mainRoad = new THREE.Mesh(mainRoadGeo, roadMat);
@@ -52,131 +47,120 @@ mainRoad.position.set(0, 0.05, 0);
 mainRoad.receiveShadow = true;
 scene.add(mainRoad);
 
-// Jalur Pulang Lingkar Luar (Bangbayang & Cisaat)
-const returnRoadGeo = new THREE.PlaneGeometry(14, 1400);
-const returnRoad = new THREE.Mesh(returnRoadGeo, roadMat);
-returnRoad.rotation.x = -Math.PI / 2;
-returnRoad.rotation.y = Math.PI / 4;
-returnRoad.position.set(-250, 0.06, 400);
-returnRoad.receiveShadow = true;
-scene.add(returnRoad);
-
-// Topografi Tebing & Bukit Sawah Terasering Kaki Gunung Salak
-const cliffMat = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.9 });
-for (let i = -3; i <= 3; i++) {
-  if (i === 0) continue;
-  const cliffGeo = new THREE.BoxGeometry(40, 30, 400);
-  const cliff = new THREE.Mesh(cliffGeo, cliffMat);
-  cliff.position.set(i * 35, 15, i * 300);
-  cliff.castShadow = true;
-  cliff.receiveShadow = true;
-  scene.add(cliff);
-}
-
-// 4. Karakter Utama (Player Kasual Masa Kini) & NPC Warga Lokal
+// 4. Grup Karakter Utama (Player & Model GLB Niko Bellic)
 const playerGroup = new THREE.Group();
-
-const bodyGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
-const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff });
-const body = new THREE.Mesh(bodyGeo, bodyMat);
-body.position.y = 1.1;
-body.castShadow = true;
-playerGroup.add(body);
-
-const headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
-const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
-const head = new THREE.Mesh(headGeo, headMat);
-head.position.y = 1.9;
-head.castShadow = true;
-playerGroup.add(head);
-
 playerGroup.position.set(0, 0, 0);
 scene.add(playerGroup);
 
-// Sistem NPC Warga Pedesaan, Petani, & Polisi Patroli
-const npcs = [];
-const npcMat = new THREE.MeshStandardMaterial({ color: 0xff6347 });
-const policeMat = new THREE.MeshStandardMaterial({ color: 0x00008b });
+// Placeholder Kotak Sementara (akan disembunyikan jika .glb berhasil dimuat)
+const bodyGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
+const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff });
+const placeholderBody = new THREE.Mesh(bodyGeo, bodyMat);
+placeholderBody.position.y = 1.1;
+placeholderBody.castShadow = true;
+playerGroup.add(placeholderBody);
 
-for (let i = 0; i < 25; i++) {
-  const isPolice = i > 20;
-  const npcGeo = new THREE.BoxGeometry(0.7, 1.7, 0.4);
-  const npc = new THREE.Mesh(npcGeo, isPolice ? policeMat : npcMat);
-  const posX = (Math.random() - 0.5) * 140;
-  const posZ = (Math.random() - 0.5) * 1500;
-  npc.position.set(posX, 0.85, posZ);
-  npc.castShadow = true;
-  scene.add(npc);
-  npcs.push({ mesh: npc, speed: 0.04, direction: 1, isPolice: isPolice });
-}
-
-// 5. Manajemen Multi-Kendaraan & Pembebanan Otomatis via models.json
-let currentVehicleType = 'foot';
+// Variabel Kontrol Gerak & Joystick
+let moveForward = 0;
+let moveTurn = 0;
+let playerSpeed = 0.15;
 let playerCash = 500000;
 let wantedStars = 0;
 
-let worldVehicle = null;
+// Load Model Niko Bellic (.glb) Langsung ke Karakter Utama
 const loader = new THREE.GLTFLoader();
-
-// Fungsi Otomatis Membaca Model dari models.json (Cukup diatur sekali ini saja untuk selamanya)
-function loadDynamicVehicle() {
+function loadPlayerModel() {
   fetch('assets/models/models.json')
     .then(response => response.json())
     .then(modelFiles => {
       if (modelFiles && modelFiles.length > 0) {
-        // Otomatis mengambil model pertama dari daftar models.json
-        const targetModel = 'assets/models/' + modelFiles[0];
-        loadModelFile(targetModel);
-      } else {
-        createFallbackVehicle();
+        // Mencari file nico_bellic atau mengambil file pertama
+        let targetFile = modelFiles.find(f => f.includes('nico') || f.includes('Untitled')) || modelFiles[0];
+        const filePath = 'assets/models/' + targetFile;
+        
+        loader.load(filePath, (gltf) => {
+          const model = gltf.scene;
+          model.scale.set(1.2, 1.2, 1.2);
+          model.position.set(0, 0, 0);
+          model.traverse((node) => {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+            }
+          });
+          // Hapus placeholder kotak, masukkan model glb Niko Bellic ke playerGroup
+          playerGroup.remove(placeholderBody);
+          playerGroup.add(model);
+          console.log('Berhasil memuat karakter Niko Bellic:', filePath);
+        }, undefined, (error) => {
+          console.warn('Gagal memuat model glb karakter, tetap pakai kotak placeholder.');
+        });
       }
     })
     .catch(error => {
-      console.warn('Gagal membaca models.json, menggunakan fallback:', error);
-      createFallbackVehicle();
+      console.warn('Gagal membaca models.json:', error);
     });
 }
+loadPlayerModel();
 
-function loadModelFile(filePath) {
-  loader.load(filePath, (gltf) => {
-    worldVehicle = gltf.scene;
-    worldVehicle.scale.set(1.5, 1.5, 1.5);
-    worldVehicle.position.set(12, 0, 30);
-    worldVehicle.traverse((node) => {
-      if (node.isMesh) {
-        node.castShadow = true;
-        node.receiveShadow = true;
+// 5. Virtual Joystick Implementation (Kontrol Sentuh Sisi Kiri)
+const joystickBase = document.getElementById('joystick-base');
+const joystickStick = document.getElementById('joystick-stick');
+let joystickTouchId = null;
+let joystickCenter = { x: 0, y: 0 };
+let maxJoystickRadius = 35;
+
+if (joystickBase) {
+  joystickBase.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    joystickTouchId = touch.identifier;
+    const rect = joystickBase.getBoundingClientRect();
+    joystickCenter.x = rect.left + rect.width / 2;
+    joystickCenter.y = rect.top + rect.height / 2;
+  }, { passive: false });
+
+  joystickBase.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      if (touch.identifier === joystickTouchId) {
+        let deltaX = touch.clientX - joystickCenter.x;
+        let deltaY = touch.clientY - joystickCenter.y;
+        let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        if (distance > maxJoystickRadius) {
+          deltaX *= maxJoystickRadius / distance;
+          deltaY *= maxJoystickRadius / distance;
+        }
+
+        joystickStick.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+        // Normalisasi arah gerak pemain
+        moveTurn = -deltaX / maxJoystickRadius;
+        moveForward = -deltaY / maxJoystickRadius;
       }
-    });
-    scene.add(worldVehicle);
-    console.log('Berhasil memuat model:', filePath);
-  }, undefined, (error) => {
-    console.warn('Gagal memuat file .glb, beralih ke fallback.');
-    createFallbackVehicle();
-  });
+    }
+  }, { passive: false });
+
+  const resetJoystick = (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      if (e.changedTouches[i].identifier === joystickTouchId) {
+        joystickTouchId = null;
+        joystickStick.style.transform = `translate(0px, 0px)`;
+        moveForward = 0;
+        moveTurn = 0;
+      }
+    }
+  };
+
+  joystickBase.addEventListener('touchend', resetJoystick);
+  joystickBase.addEventListener('touchcancel', resetJoystick);
 }
 
-function createFallbackVehicle() {
-  const carGeo = new THREE.BoxGeometry(2.2, 1.3, 4.5);
-  const carMat = new THREE.MeshStandardMaterial({ color: 0xdc143c, roughness: 0.3 });
-  worldVehicle = new THREE.Mesh(carGeo, carMat);
-  worldVehicle.position.set(12, 0.65, 30);
-  scene.add(worldVehicle);
-}
-
-// Jalankan pemuatan model otomatis
-loadDynamicVehicle();
-
-// Objek Helikopter Khusus
-const heliGeo = new THREE.ConeGeometry(2, 4, 8);
-const heliMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
-const worldHeli = new THREE.Mesh(heliGeo, heliMat);
-worldHeli.position.set(-20, 2, -100);
-scene.add(worldHeli);
-
-// 6. Sistem Kamera Orbit 360° & Sentuhan Layar
-let cameraDistance = 9;
-let cameraHeight = 3.2;
+// 6. Kamera Orbit 360° (Sentuhan Layar Sisi Kanan)
+let cameraDistance = 8;
+let cameraHeight = 2.5;
 let cameraAngle = 0;
 let isDragging = false;
 let previousTouchX = 0;
@@ -201,9 +185,9 @@ window.addEventListener('touchend', () => {
 });
 
 function updateCamera() {
-  const targetX = currentVehicleType === 'foot' ? playerGroup.position.x : (worldVehicle ? worldVehicle.position.x : 0);
-  const targetY = (currentVehicleType === 'foot' ? playerGroup.position.y : (worldVehicle ? worldVehicle.position.y : 0)) + 1;
-  const targetZ = currentVehicleType === 'foot' ? playerGroup.position.z : (worldVehicle ? worldVehicle.position.z : 0);
+  const targetX = playerGroup.position.x;
+  const targetY = playerGroup.position.y + 1;
+  const targetZ = playerGroup.position.z;
 
   const offsetX = Math.sin(cameraAngle) * cameraDistance;
   const offsetZ = Math.cos(cameraAngle) * cameraDistance;
@@ -216,107 +200,40 @@ function updateCamera() {
   camera.lookAt(targetX, targetY, targetZ);
 }
 
-// 7. Kontrol Dinamis UI Tombol & Interaksi
+// 7. Tombol Aksi & Loncat UI
 const btnAction = document.getElementById('btn-action');
 const btnJump = document.getElementById('btn-jump');
-const minimapPointer = document.getElementById('minimap-pointer');
 const cashDisplay = document.getElementById('player-cash');
 const starsDisplay = document.getElementById('wanted-stars');
-const missionDisplay = document.getElementById('mission-text');
-
-function updateDynamicUI() {
-  if (currentVehicleType === 'foot') {
-    btnAction.innerText = 'Naik';
-    btnJump.innerText = 'Loncat';
-  } else if (currentVehicleType === 'car' || currentVehicleType === 'motor') {
-    btnAction.innerText = 'Gas';
-    btnJump.innerText = 'Rem';
-  } else if (currentVehicleType === 'heli' || currentVehicleType === 'jetpack') {
-    btnAction.innerText = 'Naik';
-    btnJump.innerText = 'Turun';
-  } else {
-    btnAction.innerText = 'Tembak';
-    btnJump.innerText = 'Mundur';
-  }
-  if (cashDisplay) cashDisplay.innerText = `Rp ${playerCash.toLocaleString()}`;
-  if (starsDisplay) starsDisplay.innerText = `⭐ ${wantedStars}`;
-}
-updateDynamicUI();
-
-if (btnAction) {
-  btnAction.addEventListener('click', () => {
-    if (!worldVehicle) return;
-    const distanceToCar = playerGroup.position.distanceTo(worldVehicle.position);
-    const distanceToHeli = playerGroup.position.distanceTo(worldHeli.position);
-
-    if (currentVehicleType === 'foot' && distanceToCar < 6) {
-      currentVehicleType = 'car';
-      playerGroup.visible = false;
-      if (missionDisplay) missionDisplay.innerText = 'Misi: Berkendara menyusuri Cipari - Beber';
-      updateDynamicUI();
-    } else if (currentVehicleType === 'foot' && distanceToHeli < 6) {
-      currentVehicleType = 'heli';
-      playerGroup.visible = false;
-      if (missionDisplay) missionDisplay.innerText = 'Misi: Terbang bebas melintasi Puncak Gunung Salak';
-      updateDynamicUI();
-    } else if (currentVehicleType !== 'foot') {
-      currentVehicleType = 'foot';
-      playerGroup.position.copy(worldVehicle.position).add(new THREE.Vector3(3, 0, 0));
-      playerGroup.visible = true;
-      if (missionDisplay) missionDisplay.innerText = 'Misi: Jelajahi Rute Cidadap - Cicurug';
-      updateDynamicUI();
-    }
-  });
-}
 
 if (btnJump) {
   btnJump.addEventListener('click', () => {
-    if (currentVehicleType === 'foot') {
-      playerGroup.position.y += 1.2;
-      setTimeout(() => { playerGroup.position.y = 0; }, 300);
-    } else if (currentVehicleType === 'heli') {
-      worldHeli.position.y += 3;
-    }
+    // Efek Loncat Sederhana
+    playerGroup.position.y += 0.8;
+    setTimeout(() => { playerGroup.position.y = 0; }, 250);
   });
 }
 
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-// 8. Loop Animasi & Game Engine Tick
+// 8. Loop Animasi & Pergerakan Karakter Berdasarkan Joystick
 const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
-  const delta = clock.getDelta();
 
-  if (currentVehicleType === 'foot') {
-    playerGroup.position.z -= 0.12;
-    if (playerGroup.position.z < -900) playerGroup.position.z = 900;
-  } else if (currentVehicleType === 'car' && worldVehicle) {
-    worldVehicle.position.z -= 0.35;
-    playerGroup.position.copy(worldVehicle.position);
-    if (worldVehicle.position.z < -900) worldVehicle.position.z = 900;
-  } else if (currentVehicleType === 'heli') {
-    worldHeli.position.z -= 0.4;
-    playerGroup.position.copy(worldHeli.position);
-    if (worldHeli.position.z < -900) worldHeli.position.z = 900;
+  if (moveForward !== 0 || moveTurn !== 0) {
+    // Putar arah hadap karakter sesuai arah joystick
+    playerGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
+    
+    // Gerakkan karakter maju/mundur sesuai arah hadap
+    const moveX = Math.sin(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
+    const moveZ = Math.cos(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
+    
+    playerGroup.position.x += moveX;
+    playerGroup.position.z += moveZ;
   }
 
-  npcs.forEach(npc => {
-    npc.mesh.position.z += npc.speed * npc.direction;
-    const activeZ = currentVehicleType === 'foot' ? playerGroup.position.z : (worldVehicle ? worldVehicle.position.z : 0);
-    if (Math.abs(npc.mesh.position.z - activeZ) > 200) {
-      npc.direction *= -1;
-    }
-  });
-
-  if (minimapPointer) {
-    minimapPointer.style.transform = `translate(-50%, -50%) rotate(${cameraAngle * (180 / Math.PI)}deg)`;
-  }
+  if (cashDisplay) cashDisplay.innerText = `Rp ${playerCash.toLocaleString()}`;
+  if (starsDisplay) starsDisplay.innerText = `⭐ ${wantedStars}`;
 
   updateCamera();
   renderer.render(scene, camera);
