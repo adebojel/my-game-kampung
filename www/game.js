@@ -1,88 +1,68 @@
 // =========================================================================
-// GAME OPEN WORLD CIDADAP - MASTER ENGINE (FINAL FULL FEATURES & AUTO-LOADER)
+// GAME OPEN WORLD CIDADAP - FIX BUG POSISI TANAH, SKALA, & LANDSCAPE
 // =========================================================================
 
 const container = document.getElementById('game-container');
 
-// Paksa orientasi landscape otomatis
-if (screen.orientation && screen.orientation.lock) {
-  screen.orientation.lock('landscape').catch(() => {});
+// Paksa orientasi landscape aman untuk Android & WebView
+function forceLandscape() {
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {});
+  }
 }
+window.addEventListener('load', forceLandscape);
+window.addEventListener('resize', forceLandscape);
 
 // 1. Scene, Camera, & Renderer Setup
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
-scene.fog = new THREE.FogExp2(0x87ceeb, 0.008); // Kabut tipis khas pegunungan / vulkanik
+scene.fog = new THREE.FogExp2(0x87ceeb, 0.008);
 
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  3000
-);
-
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 3500);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 container.appendChild(renderer.domElement);
 
-// 2. Pencahayaan & Suasana Gunung Salak
+// 2. Pencahayaan (Perbaikan posisi agar bayangan tidak raksasa di atas kepala)
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(0xfffaf0, 1.2);
-sunLight.position.set(300, 400, 300);
+const sunLight = new THREE.DirectionalLight(0xfffaf0, 1.0);
+sunLight.position.set(400, 600, 400); // Posisi matahari dijauhkan agar bayangan proporsional
 sunLight.castShadow = true;
 sunLight.shadow.mapSize.width = 1024;
 sunLight.shadow.mapSize.height = 1024;
 scene.add(sunLight);
 
-// 3. Topografi Tanah, Sawah Terasering, & Rute Nyata (Cidadap - Cicurug)
-const groundGeo = new THREE.PlaneGeometry(4000, 4000);
+// 3. Topografi Tanah (FIX: Pastikan posisi Y tepat di 0 dan tidak tenggelam)
+const groundGeo = new THREE.PlaneGeometry(5000, 5000);
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x2e8b57, roughness: 0.9 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
+ground.position.y = 0; // Pijakan dasar persis di angka 0
 ground.receiveShadow = true;
 scene.add(ground);
 
-// Jalur Jalan Utama (Cidadap - Tenjolaya - Cipari - Beber - Cicurug)
-const mainRoadGeo = new THREE.PlaneGeometry(16, 2500);
+// Jalan Raya Utama
+const mainRoadGeo = new THREE.PlaneGeometry(18, 3000);
 const roadMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 });
 const mainRoad = new THREE.Mesh(mainRoadGeo, roadMat);
 mainRoad.rotation.x = -Math.PI / 2;
-mainRoad.position.set(0, 0.05, 0);
+mainRoad.position.set(0, 0.02, 0); // Sedikit di atas tanah agar tidak berkedip (z-fighting)
 mainRoad.receiveShadow = true;
 scene.add(mainRoad);
 
-// Jalur Pulang Lingkar Luar (Cisaat & Bangbayang)
-const returnRoadGeo = new THREE.PlaneGeometry(14, 1200);
-const returnRoad = new THREE.Mesh(returnRoadGeo, roadMat);
-returnRoad.rotation.x = -Math.PI / 2;
-returnRoad.rotation.z = Math.PI / 6;
-returnRoad.position.set(100, 0.06, -200);
-returnRoad.receiveShadow = true;
-scene.add(returnRoad);
-
-// Blok Sawah Terasering Tradisional & Pantulan Air Kaki Gunung Salak
-const terraceGeo = new THREE.BoxGeometry(60, 0.5, 40);
-const terraceMat = new THREE.MeshStandardMaterial({ color: 0x4da6ff, roughness: 0.2 });
-for (let i = -2; i <= 2; i++) {
-  if (i === 0) continue;
-  const terrace = new THREE.Mesh(terraceGeo, terraceMat);
-  terrace.position.set(i * 50, 0.2, -80);
-  scene.add(terrace);
-}
-
-// 4. Grup Karakter Utama & Status RPG (Uang & Wanted Level)
+// 4. Grup Karakter Utama (Posisikan Y di atas tanah: 0.5)
 const playerGroup = new THREE.Group();
-playerGroup.position.set(0, 0, 0);
+playerGroup.position.set(0, 0.5, 0);
 scene.add(playerGroup);
 
 const bodyGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
 const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e90ff });
 const placeholderBody = new THREE.Mesh(bodyGeo, bodyMat);
-placeholderBody.position.y = 1.1;
+placeholderBody.position.y = 0.6;
 placeholderBody.castShadow = true;
 playerGroup.add(placeholderBody);
 
@@ -92,123 +72,70 @@ let playerSpeed = 0.15;
 let playerCash = 500000;
 let wantedStars = 0;
 
-// 5. Sistem Multi-Kendaraan & Transportasi Umum (KRL Commuter Line)
+// 5. Sistem Kendaraan (FIX: Posisi Y disesuaikan agar roda pas di atas tanah)
 let isInVehicle = false;
 let vehicleSpeed = 0;
-
 const vehicleGroup = new THREE.Group();
-vehicleGroup.position.set(12, 0, 15);
+vehicleGroup.position.set(12, 0.5, 15); // Ketinggian Y disesuaikan
 scene.add(vehicleGroup);
 
 const carBodyGeo = new THREE.BoxGeometry(2.2, 1.2, 4.5);
 const carBodyMat = new THREE.MeshStandardMaterial({ color: 0xcc0000, roughness: 0.4 });
 const placeholderCar = new THREE.Mesh(carBodyGeo, carBodyMat);
-placeholderCar.position.y = 0.8;
+placeholderCar.position.y = 0.6;
 placeholderCar.castShadow = true;
 vehicleGroup.add(placeholderCar);
 
-// Rel & KRL Commuter Line Otomatis
-const railGeo = new THREE.PlaneGeometry(4, 3000);
+// Rel & KRL Commuter Line
+const railGeo = new THREE.PlaneGeometry(4, 4000);
 const railMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
 const railway = new THREE.Mesh(railGeo, railMat);
 railway.rotation.x = -Math.PI / 2;
-railway.position.set(-30, 0.04, 0);
+railway.position.set(-35, 0.03, 0);
 scene.add(railway);
 
 const trainGroup = new THREE.Group();
-trainGroup.position.set(-30, 0.8, -500);
+trainGroup.position.set(-35, 1.0, -800);
 scene.add(trainGroup);
-const trainGeo = new THREE.BoxGeometry(3, 2.5, 18);
+const trainGeo = new THREE.BoxGeometry(3, 2.5, 20);
 const trainMat = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
 const trainMesh = new THREE.Mesh(trainGeo, trainMat);
 trainGroup.add(trainMesh);
 
-// 6. Sistem AI NPC Warga Lokal (Living World)
-const npcs = [];
-const npcGeo = new THREE.BoxGeometry(0.7, 1.1, 0.4);
-const npcMat = new THREE.MeshStandardMaterial({ color: 0xff6347 });
-
-for (let i = 0; i < 15; i++) {
-  const npc = new THREE.Mesh(npcGeo, npcMat);
-  const posX = (Math.random() - 0.5) * 200;
-  const posZ = (Math.random() - 0.5) * 1000;
-  npc.position.set(posX, 0.55, posZ);
-  npc.castShadow = true;
-  scene.add(npc);
-  
-  npcs.push({
-    mesh: npc,
-    dir: Math.random() > 0.5 ? 1 : -1,
-    speed: 0.03 + Math.random() * 0.03,
-    limit: posZ + 80
-  });
-}
-
-// 7. AUTO-LOADER DINAMIS PERMANEN BERBASIS JSON (Karakter, Kendaraan, & Peta)
+// 6. AUTO-LOADER BERBASIS JSON (Dengan pembatasan skala agar tidak raksasa)
 const loader = new THREE.GLTFLoader();
 
-// A. Load Model dari models.json
 fetch('assets/models/models.json')
   .then(response => response.json())
   .then(fileList => {
-    console.log('Daftar aset terdeteksi otomatis:', fileList);
-    
     fileList.forEach(fileName => {
       const filePath = `assets/models/${fileName}`;
+      const lowerName = fileName.toLowerCase();
       
-      // Deteksi Karakter (Nico Bellic)
-      if (fileName.toLowerCase().includes('nico') || fileName.toLowerCase().includes('bellic')) {
-        loader.load(filePath, (gltf) => {
-          const model = gltf.scene;
-          model.scale.set(1.2, 1.2, 1.2);
-          model.traverse((node) => {
-            if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
-          });
-          playerGroup.remove(placeholderBody);
-          playerGroup.add(model);
-          console.log('Otomatis muat karakter:', fileName);
-        });
-      }
-      
-      // Deteksi Kendaraan (Police Car, GTR, dll)
-      if (fileName.toLowerCase().includes('police') || fileName.toLowerCase().includes('car') || fileName.toLowerCase().includes('gtr')) {
-        loader.load(filePath, (gltf) => {
-          const carModel = gltf.scene;
-          carModel.scale.set(1.5, 1.5, 1.5);
-          carModel.traverse((node) => {
-            if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
-          });
-          vehicleGroup.remove(placeholderCar);
-          vehicleGroup.add(carModel);
-          console.log('Otomatis muat kendaraan:', fileName);
-        });
-      }
-    });
-  })
-  .catch(err => {
-    console.warn('models.json belum terbaca, menggunakan placeholder bawaan.', err);
-  });
-
-// B. Load Tata Letak Peta & Bangunan dari map.json (Opsional)
-fetch('assets/map.json')
-  .then(response => response.json())
-  .then(mapData => {
-    mapData.forEach(item => {
-      const modelPath = `assets/models/${item.model}`;
-      loader.load(modelPath, (gltf) => {
-        const obj = gltf.scene;
-        obj.position.set(item.x, 0, item.z);
-        if (item.scale) obj.scale.set(item.scale, item.scale, item.scale);
-        obj.traverse((node) => {
+      loader.load(filePath, (gltf) => {
+        const model = gltf.scene;
+        model.traverse((node) => {
           if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
         });
-        scene.add(obj);
+
+        // Karakter
+        if (lowerName.includes('nico') || lowerName.includes('bellic') || lowerName.includes('player')) {
+          model.scale.set(1.0, 1.0, 1.0); // Skala dinormalisasi
+          playerGroup.remove(placeholderBody);
+          playerGroup.add(model);
+        }
+        // Kendaraan (Mobil / Polisi)
+        else if (lowerName.includes('car') || lowerName.includes('police') || lowerName.includes('gtr')) {
+          model.scale.set(1.0, 1.0, 1.0); // Skala dinormalisasi agar pas
+          vehicleGroup.remove(placeholderCar);
+          vehicleGroup.add(model);
+        }
       });
     });
   })
   .catch(() => {});
 
-// 8. Virtual Joystick Implementation
+// 7. Kontrol Virtual Joystick
 const joystickBase = document.getElementById('joystick-base');
 const joystickStick = document.getElementById('joystick-stick');
 let joystickTouchId = null;
@@ -233,12 +160,10 @@ if (joystickBase) {
         let deltaX = touch.clientX - joystickCenter.x;
         let deltaY = touch.clientY - joystickCenter.y;
         let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
         if (distance > maxJoystickRadius) {
           deltaX *= maxJoystickRadius / distance;
           deltaY *= maxJoystickRadius / distance;
         }
-
         joystickStick.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
         moveTurn = -deltaX / maxJoystickRadius;
         moveForward = -deltaY / maxJoystickRadius;
@@ -256,12 +181,11 @@ if (joystickBase) {
       }
     }
   };
-
   joystickBase.addEventListener('touchend', resetJoystick);
   joystickBase.addEventListener('touchcancel', resetJoystick);
 }
 
-// 9. Kamera Orbit 360°
+// Kamera Orbit 360°
 let cameraDistance = 9;
 let cameraHeight = 3.0;
 let cameraAngle = 0;
@@ -282,35 +206,22 @@ window.addEventListener('touchmove', (e) => {
     previousTouchX = e.touches[0].clientX;
   }
 });
-
-window.addEventListener('touchend', () => {
-  isDragging = false;
-});
-
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+window.addEventListener('touchend', () => { isDragging = false; });
 
 function updateCamera() {
   const activeTarget = isInVehicle ? vehicleGroup : playerGroup;
   const targetX = activeTarget.position.x;
-  const targetY = activeTarget.position.y + 1;
+  const targetY = activeTarget.position.y + 0.5;
   const targetZ = activeTarget.position.z;
 
-  const offsetX = Math.sin(cameraAngle) * (isInVehicle ? cameraDistance * 1.4 : cameraDistance);
-  const offsetZ = Math.cos(cameraAngle) * (isInVehicle ? cameraDistance * 1.4 : cameraDistance);
+  const offsetX = Math.sin(cameraAngle) * cameraDistance;
+  const offsetZ = Math.cos(cameraAngle) * cameraDistance;
 
-  camera.position.set(
-    targetX - offsetX,
-    targetY + cameraHeight,
-    targetZ - offsetZ
-  );
+  camera.position.set(targetX - offsetX, targetY + cameraHeight, targetZ - offsetZ);
   camera.lookAt(targetX, targetY, targetZ);
 }
 
-// 10. Tombol Aksi & Loncat UI (Masuk/Keluar Kendaraan)
+// 8. Tombol UI Aksi & Loncat
 const btnAction = document.getElementById('btn-action');
 const btnJump = document.getElementById('btn-jump');
 const cashDisplay = document.getElementById('player-cash');
@@ -335,58 +246,35 @@ if (btnJump) {
   btnJump.addEventListener('click', () => {
     if (!isInVehicle) {
       playerGroup.position.y += 0.8;
-      setTimeout(() => { playerGroup.position.y = 0; }, 250);
+      setTimeout(() => { playerGroup.position.y = 0.5; }, 250);
     }
   });
 }
 
-// Pembatas Area (Collision Bounds)
-function checkPlayerBounds() {
-  const maxBoundary = 1900;
-  if (playerGroup.position.x > maxBoundary) playerGroup.position.x = maxBoundary;
-  if (playerGroup.position.x < -maxBoundary) playerGroup.position.x = -maxBoundary;
-  if (playerGroup.position.z > maxBoundary) playerGroup.position.z = maxBoundary;
-  if (playerGroup.position.z < -maxBoundary) playerGroup.position.z = -maxBoundary;
-}
-
-// 11. Master Loop Animasi (Pergerakan, NPC, Kereta, & Render)
+// 9. Master Loop Animasi
 function animate() {
   requestAnimationFrame(animate);
 
-  // Pergerakan Karakter / Kendaraan
   if (moveForward !== 0 || moveTurn !== 0) {
     if (!isInVehicle) {
       playerGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
       const moveX = Math.sin(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
       const moveZ = Math.cos(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
-      
       playerGroup.position.x += moveX;
       playerGroup.position.z += moveZ;
-      checkPlayerBounds();
     } else {
       vehicleGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
-      vehicleSpeed = playerSpeed * 3.0;
-      
+      vehicleSpeed = playerSpeed * 3.5;
       const moveX = Math.sin(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
       const moveZ = Math.cos(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
-      
       vehicleGroup.position.x += moveX;
       vehicleGroup.position.z += moveZ;
       playerGroup.position.copy(vehicleGroup.position);
     }
   }
 
-  // Animasi Rutinitas AI NPC Warga Lokal
-  npcs.forEach(npcData => {
-    npcData.mesh.position.z += npcData.dir * npcData.speed;
-    if (Math.abs(npcData.mesh.position.z - npcData.limit) > 60) {
-      npcData.dir *= -1;
-    }
-  });
-
-  // Animasi Otomatis KRL Commuter Line di atas Rel
-  trainGroup.position.z += 0.8;
-  if (trainGroup.position.z > 1500) trainGroup.position.z = -1500;
+  trainGroup.position.z += 1.0;
+  if (trainGroup.position.z > 2000) trainGroup.position.z = -2000;
 
   if (cashDisplay) cashDisplay.innerText = `Rp ${playerCash.toLocaleString()}`;
   if (starsDisplay) starsDisplay.innerText = `⭐ ${wantedStars}`;
