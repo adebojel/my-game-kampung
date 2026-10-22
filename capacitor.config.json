@@ -1,11 +1,20 @@
 {
-  "appId": "com.adebojel.mygamekampung",
-  "appName": "Cidadap Open World",
+  "appId": "com.adebojel.gamekampung",
+  "appName": "Game Kampung",
   "webDir": "www",
   "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true,
+    "permissions": [
+      "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.INTERNET"
+    ]
+  },
   "plugins": {
-    "ScreenOrientation": {
-      "initialOrientation": "landscape"
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#000000"
     }
   }
 }

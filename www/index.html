@@ -1,79 +1,62 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cidadap Open World - Master Final Fase 5</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Pustaka Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <!-- GLTFLoader untuk Memuat File Model 3D .glb / .gltf -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Game Kampung - GTA Mode</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Core Engines -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
 </head>
 <body>
+    <!-- Permission & Orientation Blocker -->
+    <div id="orientation-blocker">Putar HP Lu ke Mode Miring (Landscape)!</div>
 
-  <!-- MULTI-LOADING SCREEN SLIDESHOW -->
-  <div id="loading-screen">
-    <div class="loading-bg-slide active" style="background-image: url('assets/images/loading1.jpg');"></div>
-    <div class="loading-bg-slide" style="background-image: url('assets/images/loading2.jpg');"></div>
-    <div class="loading-bg-slide" style="background-image: url('assets/images/loading3.jpg');"></div>
-    <div class="loading-overlay-grad"></div>
-
-    <div class="loading-content">
-      <div class="loading-title">CIDADAP OPEN WORLD</div>
-      <div class="loading-subtitle">MENELUSURI NADI CIDADAP - CICURUG</div>
-      <div class="progress-track">
-        <div id="progress-fill"></div>
-      </div>
-      <div id="loading-tip">Memuat aset dunia terbuka & topografi Gunung Salak...</div>
-    </div>
-  </div>
-
-  <div id="game-container"></div>
-  
-  <div id="ui-container">
-    <!-- Live Minimap & Radar -->
-    <div id="minimap-container" class="interactive-ui">
-      <canvas id="minimap-canvas"></canvas>
-      <div id="minimap-pointer"></div>
-    </div>
-
-    <!-- HUD Status & Tombol Tas -->
-    <div id="hud-status" class="interactive-ui">
-      <div id="player-cash">Rp 500.000</div>
-      <div id="wanted-stars">⭐ 0</div>
-      <div id="mission-text">Misi: Jelajahi Rute Cidadap - Cicurug</div>
-      <button id="btn-inventory" class="interactive-ui">🎒 TAS / SENJATA</button>
-    </div>
-
-    <!-- Modal Inventory / Tas Barang & Senjata -->
-    <div id="inventory-modal" class="interactive-ui" style="display: none;">
-      <div class="inventory-content">
-        <h2>📦 INVENTORY & PERALATAN</h2>
-        <div class="inventory-grid">
-          <div class="inv-slot">🔫 AK-47 Lokal<br><span>Peluru: 90/30</span></div>
-          <div class="inv-slot">🗡️ Golok Sunda<br><span>Senjata Melee</span></div>
-          <div class="inv-slot">💊 P3K / Obat<br><span>Jumlah: 3</span></div>
-          <div class="inv-slot">📦 Kotak Logistik<br><span>Misi Cidadap</span></div>
+    <!-- UI Game Utama -->
+    <div id="game-ui">
+        <!-- Minimap GTA (Bisa di-klik untuk Waypoint) -->
+        <div id="minimap-container">
+            <div id="minimap"></div>
+            <div id="player-blip"></div>
+            <div id="waypoint-blip"></div>
         </div>
-        <button id="close-inventory">TUTUP</button>
-      </div>
+        
+        <!-- HUD Uang, Darah, Senjata -->
+        <div class="hud-top-right">
+            <div id="money">$00500000</div>
+            <div class="health-bar"><div id="health-fill"></div></div>
+            <div id="weapon-display">M4 (30/90)</div>
+        </div>
+
+        <div id="location-text">Cidadap</div>
+
+        <!-- Area Rotasi Kamera 360 (Setengah Layar Kanan) -->
+        <div id="camera-touch-zone"></div>
+
+        <!-- Joystick Bergerak (Kiri) -->
+        <div id="joystick-zone"></div>
+
+        <!-- Tombol Aksi (Jalan Kaki) -->
+        <div id="action-buttons-foot" class="control-group active">
+            <button id="btn-shoot">Tembak</button>
+            <button id="btn-jump">Lompat</button>
+            <button id="btn-enter-vehicle" style="display:none;">Naik Kendaraan</button>
+        </div>
+
+        <!-- Tombol Aksi (Kendaraan) -->
+        <div id="action-buttons-vehicle" class="control-group">
+            <button id="btn-gas">Gas</button>
+            <button id="btn-brake">Rem/Mundur</button>
+            <button id="btn-exit-vehicle">Turun</button>
+        </div>
     </div>
 
-    <!-- Kontrol Sisi Kiri (Virtual Joystick) -->
-    <div id="controls-left" class="interactive-ui">
-      <div id="joystick-base">
-        <div id="joystick-stick"></div>
-      </div>
-    </div>
-
-    <!-- Kontrol Sisi Kanan (Tombol Aksi Kontekstual & Loncat) -->
-    <div id="controls-right" class="interactive-ui">
-      <div class="control-btn" id="btn-action">NAIK</div>
-      <div class="control-btn" id="btn-jump">LOMPAT</div>
-    </div>
-  </div>
-
-  <script src="game.js"></script>
+    <!-- Sistem Radio -->
+    <audio id="game-radio" loop></audio>
+    <script src="game.js"></script>
 </body>
 </html>
