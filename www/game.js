@@ -1,10 +1,9 @@
 // =========================================================================
-// GAME OPEN WORLD CIDADAP - MASTER ENGINE FINAL FASE 4 (FIX AUTO-LOADER & RUTE)
+// CIDADAP OPEN WORLD - MASTER ENGINE FINAL FULLY OPTIMIZED & FIXED
 // =========================================================================
 
 const container = document.getElementById('game-container');
 
-// Paksa orientasi landscape aman untuk Android & WebView
 function forceLandscape() {
   if (screen.orientation && screen.orientation.lock) {
     screen.orientation.lock('landscape').catch(() => {});
@@ -13,7 +12,57 @@ function forceLandscape() {
 window.addEventListener('load', forceLandscape);
 window.addEventListener('resize', forceLandscape);
 
-// 1. Scene, Camera, & Renderer Setup
+// --- 1. SIMULASI LOADING SCREEN & ASYNC SAFETY ---
+function initLoadingSequence() {
+  let progress = 0;
+  const fill = document.getElementById('progress-fill');
+  const tip = document.getElementById('loading-tip');
+  const screen = document.getElementById('loading-screen');
+  const slides = document.querySelectorAll('.loading-bg-slide');
+  
+  const tipsText = [
+    "Memuat aset jalanan rute Cidadap - Cicurug...",
+    "Menyiapkan topografi alam & pemandangan Gunung Salak...",
+    "Menyiapkan tas inventaris & slot senjata...",
+    "Mengaktifkan radar minimap & sistem navigasi GPS..."
+  ];
+
+  let currentSlide = 0;
+  const slideInterval = setInterval(() => {
+    if (slides.length > 0) {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }
+  }, 2500);
+
+  const progressInterval = setInterval(() => {
+    progress += Math.floor(Math.random() * 10) + 5;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(progressInterval);
+      clearInterval(slideInterval);
+      
+      setTimeout(() => {
+        if (screen) {
+          screen.style.opacity = '0';
+          setTimeout(() => { screen.style.display = 'none'; }, 800);
+        }
+      }, 500);
+    }
+    if (fill) fill.style.width = progress + '%';
+    let tipIdx = Math.floor((progress / 100) * (tipsText.length - 1));
+    if (tip) tip.innerText = tipsText[tipIdx];
+  }, 150);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initLoadingSequence();
+  initMinimap();
+  initInventoryUI();
+});
+
+// 2. Scene, Camera, & Renderer Setup
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
 scene.fog = new THREE.FogExp2(0x87ceeb, 0.008);
@@ -25,23 +74,20 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 container.appendChild(renderer.domElement);
 
-// 2. Pencahayaan
+// 3. Pencahayaan
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
 scene.add(ambientLight);
 
 const sunLight = new THREE.DirectionalLight(0xfffaf0, 1.0);
 sunLight.position.set(400, 600, 400);
 sunLight.castShadow = true;
-sunLight.shadow.mapSize.width = 1024;
-sunLight.shadow.mapSize.height = 1024;
 scene.add(sunLight);
 
-// 3. Topografi Tanah & Jalan Raya Utama Cidadap - Cicurug
+// 4. Topografi Tanah & Jalan Raya Utama Cidadap - Cicurug
 const groundGeo = new THREE.PlaneGeometry(5000, 5000);
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x2e8b57, roughness: 0.9 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
-ground.position.y = 0;
 ground.receiveShadow = true;
 scene.add(ground);
 
@@ -53,7 +99,7 @@ mainRoad.position.set(0, 0.02, 0);
 mainRoad.receiveShadow = true;
 scene.add(mainRoad);
 
-// 4. Jalur Rel Kereta & KRL Commuter Line
+// 5. Jalur Rel Kereta & KRL Commuter Line & Pesawat
 const railGeo = new THREE.PlaneGeometry(4, 4000);
 const railMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
 const railway = new THREE.Mesh(railGeo, railMat);
@@ -70,7 +116,16 @@ const trainMesh = new THREE.Mesh(trainGeo, trainMat);
 trainMesh.castShadow = true;
 trainGroup.add(trainMesh);
 
-// 5. Grup Karakter Utama (Pemain)
+const planeGroup = new THREE.Group();
+planeGroup.position.set(0, 300, -1000);
+scene.add(planeGroup);
+const planeGeo = new THREE.ConeGeometry(4, 15, 4);
+planeGeo.rotateX(Math.PI / 2);
+const planeMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+const planeMesh = new THREE.Mesh(planeGeo, planeMat);
+planeGroup.add(planeMesh);
+
+// 6. Grup Karakter Utama & Sistem Animasi
 const playerGroup = new THREE.Group();
 playerGroup.position.set(0, 0.5, 0);
 scene.add(playerGroup);
@@ -82,17 +137,20 @@ placeholderBody.position.y = 0.6;
 placeholderBody.castShadow = true;
 playerGroup.add(placeholderBody);
 
+let characterMixer = null;
+let activeAction = null;
 let moveForward = 0;
 let moveTurn = 0;
 let playerSpeed = 0.15;
 let playerCash = 500000;
 let wantedStars = 0;
 
-// 6. Sistem Kendaraan (Spawn Terpisah & Tidak Bertumpuk)
+// 7. Sistem Kendaraan (Terstruktur, Tidak Menumpuk)
 let isInVehicle = false;
+let currentVehicleType = 'car';
 let vehicleSpeed = 0;
 const vehicleGroup = new THREE.Group();
-vehicleGroup.position.set(12, 0.5, 15); // Posisi spawn mobil utama yang aman
+vehicleGroup.position.set(12, 0.5, 15);
 scene.add(vehicleGroup);
 
 const carBodyGeo = new THREE.BoxGeometry(2.2, 1.2, 4.5);
@@ -102,15 +160,8 @@ placeholderCar.position.y = 0.6;
 placeholderCar.castShadow = true;
 vehicleGroup.add(placeholderCar);
 
-// Zona Toko & Checkpoint Misi
+// Checkpoint Misi Rute Cidadap - Cicurug
 const shopPosition = new THREE.Vector3(25, 0, 50);
-const shopGeo = new THREE.BoxGeometry(6, 4, 6);
-const shopMat = new THREE.MeshStandardMaterial({ color: 0xd2b48c });
-const shopMesh = new THREE.Mesh(shopGeo, shopMat);
-shopMesh.position.copy(shopPosition);
-shopMesh.position.y = 2;
-scene.add(shopMesh);
-
 const checkpointPosition = new THREE.Vector3(0, 0, -400);
 const cpGeo = new THREE.CylinderGeometry(4, 4, 0.5, 16);
 const cpMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.6 });
@@ -118,12 +169,16 @@ const checkpointMesh = new THREE.Mesh(cpGeo, cpMat);
 checkpointMesh.position.copy(checkpointPosition);
 scene.add(checkpointMesh);
 
-// 7. AUTO-LOADER BERBASIS JSON (Pemetaan Nama Aset Fase 1, 2, dan 3)
-const loader = new THREE.GLTFLoader();
+const clock = new THREE.Clock();
 
+// 8. AUTO-LOADER JSON (Mencegah Path Error & Objek Stacking)
+const loader = new THREE.GLTFLoader();
 fetch('assets/models/models.json')
   .then(response => response.json())
   .then(fileList => {
+    let bIndex = 0;
+    let tIndex = 0;
+
     fileList.forEach(fileName => {
       const filePath = `assets/models/${fileName}`;
       const lowerName = fileName.toLowerCase();
@@ -134,36 +189,40 @@ fetch('assets/models/models.json')
           if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
         });
 
-        // Karakter Utama (Adventurer / Nico)
         if (lowerName.includes('adventurer') || lowerName.includes('nico') || lowerName.includes('bellic') || lowerName.includes('casual character')) {
           model.scale.set(1.0, 1.0, 1.0);
           playerGroup.remove(placeholderBody);
           playerGroup.add(model);
-        }
-        // Kendaraan Utama / Mobil
-        else if (lowerName.includes('car') || lowerName.includes('pickup') || lowerName.includes('gtr') || lowerName.includes('police')) {
+
+          if (gltf.animations && gltf.animations.length > 0) {
+            characterMixer = new THREE.AnimationMixer(model);
+            const walkClip = gltf.animations.find(c => c.name.toLowerCase().includes('walk') || c.name.toLowerCase().includes('run')) || gltf.animations[0];
+            if (walkClip) activeAction = characterMixer.clipAction(walkClip);
+          }
+        } else if (lowerName.includes('car') || lowerName.includes('pickup') || lowerName.includes('police')) {
           model.scale.set(1.0, 1.0, 1.0);
           vehicleGroup.remove(placeholderCar);
           vehicleGroup.add(model);
-        }
-        // Bangunan, Rumah, Warung, Toko (Disebar di pinggir jalan)
-        else if (lowerName.includes('house') || lowerName.includes('shop') || lowerName.includes('store') || lowerName.includes('building') || lowerName.includes('rural')) {
+          currentVehicleType = 'car';
+        } else if (lowerName.includes('building') || lowerName.includes('house') || lowerName.includes('shop')) {
           model.scale.set(1.2, 1.2, 1.2);
-          model.position.set((Math.random() > 0.5 ? 1 : -1) * (25 + Math.random() * 20), 0, (Math.random() - 0.5) * 2000);
+          const side = (bIndex % 2 === 0) ? 1 : -1;
+          model.position.set(side * 25, 0, -100 - (Math.floor(bIndex / 2) * 80));
           scene.add(model);
-        }
-        // Elemen Alam & Pohon (Disebar di luar jalan raya)
-        else if (lowerName.includes('tree') || lowerName.includes('pine') || lowerName.includes('rock') || lowerName.includes('mountain')) {
+          bIndex++;
+        } else if (lowerName.includes('tree') || lowerName.includes('pine')) {
           model.scale.set(1.0, 1.0, 1.0);
-          model.position.set((Math.random() > 0.5 ? 1 : -1) * (35 + Math.random() * 50), 0, (Math.random() - 0.5) * 2500);
+          const side = (tIndex % 2 === 0) ? 1 : -1;
+          model.position.set(side * (38 + (tIndex % 3) * 8), 0, -50 - (Math.floor(tIndex / 2) * 45));
           scene.add(model);
+          tIndex++;
         }
-      });
+      }, undefined, () => {});
     });
   })
   .catch(() => {});
 
-// 8. Kontrol Virtual Joystick
+// 9. Kontrol Virtual Joystick Kiri
 const joystickBase = document.getElementById('joystick-base');
 const joystickStick = document.getElementById('joystick-stick');
 let joystickTouchId = null;
@@ -213,25 +272,29 @@ if (joystickBase) {
   joystickBase.addEventListener('touchcancel', resetJoystick);
 }
 
-// Kamera Orbit 360°
+// 10. Kamera Orbit 360°
 let cameraDistance = 9;
 let cameraHeight = 3.0;
-let cameraAngle = 0;
+let cameraAngleY = 0;
+let cameraAngleX = 0;
 let isDragging = false;
-let previousTouchX = 0;
+let previousTouchPos = { x: 0, y: 0 };
 
 window.addEventListener('touchstart', (e) => {
   if (e.touches.length === 1 && e.touches[0].clientX > window.innerWidth / 2) {
     isDragging = true;
-    previousTouchX = e.touches[0].clientX;
+    previousTouchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   }
 });
 
 window.addEventListener('touchmove', (e) => {
   if (isDragging && e.touches.length === 1) {
-    const deltaX = e.touches[0].clientX - previousTouchX;
-    cameraAngle -= deltaX * 0.008;
-    previousTouchX = e.touches[0].clientX;
+    const deltaX = e.touches[0].clientX - previousTouchPos.x;
+    const deltaY = e.touches[0].clientY - previousTouchPos.y;
+    cameraAngleY -= deltaX * 0.008;
+    cameraAngleX -= deltaY * 0.008;
+    cameraAngleX = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, cameraAngleX));
+    previousTouchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   }
 });
 window.addEventListener('touchend', () => { isDragging = false; });
@@ -242,35 +305,94 @@ function updateCamera() {
   const targetY = activeTarget.position.y + 0.5;
   const targetZ = activeTarget.position.z;
 
-  const offsetX = Math.sin(cameraAngle) * cameraDistance;
-  const offsetZ = Math.cos(cameraAngle) * cameraDistance;
+  const offsetX = Math.sin(cameraAngleY) * Math.cos(cameraAngleX) * cameraDistance;
+  const offsetY = Math.sin(cameraAngleX) * cameraDistance + cameraHeight;
+  const offsetZ = Math.cos(cameraAngleY) * Math.cos(cameraAngleX) * cameraDistance;
 
-  camera.position.set(targetX - offsetX, targetY + cameraHeight, targetZ - offsetZ);
+  camera.position.set(targetX - offsetX, targetY + offsetY, targetZ - offsetZ);
   camera.lookAt(targetX, targetY, targetZ);
 }
 
-// 9. Tombol UI Aksi & Loncat (Interaksi Toko & Kendaraan)
+// 11. Live Minimap & Radar Sinkron Real-Time
+let minimapCanvas, minimapCtx;
+function initMinimap() {
+  minimapCanvas = document.getElementById('minimap-canvas');
+  if (!minimapCanvas) return;
+  minimapCanvas.width = minimapCanvas.parentElement.clientWidth;
+  minimapCanvas.height = minimapCanvas.parentElement.clientHeight;
+  minimapCtx = minimapCanvas.getContext('2d');
+}
+
+function updateMinimap() {
+  if (!minimapCtx) return;
+  const w = minimapCanvas.width;
+  const h = minimapCanvas.height;
+  
+  minimapCtx.clearRect(0, 0, w, h);
+  minimapCtx.fillStyle = 'rgba(20, 20, 20, 0.85)';
+  minimapCtx.beginPath();
+  minimapCtx.arc(w/2, h/2, w/2, 0, Math.PI * 2);
+  minimapCtx.fill();
+
+  minimapCtx.fillStyle = '#444';
+  minimapCtx.fillRect(w/2 - 6, 0, 12, h);
+
+  minimapCtx.fillStyle = '#e74c3c';
+  minimapCtx.beginPath();
+  minimapCtx.arc(w/2, h/2, 5, 0, Math.PI * 2);
+  minimapCtx.fill();
+
+  const activeTarget = isInVehicle ? vehicleGroup : playerGroup;
+  const dx = checkpointPosition.x - activeTarget.position.x;
+  const dz = checkpointPosition.z - activeTarget.position.z;
+  const scale = 0.15;
+  const cpScreenX = w/2 + dx * scale;
+  const cpScreenY = h/2 + dz * scale;
+
+  if (cpScreenX >= 0 && cpScreenX <= w && cpScreenY >= 0 && cpScreenY <= h) {
+    minimapCtx.fillStyle = '#2ecc71';
+    minimapCtx.beginPath();
+    minimapCtx.arc(cpScreenX, cpScreenY, 6, 0, Math.PI * 2);
+    minimapCtx.fill();
+  }
+}
+
+// 12. Sistem Inventory & Tas Barang
+function initInventoryUI() {
+  const btnInv = document.getElementById('btn-inventory');
+  const modalInv = document.getElementById('inventory-modal');
+  const closeInv = document.getElementById('close-inventory');
+
+  if (btnInv && modalInv && closeInv) {
+    btnInv.addEventListener('click', () => { modalInv.style.display = 'flex'; });
+    closeInv.addEventListener('click', () => { modalInv.style.display = 'none'; });
+  }
+}
+
+// 13. Tombol Aksi Kontekstual & Interaksi
 const btnAction = document.getElementById('btn-action');
 const btnJump = document.getElementById('btn-jump');
 const cashDisplay = document.getElementById('player-cash');
 const starsDisplay = document.getElementById('wanted-stars');
 
+function updateContextButton() {
+  const distanceToCar = playerGroup.position.distanceTo(vehicleGroup.position);
+  if (isInVehicle) {
+    btnAction.innerText = (currentVehicleType === 'motor') ? "WHEELIE" : "TURUN";
+  } else {
+    btnAction.innerText = (distanceToCar < 8) ? "NAIK" : "AKSI";
+  }
+}
+
 if (btnAction) {
-  btnAction.innerText = "🚗";
   btnAction.addEventListener('click', () => {
     const distanceToCar = playerGroup.position.distanceTo(vehicleGroup.position);
-    const distanceToShop = playerGroup.position.distanceTo(shopPosition);
-
-    if (distanceToShop < 6) {
-      playerCash += 50000;
-      alert("Transaksi Warung Berhasil! Uang bertambah Rp 50.000");
-      return;
-    }
-
-    if (!isInVehicle && distanceToCar < 8) {
-      isInVehicle = true;
-      playerGroup.visible = false;
-    } else if (isInVehicle) {
+    if (!isInVehicle) {
+      if (distanceToCar < 8) {
+        isInVehicle = true;
+        playerGroup.visible = false;
+      }
+    } else {
       isInVehicle = false;
       playerGroup.position.set(vehicleGroup.position.x + 3, vehicleGroup.position.y, vehicleGroup.position.z);
       playerGroup.visible = true;
@@ -287,21 +409,26 @@ if (btnJump) {
   });
 }
 
-// 10. Master Loop Animasi & Pembatas Wilayah (Boundary Collision)
+// 14. Master Loop Animasi
 function animate() {
   requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+
+  if (characterMixer) characterMixer.update(delta);
 
   if (moveForward !== 0 || moveTurn !== 0) {
     if (!isInVehicle) {
-      playerGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
+      playerGroup.rotation.y = cameraAngleY + Math.atan2(moveTurn, moveForward);
       const moveX = Math.sin(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
       const moveZ = Math.cos(playerGroup.rotation.y) * playerSpeed * Math.abs(moveForward);
       
       playerGroup.position.x += moveX;
       playerGroup.position.z += moveZ;
       playerGroup.position.x = Math.max(-50, Math.min(50, playerGroup.position.x));
+
+      if (activeAction && !activeAction.isRunning()) activeAction.play();
     } else {
-      vehicleGroup.rotation.y = cameraAngle + Math.atan2(moveTurn, moveForward);
+      vehicleGroup.rotation.y = cameraAngleY + Math.atan2(moveTurn, moveForward);
       vehicleSpeed = playerSpeed * 3.5;
       const moveX = Math.sin(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
       const moveZ = Math.cos(vehicleGroup.rotation.y) * vehicleSpeed * Math.abs(moveForward);
@@ -311,23 +438,29 @@ function animate() {
       vehicleGroup.position.x = Math.max(-50, Math.min(50, vehicleGroup.position.x));
       playerGroup.position.copy(vehicleGroup.position);
     }
+  } else {
+    if (activeAction && activeAction.isRunning()) activeAction.stop();
   }
 
-  // Pergerakan KRL Commuter Line
   trainGroup.position.z += 1.2;
   if (trainGroup.position.z > 2000) trainGroup.position.z = -2000;
 
-  // Cek Checkpoint Misi
+  planeGroup.position.z += 2.0;
+  if (planeGroup.position.z > 2000) planeGroup.position.z = -2000;
+
   if (playerGroup.position.distanceTo(checkpointPosition) < 10) {
     checkpointMesh.position.set((Math.random() - 0.5) * 30, 0, playerGroup.position.z - 500);
+    checkpointPosition.copy(checkpointMesh.position);
     playerCash += 100000;
   }
 
   if (cashDisplay) cashDisplay.innerText = `Rp ${playerCash.toLocaleString()}`;
   if (starsDisplay) starsDisplay.innerText = `⭐ ${wantedStars}`;
 
+  updateContextButton();
   updateCamera();
   renderer.render(scene, camera);
+  updateMinimap();
 }
 
 animate();
