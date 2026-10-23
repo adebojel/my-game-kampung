@@ -29,7 +29,6 @@ jobs:
 
       - name: Setup Android & Generate Custom Icon
         run: |
-          npx cap init "Game Kampung" "com.adebojel.gamekampung" --web-dir www --force
           npx cap add android
           npx @capacitor/assets generate --android
           npx cap sync android
@@ -45,4 +44,3 @@ jobs:
         with:
           name: app-debug.apk
           path: android/app/build/outputs/apk/debug/*.apk
-          
