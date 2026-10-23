@@ -3,29 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Game Kampung - GTA Mode</title>
+    <title>Game Kampung - Open World Cidadap Cicurug</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Core Engines -->
+    <!-- Core Engines (Wajib Berurutan) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
 </head>
 <body>
-    <!-- Permission & Orientation Blocker -->
+    <!-- Blocker Mode Portrait -->
     <div id="orientation-blocker">Putar HP Lu ke Mode Miring (Landscape)!</div>
+
+    <!-- LOADING SCREEN GTA STYLE -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <h1 class="gta-font">MEMUAT CIDADAP...</h1>
+            <div class="spinner"></div>
+            <p id="loading-progress">Menyiapkan dunia nyata...</p>
+        </div>
+    </div>
 
     <!-- UI Game Utama -->
     <div id="game-ui">
-        <!-- Minimap GTA (Bisa di-klik untuk Waypoint) -->
+        <!-- Minimap GTA Interaktif -->
         <div id="minimap-container">
             <div id="minimap"></div>
             <div id="player-blip"></div>
             <div id="waypoint-blip"></div>
         </div>
         
-        <!-- HUD Uang, Darah, Senjata -->
+        <!-- HUD Status -->
         <div class="hud-top-right">
             <div id="money">$00500000</div>
             <div class="health-bar"><div id="health-fill"></div></div>
@@ -34,20 +43,20 @@
 
         <div id="location-text">Cidadap</div>
 
-        <!-- Area Rotasi Kamera 360 (Setengah Layar Kanan) -->
+        <!-- Area Sentuh Kamera 360 -->
         <div id="camera-touch-zone"></div>
 
-        <!-- Joystick Bergerak (Kiri) -->
+        <!-- Joystick analog Kiri -->
         <div id="joystick-zone"></div>
 
-        <!-- Tombol Aksi (Jalan Kaki) -->
+        <!-- Tombol Aksi Kanan (Jalan Kaki) -->
         <div id="action-buttons-foot" class="control-group active">
             <button id="btn-shoot">Tembak</button>
             <button id="btn-jump">Lompat</button>
             <button id="btn-enter-vehicle" style="display:none;">Naik Kendaraan</button>
         </div>
 
-        <!-- Tombol Aksi (Kendaraan) -->
+        <!-- Tombol Aksi Kanan (Berkendara) -->
         <div id="action-buttons-vehicle" class="control-group">
             <button id="btn-gas">Gas</button>
             <button id="btn-brake">Rem/Mundur</button>
@@ -55,8 +64,10 @@
         </div>
     </div>
 
-    <!-- Sistem Radio -->
+    <!-- Audio Radio -->
     <audio id="game-radio" loop></audio>
+
+    <!-- Script Game Utama -->
     <script src="game.js"></script>
 </body>
 </html>
