@@ -3,71 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Game Kampung - Open World Cidadap Cicurug</title>
+    <title>Game Kampung - Ultimate Edition</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Core Engines (Wajib Berurutan) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
 </head>
 <body>
-    <!-- Blocker Mode Portrait -->
     <div id="orientation-blocker">Putar HP Lu ke Mode Miring (Landscape)!</div>
 
-    <!-- LOADING SCREEN GTA STYLE -->
+    <!-- LOADING SCREEN -->
     <div id="loading-screen">
         <div class="loading-content">
-            <h1 class="gta-font">MEMUAT CIDADAP...</h1>
+            <h1 class="gta-font">MEMUAT DUNIA...</h1>
             <div class="spinner"></div>
-            <p id="loading-progress">Menyiapkan dunia nyata...</p>
+            <p id="loading-progress">Menyelaraskan aset 3D...</p>
+        </div>
+    </div>
+
+    <!-- MENU UTAMA (Muncul setelah loading) -->
+    <div id="main-menu" style="display: none;">
+        <div class="menu-content">
+            <h1 class="gta-font menu-title">GAME KAMPUNG</h1>
+            <button class="menu-btn" id="btn-start-game">MULAI MAIN</button>
+            <button class="menu-btn" id="btn-open-settings">PENGATURAN</button>
+        </div>
+    </div>
+
+    <!-- MENU PENGATURAN (Izin Perangkat ala PUBG/GTA) -->
+    <div id="settings-menu" style="display: none;">
+        <div class="settings-content">
+            <h2>PENGATURAN & IZIN PERANGKAT</h2>
+            <p>Berikan izin agar game berjalan lancar:</p>
+            <div class="perm-list">
+                <div class="perm-item">
+                    <span>Izin Penyimpanan Perangkat (Storage)</span>
+                    <button class="perm-btn" id="perm-storage">IZINKAN</button>
+                </div>
+                <div class="perm-item">
+                    <span>Izin Aksesibilitas (Audio & Mic)</span>
+                    <button class="perm-btn" id="perm-audio">IZINKAN</button>
+                </div>
+                <div class="perm-item">
+                    <span>Grafik Definisi Tinggi (HD)</span>
+                    <button class="perm-btn" id="perm-hd" style="background:#2ecc71;">AKTIF</button>
+                </div>
+            </div>
+            <button class="menu-btn back-btn" id="btn-close-settings">KEMBALI</button>
+        </div>
+    </div>
+
+    <!-- UI Peta Layar Penuh -->
+    <div id="full-map-ui" style="display: none;">
+        <button id="close-map-btn">X Terapkan & Tutup</button>
+        <div id="full-map-container">
+            <div id="full-map-texture"></div>
+            <div id="full-map-player-blip"></div>
+            <div id="full-map-waypoint-blip"></div>
         </div>
     </div>
 
     <!-- UI Game Utama -->
-    <div id="game-ui">
-        <!-- Minimap GTA Interaktif -->
-        <div id="minimap-container">
-            <div id="minimap"></div>
-            <div id="player-blip"></div>
-            <div id="waypoint-blip"></div>
-        </div>
-        
-        <!-- HUD Status -->
-        <div class="hud-top-right">
-            <div id="money">$00500000</div>
-            <div class="health-bar"><div id="health-fill"></div></div>
-            <div id="weapon-display">M4 (30/90)</div>
+    <div id="ui-container" style="display: none;">
+        <div id="minimap-container" class="interactive-ui">
+            <div id="minimap-texture"></div>
+            <div id="minimap-pointer"></div>
+            <div id="minimap-waypoint-blip"></div>
         </div>
 
-        <div id="location-text">Cidadap</div>
+        <div id="hud-status" class="interactive-ui">
+            <span id="player-cash">Rp 500.000</span> | <span id="wanted-stars">⭐ 0</span>
+        </div>
 
-        <!-- Area Sentuh Kamera 360 -->
         <div id="camera-touch-zone"></div>
-
-        <!-- Joystick analog Kiri -->
-        <div id="joystick-zone"></div>
-
-        <!-- Tombol Aksi Kanan (Jalan Kaki) -->
-        <div id="action-buttons-foot" class="control-group active">
-            <button id="btn-shoot">Tembak</button>
-            <button id="btn-jump">Lompat</button>
-            <button id="btn-enter-vehicle" style="display:none;">Naik Kendaraan</button>
+        
+        <div id="controls-left" class="interactive-ui">
+            <div id="joystick-zone"></div>
         </div>
 
-        <!-- Tombol Aksi Kanan (Berkendara) -->
-        <div id="action-buttons-vehicle" class="control-group">
-            <button id="btn-gas">Gas</button>
-            <button id="btn-brake">Rem/Mundur</button>
-            <button id="btn-exit-vehicle">Turun</button>
+        <div id="controls-right" class="interactive-ui">
+            <div class="control-btn" id="btn-action">Naik</div>
+            <div class="control-btn" id="btn-jump">Loncat</div>
         </div>
     </div>
 
-    <!-- Audio Radio -->
-    <audio id="game-radio" loop></audio>
-
-    <!-- Script Game Utama -->
     <script src="game.js"></script>
 </body>
 </html>
