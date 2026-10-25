@@ -27,10 +27,10 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 .perm-btn { padding: 8px 15px; font-weight: bold; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer; }
 .perm-btn.granted { background: #2ecc71; }
 
-/* UI GAME */
+/* UI GAME & MINIMAP TERHUBUNG KE PETA ASLI */
 #full-map-ui { position: absolute; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: flex; justify-content: center; align-items: center; pointer-events: auto; }
 #close-map-btn { position: absolute; top: 20px; right: 30px; padding: 10px 20px; font-size: 1.2rem; background: #e74c3c; color: white; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; z-index: 5001; }
-#full-map-container { width: 80%; height: 80%; background: #27ae60; position: relative; overflow: hidden; border: 4px solid #fff; border-radius: 10px; }
+#full-map-container { width: 80%; height: 80%; background: url('assets/images/peta_warna.png') center/cover no-repeat #27ae60; position: relative; overflow: hidden; border: 4px solid #fff; border-radius: 10px; }
 #full-map-player-blip { position: absolute; width: 16px; height: 16px; background: #fff; border: 2px solid #000; border-radius: 50%; transform: translate(-50%, -50%); z-index: 2; }
 #full-map-waypoint-blip { position: absolute; width: 14px; height: 14px; background: #9b59b6; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); z-index: 1; display: none; }
 
@@ -38,7 +38,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 .interactive-ui { pointer-events: auto; }
 
 #minimap-container { position: absolute; top: 15px; left: 15px; width: 130px; height: 130px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 50%; overflow: hidden; z-index: 15; }
-#minimap-texture { width: 500%; height: 500%; background: #27ae60; position: absolute; top: -200%; left: -200%; }
+#minimap-texture { width: 500%; height: 500%; background: url('assets/images/peta_warna.png') center/cover no-repeat; position: absolute; top: -200%; left: -200%; }
 #minimap-pointer { position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 14px solid #ffcc00; transform: translate(-50%, -50%); z-index: 2; }
 #minimap-waypoint-blip { position: absolute; width: 10px; height: 10px; background: #9b59b6; border-radius: 50%; display: none; z-index: 1; border: 2px solid #fff; }
 

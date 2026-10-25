@@ -16,7 +16,7 @@ try {
     const FILE_KARAKTER = "assets/models/Animated Woman.glb";
     const FILE_MOBIL = "assets/models/SUV.glb";
     const FILE_SENJATA = "assets/models/Assault Rifle.glb";
-    const WORLD_SIZE = 1000; 
+    const WORLD_SIZE = 3000; 
 
     // ==========================================
     // 2. SISTEM MENU & UI STATUS
@@ -59,11 +59,11 @@ try {
     }, 15000);
 
     // ==========================================
-    // 3. ENGINE 3D, KAMERA & FISIKA
+    // 3. ENGINE 3D, KAMERA & PETA NYATA CICURUG
     // ==========================================
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87ceeb); 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 4000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 5000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
@@ -75,15 +75,35 @@ try {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
     const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(200, 500, 200);
+    dirLight.position.set(500, 1000, 500);
     dirLight.castShadow = true;
     scene.add(dirLight);
 
+    // Fisika Tanah Dasar
     const groundBody = new CANNON.Body({ mass: 0, shape: new CANNON.Plane() });
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1,0,0), -Math.PI/2);
     world.addBody(groundBody);
-    const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE), new THREE.MeshStandardMaterial({color: 0x3d5e3a}));
-    groundMesh.rotation.x = -Math.PI/2;
+
+    // Memuat Peta Asli Cicurug (Kontur 3D + Tekstur Warna)
+    const terrainWidth = 3000;
+    const terrainHeight = 3000;
+    const groundGeo = new THREE.PlaneGeometry(terrainWidth, terrainHeight, 128, 128);
+    const textureLoader = new THREE.TextureLoader(loadingManager);
+
+    const heightTexture = textureLoader.load('assets/images/peta_tinggi.png');
+    const colorTexture = textureLoader.load('assets/images/peta_warna.png');
+
+    const groundMat = new THREE.MeshStandardMaterial({
+        map: colorTexture,
+        roughness: 0.8,
+        displacementMap: heightTexture,
+        displacementScale: 200, // Tinggi rendahnya relief pegunungan
+        wireframe: false
+    });
+
+    const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+    groundMesh.rotation.x = -Math.PI / 2;
+    groundMesh.receiveShadow = true;
     scene.add(groundMesh);
 
     // ==========================================
@@ -118,7 +138,7 @@ try {
             gltfLoader.load(FILE_SENJATA, (w_gltf) => {
                 weaponMesh = w_gltf.scene;
                 weaponMesh.scale.set(0.4, 0.4, 0.4);
-                weaponMesh.position.set(0.4, 0.8, 0.6); // Posisi pas di tangan
+                weaponMesh.position.set(0.4, 0.8, 0.6);
                 weaponMesh.rotation.y = Math.PI / 2;
                 playerMesh.add(weaponMesh);
                 isHoldingWeapon = true;
@@ -163,22 +183,18 @@ try {
     function shootWeapon() {
         if (!isHoldingWeapon || currentVehicleType !== 'foot') return;
         
-        // Buat proyektil peluru visual sederhana melesat ke depan
         const bulletGeo = new THREE.SphereGeometry(0.15, 8, 8);
         const bulletMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
         const bullet = new THREE.Mesh(bulletGeo, bulletMat);
 
-        // Ambil posisi dan arah hadap player
         bullet.position.copy(playerMesh.position).add(new THREE.Vector3(0, 1.2, 0));
         
-        // Arah tembakan berdasarkan rotasi player
         const dir = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), playerMesh.rotation.y);
         bullet.velocity = dir.multiplyScalar(3.5);
         
         scene.add(bullet);
         bullets.push(bullet);
 
-        // Efek recoil kecil pada senjata
         if (weaponMesh) {
             weaponMesh.position.z -= 0.2;
             setTimeout(() => { weaponMesh.position.z = 0.6; }, 100);
@@ -209,16 +225,14 @@ try {
         }
     });
 
-    // Tombol Loncat berfungsi ganda jadi Tombol Tembak jika sedang jalan kaki memegang senjata
     btnJump.addEventListener('click', () => {
         if (currentVehicleType === 'foot' && isHoldingWeapon) {
             shootWeapon();
         } else if (currentVehicleType === 'foot') {
-            playerBody.velocity.y = 8; // Efek loncat
+            playerBody.velocity.y = 8;
         }
     });
 
-    // Joystick & Kamera Sentuh 360
     let joystickVector = { x: 0, y: 0 };
     let camAngle = { x: 0, y: 0 };
     if (typeof nipplejs !== 'undefined') {
@@ -243,7 +257,6 @@ try {
         touchZone.addEventListener('touchend', () => isDragging=false);
     }
 
-    // Peta & Waypoint Pin
     let targetWaypoint = null; 
     document.getElementById('minimap-container').addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'flex');
     document.getElementById('close-map-btn').addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'none');
@@ -287,17 +300,14 @@ try {
                 activeMesh.rotation.y = Math.atan2(activeBody.velocity.x, activeBody.velocity.z);
             }
 
-            // Update Peluru Bergerak
             for (let i = bullets.length - 1; i >= 0; i--) {
                 bullets[i].position.add(bullets[i].velocity);
-                // Hapus peluru setelah jarak jauh
                 if (bullets[i].position.distanceTo(activeMesh.position) > 300) {
                     scene.remove(bullets[i]);
                     bullets.splice(i, 1);
                 }
             }
 
-            // Sinkronisasi Minimap & UI Status
             const mapPosX = (activeBody.position.x / WORLD_SIZE) + 0.5;
             const mapPosZ = (activeBody.position.z / WORLD_SIZE) + 0.5;
             document.getElementById('full-map-player-blip').style.left = (mapPosX * 100) + '%';
