@@ -19,7 +19,77 @@ try {
     const WORLD_SIZE = 3000; 
 
     // ==========================================
-    // 2. SISTEM MENU, PERIZINAN, RADIO & ANIMASI
+    // 2. SISTEM AUDIO HTML5 (RADIO & SFX SENJATA/KLAKSON)
+    // ==========================================
+    const audioAssets = {
+        backsound: new Audio('assets/audio/backsound.mp3'),
+        horn: new Audio('assets/audio/horn.mp3'),
+        gunshot: new Audio('assets/audio/gunshot.mp3'),
+        pistol: new Audio('assets/audio/pistol.mp3'),
+        rifle: new Audio('assets/audio/rifle_m16.mp3'),
+        shotgun: new Audio('assets/audio/shotgun.mp3'),
+        bazooka: new Audio('assets/audio/bazooka.mp3')
+    };
+
+    // Pengaturan Backsound Loop & Volume
+    audioAssets.backsound.loop = true;
+    audioAssets.backsound.volume = 0.5;
+
+    let isRadioPlaying = false;
+    const btnRadio = document.getElementById('btn-radio-toggle');
+
+    function toggleRadio(play) {
+        if (play !== undefined) isRadioPlaying = play;
+        else isRadioPlaying = !isRadioPlaying;
+
+        if (isRadioPlaying) {
+            audioAssets.backsound.play().catch(e => console.log("Autoplay diblokir browser:", e));
+            if (btnRadio) {
+                btnRadio.innerText = "📻 Radio: ON";
+                btnRadio.style.color = "#2ecc71";
+                btnRadio.style.borderColor = "#2ecc71";
+            }
+        } else {
+            audioAssets.backsound.pause();
+            if (btnRadio) {
+                btnRadio.innerText = "📻 Radio: OFF";
+                btnRadio.style.color = "#f39c12";
+                btnRadio.style.borderColor = "#f39c12";
+            }
+        }
+    }
+
+    // Fungsi Play SFX Suara Tembakan Berdasarkan Jenis Senjata
+    function playShootSound(weaponType = 'default') {
+        let sound;
+        switch(weaponType) {
+            case 'pistol': sound = audioAssets.pistol; break;
+            case 'rifle': sound = audioAssets.rifle; break;
+            case 'shotgun': sound = audioAssets.shotgun; break;
+            case 'bazooka': sound = audioAssets.bazooka; break;
+            default: sound = audioAssets.gunshot; break;
+        }
+        
+        if (sound) {
+            sound.currentTime = 0; // Reset agar bisa diputar beruntun tanpa delay
+            sound.play().catch(e => console.log("SFX Tembakan error:", e));
+        }
+    }
+
+    // Fungsi Play SFX Klakson Mobil
+    function playHornSound() {
+        if (audioAssets.horn) {
+            audioAssets.horn.currentTime = 0;
+            audioAssets.horn.play().catch(e => console.log("Horn error:", e));
+        }
+    }
+
+    if (btnRadio) {
+        btnRadio.addEventListener('click', () => toggleRadio());
+    }
+
+    // ==========================================
+    // 3. SISTEM MENU & PERIZINAN
     // ==========================================
     const loadingScreen = document.getElementById('loading-screen');
     const mainMenu = document.getElementById('main-menu');
@@ -31,74 +101,70 @@ try {
     let playerCash = 500000;
     let wantedStars = 0;
 
-    // Sistem Radio Audio HTML5
-    const gameAudio = document.getElementById('game-audio');
-    const btnRadio = document.getElementById('btn-radio-toggle');
-    let isRadioPlaying = false;
-
-    function toggleRadio(play) {
-        if (play !== undefined) isRadioPlaying = play;
-        else isRadioPlaying = !isRadioPlaying;
-
-        if (isRadioPlaying) {
-            gameAudio.play().catch(e => console.log("Autoplay diblokir browser:", e));
-            btnRadio.innerText = "📻 Radio: ON";
-            btnRadio.style.color = "#2ecc71";
-            btnRadio.style.borderColor = "#2ecc71";
-        } else {
-            gameAudio.pause();
-            btnRadio.innerText = "📻 Radio: OFF";
-            btnRadio.style.color = "#f39c12";
-            btnRadio.style.borderColor = "#f39c12";
-        }
+    // Tombol Izin Interaktif
+    const permStorage = document.getElementById('perm-storage');
+    const permAudio = document.getElementById('perm-audio');
+    if (permStorage) {
+        permStorage.addEventListener('click', (e) => {
+            e.target.innerText = 'DIZINKAN';
+            e.target.classList.add('granted');
+        });
+    }
+    if (permAudio) {
+        permAudio.addEventListener('click', (e) => {
+            e.target.innerText = 'DIZINKAN';
+            e.target.classList.add('granted');
+            toggleRadio(true);
+        });
     }
 
-    btnRadio.addEventListener('click', () => toggleRadio());
-
-    // Tombol Izin Interaktif
-    document.getElementById('perm-storage').addEventListener('click', (e) => {
-        e.target.innerText = 'DIZINKAN';
-        e.target.classList.add('granted');
-    });
-    document.getElementById('perm-audio').addEventListener('click', (e) => {
-        e.target.innerText = 'DIZINKAN';
-        e.target.classList.add('granted');
-        toggleRadio(true);
-    });
-
     // Pilihan Karakter dari Pengaturan
-    document.getElementById('char-selector').addEventListener('change', (e) => {
-        FILE_KARAKTER = e.target.value;
-    });
+    const charSelector = document.getElementById('char-selector');
+    if (charSelector) {
+        charSelector.addEventListener('change', (e) => {
+            FILE_KARAKTER = e.target.value;
+        });
+    }
 
-    document.getElementById('btn-start-game').addEventListener('click', () => {
-        mainMenu.style.display = 'none';
-        gameUI.style.display = 'block';
-    });
+    const btnStartGame = document.getElementById('btn-start-game');
+    if (btnStartGame) {
+        btnStartGame.addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            gameUI.style.display = 'block';
+        });
+    }
 
-    document.getElementById('btn-open-settings').addEventListener('click', () => {
-        mainMenu.style.display = 'none';
-        settingsMenu.style.display = 'flex';
-    });
+    const btnOpenSettings = document.getElementById('btn-open-settings');
+    if (btnOpenSettings) {
+        btnOpenSettings.addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            settingsMenu.style.display = 'flex';
+        });
+    }
 
-    document.getElementById('btn-close-settings').addEventListener('click', () => {
-        settingsMenu.style.display = 'none';
-        mainMenu.style.display = 'flex';
-    });
+    const btnCloseSettings = document.getElementById('btn-close-settings');
+    if (btnCloseSettings) {
+        btnCloseSettings.addEventListener('click', () => {
+            settingsMenu.style.display = 'none';
+            mainMenu.style.display = 'flex';
+        });
+    }
 
-    loadingManager.onProgress = (url, loaded, total) => { loadingProgress.innerText = `Memuat Aset: ${loaded}/${total}`; };
+    loadingManager.onProgress = (url, loaded, total) => { if (loadingProgress) loadingProgress.innerText = `Memuat Aset: ${loaded}/${total}`; };
     loadingManager.onLoad = () => { 
-        loadingScreen.style.opacity = '0'; 
-        setTimeout(() => { loadingScreen.style.display = 'none'; mainMenu.style.display = 'flex'; }, 1000); 
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0'; 
+            setTimeout(() => { loadingScreen.style.display = 'none'; if (mainMenu) mainMenu.style.display = 'flex'; }, 1000); 
+        }
     };
     setTimeout(() => { 
-        if(loadingScreen.style.display !== 'none') {
-            loadingScreen.style.display = 'none'; mainMenu.style.display = 'flex'; 
+        if (loadingScreen && loadingScreen.style.display !== 'none') {
+            loadingScreen.style.display = 'none'; if (mainMenu) mainMenu.style.display = 'flex'; 
         }
     }, 15000);
 
     // ==========================================
-    // 3. ENGINE 3D, KAMERA & MEMUAT 12 TILE PETA .OBJ
+    // 4. ENGINE 3D, KAMERA & MEMUAT 12 TILE PETA .OBJ
     // ==========================================
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87ceeb); 
@@ -161,7 +227,7 @@ try {
     }
 
     // ==========================================
-    // 4. PEMUATAN KARAKTER (DENGAN ANIMATION MIXER), SENJATA & MOBIL
+    // 5. PEMUATAN KARAKTER (ANIMASI), SENJATA & MOBIL
     // ==========================================
     let playerMesh = new THREE.Group(); scene.add(playerMesh);
     const playerBody = new CANNON.Body({ mass: 70, shape: new CANNON.Cylinder(1,1,4,12) });
@@ -178,6 +244,7 @@ try {
 
     let weaponMesh = null;
     let isHoldingWeapon = false;
+    let currentWeaponType = 'rifle'; // default jenis senjata
     let mixer = null;
     let walkAction = null;
 
@@ -235,12 +302,15 @@ try {
     }
 
     // ==========================================
-    // 5. SISTEM MENEMBAK & EFEK PELURU
+    // 6. SISTEM MENEMBAK & EFEK PELURU + AUDIONYA
     // ==========================================
     const bullets = [];
     function shootWeapon() {
         if (!isHoldingWeapon || currentVehicleType !== 'foot') return;
         
+        // Putar Suara Tembakan
+        playShootSound(currentWeaponType);
+
         const bulletGeo = new THREE.SphereGeometry(0.15, 8, 8);
         const bulletMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
         const bullet = new THREE.Mesh(bulletGeo, bulletMat);
@@ -260,37 +330,43 @@ try {
     }
 
     // ==========================================
-    // 6. KONTROL INTERAKSI & JOYSTICK (PERBAIKAN ARAH MAJU/MUNDUR)
+    // 7. KONTROL INTERAKSI & JOYSTICK
     // ==========================================
     let currentVehicleType = 'foot'; 
     const btnAction = document.getElementById('btn-action');
     const btnJump = document.getElementById('btn-jump');
 
-    btnAction.addEventListener('click', () => {
-        if (currentVehicleType === 'foot' && playerBody.position.distanceTo(vehicleBody.position) < 8) {
-            currentVehicleType = 'car';
-            playerMesh.visible = false;
-            playerBody.position.set(0, -100, 0); 
-            btnAction.innerText = 'Turun'; 
-            btnJump.innerText = 'Klakson';
-            toggleRadio(true); // Otomatis nyalakan radio saat naik mobil
-        } else if (currentVehicleType === 'car') {
-            currentVehicleType = 'foot';
-            playerMesh.visible = true;
-            playerBody.position.copy(vehicleBody.position);
-            playerBody.position.x += 4;
-            btnAction.innerText = 'Naik'; 
-            btnJump.innerText = 'Loncat';
-        }
-    });
+    if (btnAction) {
+        btnAction.addEventListener('click', () => {
+            if (currentVehicleType === 'foot' && playerBody.position.distanceTo(vehicleBody.position) < 8) {
+                currentVehicleType = 'car';
+                playerMesh.visible = false;
+                playerBody.position.set(0, -100, 0); 
+                btnAction.innerText = 'Turun'; 
+                if (btnJump) btnJump.innerText = 'Klakson';
+                toggleRadio(true); // Auto-play radio saat naik kendaraan
+            } else if (currentVehicleType === 'car') {
+                currentVehicleType = 'foot';
+                playerMesh.visible = true;
+                playerBody.position.copy(vehicleBody.position);
+                playerBody.position.x += 4;
+                btnAction.innerText = 'Naik'; 
+                if (btnJump) btnJump.innerText = 'Tembak / Loncat';
+            }
+        });
+    }
 
-    btnJump.addEventListener('click', () => {
-        if (currentVehicleType === 'foot' && isHoldingWeapon) {
-            shootWeapon();
-        } else if (currentVehicleType === 'foot') {
-            playerBody.velocity.y = 8;
-        }
-    });
+    if (btnJump) {
+        btnJump.addEventListener('click', () => {
+            if (currentVehicleType === 'foot' && isHoldingWeapon) {
+                shootWeapon();
+            } else if (currentVehicleType === 'foot') {
+                playerBody.velocity.y = 8;
+            } else if (currentVehicleType === 'car') {
+                playHornSound(); // Memicu klakson saat berada di dalam mobil
+            }
+        });
+    }
 
     let joystickVector = { x: 0, y: 0 };
     let camAngle = { x: 0, y: 0 };
@@ -317,24 +393,30 @@ try {
     }
 
     let targetWaypoint = null; 
-    document.getElementById('minimap-container').addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'flex');
-    document.getElementById('close-map-btn').addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'none');
+    const minimapContainer = document.getElementById('minimap-container');
+    const closeMapBtn = document.getElementById('close-map-btn');
+    const fullMapContainer = document.getElementById('full-map-container');
+
+    if (minimapContainer) minimapContainer.addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'flex');
+    if (closeMapBtn) closeMapBtn.addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'none');
     
-    document.getElementById('full-map-container').addEventListener('click', (e) => {
-        const rect = document.getElementById('full-map-container').getBoundingClientRect();
-        const percentX = (e.clientX - rect.left) / rect.width;
-        const percentY = (e.clientY - rect.top) / rect.height;
+    if (fullMapContainer) {
+        fullMapContainer.addEventListener('click', (e) => {
+            const rect = fullMapContainer.getBoundingClientRect();
+            const percentX = (e.clientX - rect.left) / rect.width;
+            const percentY = (e.clientY - rect.top) / rect.height;
 
-        document.getElementById('full-map-waypoint-blip').style.display = 'block';
-        document.getElementById('full-map-waypoint-blip').style.left = (percentX * 100) + '%';
-        document.getElementById('full-map-waypoint-blip').style.top = (percentY * 100) + '%';
-        document.getElementById('minimap-waypoint-blip').style.display = 'block';
+            document.getElementById('full-map-waypoint-blip').style.display = 'block';
+            document.getElementById('full-map-waypoint-blip').style.left = (percentX * 100) + '%';
+            document.getElementById('full-map-waypoint-blip').style.top = (percentY * 100) + '%';
+            document.getElementById('minimap-waypoint-blip').style.display = 'block';
 
-        targetWaypoint = { x: (percentX - 0.5) * WORLD_SIZE, z: (percentY - 0.5) * WORLD_SIZE };
-    });
+            targetWaypoint = { x: (percentX - 0.5) * WORLD_SIZE, z: (percentY - 0.5) * WORLD_SIZE };
+        });
+    }
 
     // ==========================================
-    // 7. GAME LOOP UTAMA (TICK)
+    // 8. GAME LOOP UTAMA (TICK)
     // ==========================================
     const clock = new THREE.Clock();
 
@@ -353,7 +435,7 @@ try {
             const forward = new THREE.Vector3(Math.sin(camAngle.x), 0, Math.cos(camAngle.x)).normalize();
             const right = new THREE.Vector3(Math.sin(camAngle.x - Math.PI/2), 0, Math.cos(camAngle.x - Math.PI/2)).normalize();
             
-            // PERBAIKAN Arah Vektor Joystick (Ditarik ke depan = Karakter Maju)
+            // Perbaikan Arah Vektor Joystick (Ditarik ke depan = Karakter Maju)
             activeBody.velocity.x = (forward.x * -joystickVector.y * speed) + (right.x * joystickVector.x * speed);
             activeBody.velocity.z = (forward.z * -joystickVector.y * speed) + (right.z * joystickVector.x * speed);
 
@@ -375,34 +457,11 @@ try {
 
             const mapPosX = (activeBody.position.x / WORLD_SIZE) + 0.5;
             const mapPosZ = (activeBody.position.z / WORLD_SIZE) + 0.5;
-            document.getElementById('full-map-player-blip').style.left = (mapPosX * 100) + '%';
-            document.getElementById('full-map-player-blip').style.top = (mapPosZ * 100) + '%';
-            document.getElementById('minimap-texture').style.left = `calc(50% - ${mapPosX * 100}%)`;
-            document.getElementById('minimap-texture').style.top = `calc(50% - ${mapPosZ * 100}%)`;
-            document.getElementById('minimap-pointer').style.transform = `translate(-50%, -50%) rotate(${-camAngle.x}rad)`;
-            document.getElementById('player-cash').innerText = `Rp ${playerCash.toLocaleString()}`;
-            document.getElementById('wanted-stars').innerText = `⭐ ${wantedStars}`;
+            
+            const fullMapPlayerBlip = document.getElementById('full-map-player-blip');
+            const minimapTexture = document.getElementById('minimap-texture');
+            const minimapPointer = document.getElementById('minimap-pointer');
+            const playerCashEl = document.getElementById('player-cash');
+            const wantedStarsEl = document.getElementById('wanted-stars');
 
-            if (targetWaypoint) {
-                const diffX = targetWaypoint.x - activeBody.position.x;
-                const diffZ = targetWaypoint.z - activeBody.position.z;
-                document.getElementById('minimap-waypoint-blip').style.left = `calc(50% + ${diffX / 4}px)`;
-                document.getElementById('minimap-waypoint-blip').style.top = `calc(50% + ${diffZ / 4}px)`;
-            }
-        }
-
-        if (currentVehicleType === 'foot') vehicleMesh.position.copy(vehicleBody.position);
-
-        const radius = currentVehicleType === 'foot' ? 12 : 18;
-        camera.position.x = activeBody.position.x - radius * Math.sin(camAngle.x) * Math.cos(camAngle.y);
-        camera.position.y = activeBody.position.y + (currentVehicleType === 'foot' ? 5 : 7) + radius * Math.sin(camAngle.y);
-        camera.position.z = activeBody.position.z - radius * Math.cos(camAngle.x) * Math.cos(camAngle.y);
-        camera.lookAt(activeBody.position.x, activeBody.position.y, activeBody.position.z);
-
-        renderer.render(scene, camera);
-    }
-    animate();
-
-} catch (error) {
-    document.body.innerHTML += `<div style="position:absolute;top:10px;left:10px;color:red;background:#fff;padding:15px;z-index:999999;">ERROR: ${error.message}</div>`;
-}
+            if (fu
