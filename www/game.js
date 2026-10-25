@@ -4,28 +4,22 @@ if (screen.orientation && screen.orientation.lock) {
 
 try {
     // ==========================================
-    // 1. SISTEM AUTO-GENERATE ASSETS (PROCEDURAL)
+    // 1. DATA PETA & ASET UTAMA
     // ==========================================
-    // Ini skrip ajaib buat memuat ratusan file dari folder lu[span_3](start_span)[span_3](end_span) secara otomatis.
-    // 'type: enterable' bikin bangunan bisa dimasukin. 'type: solid' bikin benda padat (pohon/tembok).
     const autoGenAssets = [
-        // ASET BANGUNAN (Bisa dimasukin)
         { file: "assets/models/House.glb", type: "enterable", scale: 4, count: 8, radiusSpread: 300 },
         { file: "assets/models/Store.glb", type: "enterable", scale: 4, count: 3, radiusSpread: 150 },
-        
-        // ASET ALAM & KOTA (Padat)
-        { file: "assets/models/Trees.glb", type: "solid", scale: 3, count: 40, radiusSpread: 400 },
-        { file: "assets/models/Streetlight.glb", type: "solid", scale: 2, count: 15, radiusSpread: 300 },
-        { file: "assets/models/Road.glb", type: "floor", scale: 5, count: 1, radiusSpread: 0 } // Pusat map
+        { file: "assets/models/Trees.glb", type: "solid", scale: 3, count: 30, radiusSpread: 400 },
+        { file: "assets/models/Streetlight.glb", type: "solid", scale: 2, count: 12, radiusSpread: 300 }
     ];
     
-    const FILE_KARAKTER = "assets/models/Animated Woman.glb"; // Dari list lu[span_4](start_span)[span_4](end_span)
-    const FILE_MOBIL = "assets/models/SUV.glb"; // Dari list lu[span_5](start_span)[span_5](end_span)
-    const FILE_SENJATA = "assets/models/Assault Rifle.glb"; // Dari list lu[span_6](start_span)[span_6](end_span)
+    const FILE_KARAKTER = "assets/models/Animated Woman.glb";
+    const FILE_MOBIL = "assets/models/SUV.glb";
+    const FILE_SENJATA = "assets/models/Assault Rifle.glb";
     const WORLD_SIZE = 1000; 
 
     // ==========================================
-    // 2. LOGIKA MENU UTAMA & PENGATURAN
+    // 2. SISTEM MENU & UI STATUS
     // ==========================================
     const loadingScreen = document.getElementById('loading-screen');
     const mainMenu = document.getElementById('main-menu');
@@ -34,7 +28,10 @@ try {
     const loadingProgress = document.getElementById('loading-progress');
     const loadingManager = new THREE.LoadingManager();
 
-    // Event Menu
+    let playerCash = 500000;
+    let wantedStars = 0;
+    let currentMissionText = "Misi: Pergi ke Warung Cidadap & Ambil Logistik";
+
     document.getElementById('btn-start-game').addEventListener('click', () => {
         mainMenu.style.display = 'none';
         gameUI.style.display = 'block';
@@ -50,21 +47,7 @@ try {
         mainMenu.style.display = 'flex';
     });
 
-    // Simulasi Permintaan Izin
-    document.getElementById('perm-storage').addEventListener('click', (e) => {
-        e.target.innerText = "DIIZINKAN";
-        e.target.classList.add("granted");
-        alert("Izin Penyimpanan diberikan. (Disimulasikan untuk Web)");
-    });
-    document.getElementById('perm-audio').addEventListener('click', (e) => {
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
-            e.target.innerText = "DIIZINKAN";
-            e.target.classList.add("granted");
-        }).catch(() => alert("Izin Mic Ditolak"));
-    });
-
-    // Loading Selesai -> Buka Main Menu
-    loadingManager.onProgress = (url, loaded, total) => { loadingProgress.innerText = `Mengatur Aset: ${loaded}/${total}`; };
+    loadingManager.onProgress = (url, loaded, total) => { loadingProgress.innerText = `Memuat Aset: ${loaded}/${total}`; };
     loadingManager.onLoad = () => { 
         loadingScreen.style.opacity = '0'; 
         setTimeout(() => { loadingScreen.style.display = 'none'; mainMenu.style.display = 'flex'; }, 1000); 
@@ -73,10 +56,10 @@ try {
         if(loadingScreen.style.display !== 'none') {
             loadingScreen.style.display = 'none'; mainMenu.style.display = 'flex'; 
         }
-    }, 15000); // Fail-safe timer
+    }, 15000);
 
     // ==========================================
-    // 3. ENGINE 3D & FISIKA
+    // 3. ENGINE 3D, KAMERA & FISIKA
     // ==========================================
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87ceeb); 
@@ -104,7 +87,7 @@ try {
     scene.add(groundMesh);
 
     // ==========================================
-    // 4. GENERATOR KAMPUNG OTOMATIS
+    // 4. PEMUATAN KARAKTER, SENJATA & MOBIL
     // ==========================================
     let playerMesh = new THREE.Group(); scene.add(playerMesh);
     const playerBody = new CANNON.Body({ mass: 70, shape: new CANNON.Cylinder(1,1,4,12) });
@@ -119,46 +102,47 @@ try {
     vehicleBody.fixedRotation = true;
     world.addBody(vehicleBody);
 
+    let weaponMesh = null;
+    let isHoldingWeapon = false;
+
     if (typeof THREE.GLTFLoader !== 'undefined') {
         const gltfLoader = new THREE.GLTFLoader(loadingManager);
         
-        // Load Player
+        // Load Karakter Utama
         gltfLoader.load(FILE_KARAKTER, (gltf) => {
             const char = gltf.scene; char.position.set(0,-2,0);
             char.traverse(n => { if(n.isMesh) n.castShadow=true; });
             playerMesh.add(char);
             
-            // Pasang Senjata Otomatis ke Karakter
+            // Load Senjata .GLB dan pasang ke tangan karakter
             gltfLoader.load(FILE_SENJATA, (w_gltf) => {
-                const weapon = w_gltf.scene;
-                weapon.scale.set(0.5, 0.5, 0.5);
-                weapon.position.set(0.5, 1, 0.5); // Posisi tangan
-                playerMesh.add(weapon);
-            });
-        }, undefined, ()=>console.log("File Karakter belum ada"));
+                weaponMesh = w_gltf.scene;
+                weaponMesh.scale.set(0.4, 0.4, 0.4);
+                weaponMesh.position.set(0.4, 0.8, 0.6); // Posisi pas di tangan
+                weaponMesh.rotation.y = Math.PI / 2;
+                playerMesh.add(weaponMesh);
+                isHoldingWeapon = true;
+            }, undefined, ()=>console.log("Model senjata dimuat"));
+        }, undefined, ()=>console.log("Karakter belum dimuat"));
 
         // Load Mobil
         gltfLoader.load(FILE_MOBIL, (gltf) => {
             const car = gltf.scene; car.position.set(0,-1,0); car.scale.set(3,3,3);
             car.traverse(n => { if(n.isMesh) n.castShadow=true; });
             vehicleMesh.add(car);
-        }, undefined, ()=>console.log("File Mobil belum ada"));
+        }, undefined, ()=>console.log("Mobil belum dimuat"));
 
-        // AUTO-SPREADER: Menyebarkan bangunan dan pohon[span_7](start_span)[span_7](end_span) secara otomatis
+        // Auto-Generate Peta & Bangunan
         autoGenAssets.forEach(asset => {
             gltfLoader.load(asset.file, (gltf) => {
                 for (let i = 0; i < asset.count; i++) {
-                    // Clone (Gandakan) model untuk disebar
                     const model = gltf.scene.clone();
                     model.scale.set(asset.scale, asset.scale, asset.scale);
-                    
-                    // Acak posisi X dan Z berdasarkan radiusSpread
                     const randX = (Math.random() - 0.5) * asset.radiusSpread;
                     const randZ = (Math.random() - 0.5) * asset.radiusSpread;
-                    model.position.set(randX, (asset.type === 'floor' ? 0.1 : 0), randZ);
+                    model.position.set(randX, 0, randZ);
                     scene.add(model);
 
-                    // Beri kotak fisika padat (Solid) JIKA bukan tipe bangunan/ruangan
                     if (asset.type === "solid") {
                         const box = new THREE.Box3().setFromObject(model);
                         const size = box.getSize(new THREE.Vector3());
@@ -168,12 +152,41 @@ try {
                         world.addBody(body);
                     }
                 }
-            }, undefined, ()=>console.log(`Gagal memuat ${asset.file}`));
+            });
         });
     }
 
     // ==========================================
-    // 5. INTERAKSI KENDARAAN, JOYSTICK & MINIMAP
+    // 5. SISTEM MENEMBAK & EFEK PELURU
+    // ==========================================
+    const bullets = [];
+    function shootWeapon() {
+        if (!isHoldingWeapon || currentVehicleType !== 'foot') return;
+        
+        // Buat proyektil peluru visual sederhana melesat ke depan
+        const bulletGeo = new THREE.SphereGeometry(0.15, 8, 8);
+        const bulletMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const bullet = new THREE.Mesh(bulletGeo, bulletMat);
+
+        // Ambil posisi dan arah hadap player
+        bullet.position.copy(playerMesh.position).add(new THREE.Vector3(0, 1.2, 0));
+        
+        // Arah tembakan berdasarkan rotasi player
+        const dir = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), playerMesh.rotation.y);
+        bullet.velocity = dir.multiplyScalar(3.5);
+        
+        scene.add(bullet);
+        bullets.push(bullet);
+
+        // Efek recoil kecil pada senjata
+        if (weaponMesh) {
+            weaponMesh.position.z -= 0.2;
+            setTimeout(() => { weaponMesh.position.z = 0.6; }, 100);
+        }
+    }
+
+    // ==========================================
+    // 6. KONTROL INTERAKSI & TOMBOL AKSI
     // ==========================================
     let currentVehicleType = 'foot'; 
     const btnAction = document.getElementById('btn-action');
@@ -184,16 +197,28 @@ try {
             currentVehicleType = 'car';
             playerMesh.visible = false;
             playerBody.position.set(0, -100, 0); 
-            btnAction.innerText = 'Turun'; btnJump.innerText = 'Klakson';
+            btnAction.innerText = 'Turun'; 
+            btnJump.innerText = 'Klakson';
         } else if (currentVehicleType === 'car') {
             currentVehicleType = 'foot';
             playerMesh.visible = true;
             playerBody.position.copy(vehicleBody.position);
             playerBody.position.x += 4;
-            btnAction.innerText = 'Naik'; btnJump.innerText = 'Loncat';
+            btnAction.innerText = 'Naik'; 
+            btnJump.innerText = 'Loncat';
         }
     });
 
+    // Tombol Loncat berfungsi ganda jadi Tombol Tembak jika sedang jalan kaki memegang senjata
+    btnJump.addEventListener('click', () => {
+        if (currentVehicleType === 'foot' && isHoldingWeapon) {
+            shootWeapon();
+        } else if (currentVehicleType === 'foot') {
+            playerBody.velocity.y = 8; // Efek loncat
+        }
+    });
+
+    // Joystick & Kamera Sentuh 360
     let joystickVector = { x: 0, y: 0 };
     let camAngle = { x: 0, y: 0 };
     if (typeof nipplejs !== 'undefined') {
@@ -218,6 +243,7 @@ try {
         touchZone.addEventListener('touchend', () => isDragging=false);
     }
 
+    // Peta & Waypoint Pin
     let targetWaypoint = null; 
     document.getElementById('minimap-container').addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'flex');
     document.getElementById('close-map-btn').addEventListener('click', () => document.getElementById('full-map-ui').style.display = 'none');
@@ -236,13 +262,14 @@ try {
     });
 
     // ==========================================
-    // 6. GAME LOOP UTAMA
+    // 7. GAME LOOP UTAMA (TICK)
     // ==========================================
     const clock = new THREE.Clock();
 
     function animate() {
         requestAnimationFrame(animate);
-        world.step(1/60, clock.getDelta(), 3);
+        const delta = clock.getDelta();
+        world.step(1/60, delta, 3);
 
         const activeBody = (currentVehicleType === 'foot') ? playerBody : vehicleBody;
         const activeMesh = (currentVehicleType === 'foot') ? playerMesh : vehicleMesh;
@@ -256,9 +283,21 @@ try {
             activeBody.velocity.z = (forward.z * joystickVector.y * speed) + (right.z * -joystickVector.x * speed);
 
             activeMesh.position.copy(activeBody.position);
-            if (joystickVector.x !== 0 || joystickVector.y !== 0) activeMesh.rotation.y = Math.atan2(activeBody.velocity.x, activeBody.velocity.z);
+            if (joystickVector.x !== 0 || joystickVector.y !== 0) {
+                activeMesh.rotation.y = Math.atan2(activeBody.velocity.x, activeBody.velocity.z);
+            }
 
-            // Sync Map
+            // Update Peluru Bergerak
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                bullets[i].position.add(bullets[i].velocity);
+                // Hapus peluru setelah jarak jauh
+                if (bullets[i].position.distanceTo(activeMesh.position) > 300) {
+                    scene.remove(bullets[i]);
+                    bullets.splice(i, 1);
+                }
+            }
+
+            // Sinkronisasi Minimap & UI Status
             const mapPosX = (activeBody.position.x / WORLD_SIZE) + 0.5;
             const mapPosZ = (activeBody.position.z / WORLD_SIZE) + 0.5;
             document.getElementById('full-map-player-blip').style.left = (mapPosX * 100) + '%';
@@ -266,6 +305,8 @@ try {
             document.getElementById('minimap-texture').style.left = `calc(50% - ${mapPosX * 100}%)`;
             document.getElementById('minimap-texture').style.top = `calc(50% - ${mapPosZ * 100}%)`;
             document.getElementById('minimap-pointer').style.transform = `translate(-50%, -50%) rotate(${-camAngle.x}rad)`;
+            document.getElementById('player-cash').innerText = `Rp ${playerCash.toLocaleString()}`;
+            document.getElementById('wanted-stars').innerText = `⭐ ${wantedStars}`;
 
             if (targetWaypoint) {
                 const diffX = targetWaypoint.x - activeBody.position.x;
