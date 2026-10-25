@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Game Kampung - Ultimate Action Open World</title>
+    <title>Game Kampung - Ultimate GTA Style</title>
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -18,7 +18,7 @@
         <div class="loading-content">
             <h1 class="gta-font">MEMUAT DUNIA...</h1>
             <div class="spinner"></div>
-            <p id="loading-progress">Menyelaraskan Karakter & Aset 3D...</p>
+            <p id="loading-progress">Menyelaraskan NPC, Rumah Utama & Karakter...</p>
         </div>
     </div>
 
@@ -27,37 +27,37 @@
         <div class="menu-content">
             <h1 class="gta-font menu-title">GAME KAMPUNG</h1>
             <button class="menu-btn" id="btn-start-game">MULAI MAIN</button>
-            <button class="menu-btn" id="btn-open-settings">PENGATURAN LENGKAP</button>
+            <button class="menu-btn" id="btn-open-settings">PENGATURAN & KARAKTER</button>
         </div>
     </div>
 
-    <!-- MENU PENGATURAN LENGKAP -->
+    <!-- MENU PENGATURAN & PILIH KARAKTER -->
     <div id="settings-menu" style="display: none;">
         <div class="settings-content">
-            <h2>⚙️ PENGATURAN GAME</h2>
+            <h2>⚙️ PENGATURAN & PILIH KARAKTER</h2>
             <div class="perm-list">
+                <div class="perm-item">
+                    <span>Pilih Karakter Utama</span>
+                    <select id="char-selector" class="setting-select">
+                        <option value="assets/models/Animated Man.glb" selected>👨 Karakter Utama (Laki-Laki)</option>
+                        <option value="assets/models/Animated Woman.glb">👩 Karakter Wanita</option>
+                    </select>
+                </div>
                 <div class="perm-item">
                     <span>Kualitas Visual & Grafik</span>
                     <select id="setting-graphics" class="setting-select">
-                        <option value="high" selected>Ultra HD (Halus)</option>
+                        <option value="high" selected>Ultra HD (Smooth)</option>
                         <option value="medium">Sedang</option>
                         <option value="low">Hemat Baterai</option>
                     </select>
                 </div>
                 <div class="perm-item">
-                    <span>Sensitivitas Scope/Kamera</span>
+                    <span>Sensitivitas Kamera</span>
                     <input type="range" id="setting-sensitivity" min="1" max="10" value="5">
                 </div>
                 <div class="perm-item">
-                    <span>Volume Audio & SFX</span>
+                    <span>Volume Audio</span>
                     <input type="range" id="setting-volume" min="0" max="100" value="80">
-                </div>
-                <div class="perm-item">
-                    <span>Pilih Model Karakter</span>
-                    <select id="char-selector" class="setting-select">
-                        <option value="assets/models/Animated Woman.glb">Karakter Utama Utuh</option>
-                        <option value="assets/models/Animated Man.glb">Karakter Pria</option>
-                    </select>
                 </div>
             </div>
             <button class="menu-btn back-btn" id="btn-close-settings">KEMBALI</button>
@@ -66,37 +66,39 @@
 
     <!-- PANEL INVENTARIS / TAS SURVIVAL -->
     <div id="inventory-ui" style="display: none;">
-        <div class="inventory-content">
-            <h2>🎒 TAS SURVIVAL & SENJATA</h2>
+        <div class="inventory-card">
+            <div class="inv-header">
+                <h2>🎒 INVENTARIS SENJATA</h2>
+                <button id="btn-close-inventory" class="close-inv-btn">✕</button>
+            </div>
             <div id="inventory-grid"></div>
-            <button class="menu-btn back-btn" id="btn-close-inventory">TUTUP TAS</button>
         </div>
     </div>
 
-    <!-- OVERLAY TEROPONG / SCOPE SNIPER (PUBG/FREE FIRE) -->
+    <!-- OVERLAY SCOPE SNIPER -->
     <div id="sniper-scope-overlay" style="display: none;">
-        <div class="scope-crosshair"></div>
+        <div class="scope-crosshair">
+            <div class="scope-line h-line"></div>
+            <div class="scope-line v-line"></div>
+            <div class="scope-dot"></div>
+        </div>
     </div>
 
     <!-- UI GAME UTAMA -->
     <div id="ui-container" style="display: none;">
-        <div id="minimap-container" class="interactive-ui">
-            <div id="minimap-texture"></div>
-            <div id="minimap-pointer"></div>
-        </div>
-
         <div id="hud-status" class="interactive-ui">
             <span id="player-cash">Rp 500.000</span> | <span id="wanted-stars">⭐ 0</span>
         </div>
 
         <div id="mission-box" class="interactive-ui">
-            <div id="mission-title">📋 MISI: PETUALANGAN KAMPUNG</div>
-            <div id="mission-desc">Buka tas untuk memilih Senjata, Pisau, Tongkat, atau kendaraan!</div>
+            <div id="mission-title">📋 RUMAH UTAMA</div>
+            <div id="mission-desc">Jelajahi kampung, temukan kendaraan atau interaksi dengan warga (NPC)!</div>
         </div>
 
         <div id="top-right-btns" class="interactive-ui">
-            <button id="btn-radio-toggle">📻 Radio: OFF</button>
-            <button id="btn-open-inventory">🎒 Tas Saya</button>
+            <button id="btn-respawn" class="modern-top-btn">🏠 Pulang</button>
+            <button id="btn-radio-toggle" class="modern-top-btn">📻 Radio: OFF</button>
+            <button id="btn-open-inventory" class="modern-top-btn">🎒 Tas</button>
         </div>
 
         <div id="camera-touch-zone"></div>
@@ -105,13 +107,23 @@
             <div id="joystick-zone"></div>
         </div>
 
-        <!-- TOMBOL DINAMIS TRANSPARAN BERDASARKAN KONDISI -->
         <div id="controls-right" class="interactive-ui">
-            <!-- Kontrol Utama Dinamis -->
-            <button class="btn-action-dynamic transparent-btn" id="btn-primary-action">Aksi</button>
-            <button class="btn-action-dynamic transparent-btn" id="btn-secondary-action">Loncat</button>
-            <button class="btn-action-dynamic transparent-btn" id="btn-scope-action" style="display:none;">🎯 Scope</button>
-            <button class="btn-action-dynamic transparent-btn" id="btn-exit-vehicle" style="display:none;">🚪 Turun</button>
+            <button class="ff-btn btn-fire" id="btn-primary-action">
+                <span class="btn-icon">🔥</span>
+                <span class="btn-label" id="label-primary">TEMBAK</span>
+            </button>
+            <button class="ff-btn btn-jump" id="btn-secondary-action">
+                <span class="btn-icon">🦘</span>
+                <span class="btn-label">LOMPAT</span>
+            </button>
+            <button class="ff-btn btn-scope" id="btn-scope-action" style="display:none;">
+                <span class="btn-icon">🎯</span>
+                <span class="btn-label">SCOPE</span>
+            </button>
+            <button class="ff-btn btn-exit" id="btn-exit-vehicle" style="display:none;">
+                <span class="btn-icon">🚪</span>
+                <span class="btn-label">TURUN</span>
+            </button>
         </div>
     </div>
 
