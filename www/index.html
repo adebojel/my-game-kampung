@@ -8,6 +8,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
 </head>
@@ -76,7 +77,12 @@
         </div>
 
         <div id="hud-status" class="interactive-ui">
-            <span id="player-cash">Rp 500.000</span> | <span id="wanted-stars"> 0</span>
+            <span id="player-cash">Rp 500.000</span> | <span id="wanted-stars">  0</span>
+        </div>
+
+        <!-- TOMBOL PEMUTAR MUSIK / RADIO -->
+        <div id="radio-container" class="interactive-ui">
+            <button id="btn-radio-toggle">📻 Radio: OFF</button>
         </div>
 
         <div id="camera-touch-zone"></div>
@@ -90,6 +96,11 @@
             <div class="control-btn" id="btn-jump">Loncat</div>
         </div>
     </div>
+
+    <!-- ELEMEN AUDIO HTML5 UNTUK RADIO GAME -->
+    <audio id="game-audio" loop>
+        <source src="assets/audio/backsound.mp3" type="audio/mpeg">
+    </audio>
 
     <script src="game.js"></script>
 </body>
