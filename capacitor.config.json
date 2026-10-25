@@ -2,6 +2,7 @@
   "appId": "com.adebojel.gamekampung",
   "appName": "Game Kampung",
   "webDir": "www",
+  "orientation": "landscape",
   "bundledWebRuntime": false,
   "android": {
     "allowMixedContent": true,

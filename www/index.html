@@ -12,8 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
 </head>
 <body>
-    <div id="orientation-blocker">Putar HP Lu ke Mode Miring (Landscape)!</div>
-
     <!-- LOADING SCREEN -->
     <div id="loading-screen">
         <div class="loading-content">
@@ -23,32 +21,36 @@
         </div>
     </div>
 
-    <!-- MENU UTAMA (Muncul setelah loading) -->
+    <!-- MENU UTAMA -->
     <div id="main-menu" style="display: none;">
         <div class="menu-content">
             <h1 class="gta-font menu-title">GAME KAMPUNG</h1>
             <button class="menu-btn" id="btn-start-game">MULAI MAIN</button>
-            <button class="menu-btn" id="btn-open-settings">PENGATURAN</button>
+            <button class="menu-btn" id="btn-open-settings">PENGATURAN & KARAKTER</button>
         </div>
     </div>
 
-    <!-- MENU PENGATURAN (Izin Perangkat ala PUBG/GTA) -->
+    <!-- MENU PENGATURAN & GANTI KARAKTER -->
     <div id="settings-menu" style="display: none;">
         <div class="settings-content">
-            <h2>PENGATURAN & IZIN PERANGKAT</h2>
-            <p>Berikan izin agar game berjalan lancar:</p>
+            <h2>PENGATURAN & GANTI KARAKTER</h2>
+            <p>Sesuaikan perizinan dan pilih karakter:</p>
+            
             <div class="perm-list">
                 <div class="perm-item">
-                    <span>Izin Penyimpanan Perangkat (Storage)</span>
+                    <span>Izin Penyimpanan Perangkat</span>
                     <button class="perm-btn" id="perm-storage">IZINKAN</button>
                 </div>
                 <div class="perm-item">
-                    <span>Izin Aksesibilitas (Audio & Mic)</span>
+                    <span>Izin Aksesibilitas Audio</span>
                     <button class="perm-btn" id="perm-audio">IZINKAN</button>
                 </div>
                 <div class="perm-item">
-                    <span>Grafik Definisi Tinggi (HD)</span>
-                    <button class="perm-btn" id="perm-hd" style="background:#2ecc71;">AKTIF</button>
+                    <span>Pilih Model Karakter</span>
+                    <select id="char-selector" style="padding: 8px; background: #333; color: #fff; border-radius: 5px; font-weight: bold;">
+                        <option value="assets/models/Animated Woman.glb">Karakter Wanita</option>
+                        <option value="assets/models/Animated Man.glb">Karakter Pria (Cadangan)</option>
+                    </select>
                 </div>
             </div>
             <button class="menu-btn back-btn" id="btn-close-settings">KEMBALI</button>
@@ -57,7 +59,7 @@
 
     <!-- UI Peta Layar Penuh -->
     <div id="full-map-ui" style="display: none;">
-        <button id="close-map-btn">X Terapkan & Tutup</button>
+        <button id="close-map-btn">X Tutup Peta</button>
         <div id="full-map-container">
             <div id="full-map-texture"></div>
             <div id="full-map-player-blip"></div>
@@ -74,7 +76,7 @@
         </div>
 
         <div id="hud-status" class="interactive-ui">
-            <span id="player-cash">Rp 500.000</span> | <span id="wanted-stars">⭐ 0</span>
+            <span id="player-cash">Rp 500.000</span> | <span id="wanted-stars"> 0</span>
         </div>
 
         <div id="camera-touch-zone"></div>

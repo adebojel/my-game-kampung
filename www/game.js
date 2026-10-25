@@ -13,13 +13,13 @@ try {
         { file: "assets/models/Streetlight.glb", type: "solid", scale: 2, count: 12, radiusSpread: 300 }
     ];
     
-    const FILE_KARAKTER = "assets/models/Animated Woman.glb";
+    let FILE_KARAKTER = "assets/models/Animated Woman.glb";
     const FILE_MOBIL = "assets/models/SUV.glb";
     const FILE_SENJATA = "assets/models/Assault Rifle.glb";
     const WORLD_SIZE = 3000; 
 
     // ==========================================
-    // 2. SISTEM MENU & UI STATUS
+    // 2. SISTEM MENU, PERIZINAN & GANTI KARAKTER
     // ==========================================
     const loadingScreen = document.getElementById('loading-screen');
     const mainMenu = document.getElementById('main-menu');
@@ -30,7 +30,21 @@ try {
 
     let playerCash = 500000;
     let wantedStars = 0;
-    let currentMissionText = "Misi: Pergi ke Warung Cidadap & Ambil Logistik";
+
+    // Tombol Izin Interaktif
+    document.getElementById('perm-storage').addEventListener('click', (e) => {
+        e.target.innerText = 'DIZINKAN';
+        e.target.classList.add('granted');
+    });
+    document.getElementById('perm-audio').addEventListener('click', (e) => {
+        e.target.innerText = 'DIZINKAN';
+        e.target.classList.add('granted');
+    });
+
+    // Pilihan Karakter dari Pengaturan
+    document.getElementById('char-selector').addEventListener('change', (e) => {
+        FILE_KARAKTER = e.target.value;
+    });
 
     document.getElementById('btn-start-game').addEventListener('click', () => {
         mainMenu.style.display = 'none';
@@ -59,15 +73,24 @@ try {
     }, 15000);
 
     // ==========================================
-    // 3. ENGINE 3D, KAMERA & PETA NYATA CICURUG
+    // 3. ENGINE 3D, KAMERA & PETA NYATA (FIX DISPLACEMENT)
     // ==========================================
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87ceeb); 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 5000);
+    
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     document.body.appendChild(renderer.domElement);
+
+    // Handle Resize Otomatis Agar Tidak Pecah/Terbelah
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
 
     const world = new CANNON.World();
     world.gravity.set(0, -9.82, 0);
@@ -79,15 +102,14 @@ try {
     dirLight.castShadow = true;
     scene.add(dirLight);
 
-    // Fisika Tanah Dasar
     const groundBody = new CANNON.Body({ mass: 0, shape: new CANNON.Plane() });
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1,0,0), -Math.PI/2);
     world.addBody(groundBody);
 
-    // Memuat Peta Asli Cicurug (Kontur 3D + Tekstur Warna)
+    // Memuat Peta Cicurug (Skala tinggi diturunkan jadi 40 agar tidak glitch/terbalik)
     const terrainWidth = 3000;
     const terrainHeight = 3000;
-    const groundGeo = new THREE.PlaneGeometry(terrainWidth, terrainHeight, 128, 128);
+    const groundGeo = new THREE.PlaneGeometry(terrainWidth, terrainHeight, 64, 64);
     const textureLoader = new THREE.TextureLoader(loadingManager);
 
     const heightTexture = textureLoader.load('assets/images/peta_tinggi.png');
@@ -97,7 +119,7 @@ try {
         map: colorTexture,
         roughness: 0.8,
         displacementMap: heightTexture,
-        displacementScale: 200, // Tinggi rendahnya relief pegunungan
+        displacementScale: 40, // Disesuaikan agar kontur mulus, tidak spike/terbalik
         wireframe: false
     });
 
@@ -128,13 +150,12 @@ try {
     if (typeof THREE.GLTFLoader !== 'undefined') {
         const gltfLoader = new THREE.GLTFLoader(loadingManager);
         
-        // Load Karakter Utama
+        // Load Karakter Utama sesuai pilihan pengaturan
         gltfLoader.load(FILE_KARAKTER, (gltf) => {
             const char = gltf.scene; char.position.set(0,-2,0);
             char.traverse(n => { if(n.isMesh) n.castShadow=true; });
             playerMesh.add(char);
             
-            // Load Senjata .GLB dan pasang ke tangan karakter
             gltfLoader.load(FILE_SENJATA, (w_gltf) => {
                 weaponMesh = w_gltf.scene;
                 weaponMesh.scale.set(0.4, 0.4, 0.4);
