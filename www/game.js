@@ -2,6 +2,51 @@ if (screen.orientation && screen.orientation.lock) {
     screen.orientation.lock('landscape').catch(()=>{});
 }
 
+// LOGIKA AUTO-DOWNLOADER ASET DARI GITHUB RELEASE
+const ASSETS_URL = "https://github.com/adebojel/my-game-kampung/releases/download/v1.0.0/assets.zip";
+
+async function checkAndDownloadAssets() {
+    const isDownloaded = localStorage.getItem("assets_downloaded");
+    const downloadContainer = document.getElementById("download-container");
+
+    if (isDownloaded) {
+        if (downloadContainer) downloadContainer.style.display = "none";
+        return;
+    }
+
+    if (downloadContainer) downloadContainer.style.display = "block";
+
+    try {
+        const response = await fetch(ASSETS_URL);
+        const reader = response.body.getReader();
+        const contentLength = +response.headers.get('Content-Length') || 241000000;
+        let receivedLength = 0;
+        let chunks = [];
+
+        while(true) {
+            const {done, value} = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            receivedLength += value.length;
+            
+            let percent = Math.round((receivedLength / contentLength) * 100);
+            const progressBar = document.getElementById("download-progress");
+            const percentText = document.getElementById("download-percent");
+            if (progressBar) progressBar.value = percent;
+            if (percentText) percentText.innerText = percent + "%";
+        }
+
+        localStorage.setItem("assets_downloaded", "true");
+        if (downloadContainer) downloadContainer.style.display = "none";
+    } catch (err) {
+        const statusText = document.getElementById("download-status");
+        if (statusText) statusText.innerText = "Koneksi lambat, memuat aset standar...";
+    }
+}
+
+// Panggil Pengecekan Aset saat Game Dibuka
+checkAndDownloadAssets();
+
 try {
     const MAIN_HOUSE_POS = { x: 0, y: 1.5, z: 10 };
 
@@ -232,7 +277,7 @@ try {
         });
 
         // PROSES AUTO-SPAWN MODEL ENVIRONMENT DARI JSON AGAR TIDAK MENUMPUK
-        const spawnedPositions = [{ x: 0, z: 0 }]; // Hindari koordinat rumah utama
+        const spawnedPositions = [{ x: 0, z: 0 }];
 
         fetch('assets/models.json')
             .then(res => res.json())
@@ -251,7 +296,7 @@ try {
                                 attempts++;
 
                                 validPos = spawnedPositions.every(p => {
-                                    return Math.hypot(p.x - posX, p.z - posZ) > 25; // Jarak minimal 25 unit
+                                    return Math.hypot(p.x - posX, p.z - posZ) > 25;
                                 });
                             }
 
