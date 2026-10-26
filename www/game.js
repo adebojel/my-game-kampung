@@ -2,7 +2,7 @@ if (screen.orientation && screen.orientation.lock) {
     screen.orientation.lock('landscape').catch(()=>{});
 }
 
-// LOGIKA AUTO-DOWNLOADER ASET DARI GITHUB RELEASE
+// LOGIKA AUTO-DOWNLOADER ASET + SAFE FALLBACK
 const ASSETS_URL = "https://github.com/adebojel/my-game-kampung/releases/download/v1.0.0/assets.zip";
 
 async function checkAndDownloadAssets() {
@@ -17,34 +17,41 @@ async function checkAndDownloadAssets() {
     if (downloadContainer) downloadContainer.style.display = "block";
 
     try {
-        const response = await fetch(ASSETS_URL);
-        const reader = response.body.getReader();
-        const contentLength = +response.headers.get('Content-Length') || 241000000;
-        let receivedLength = 0;
-        let chunks = [];
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000); // Batas tunggu max 6 detik
 
-        while(true) {
-            const {done, value} = await reader.read();
-            if (done) break;
-            chunks.push(value);
-            receivedLength += value.length;
-            
-            let percent = Math.round((receivedLength / contentLength) * 100);
-            const progressBar = document.getElementById("download-progress");
-            const percentText = document.getElementById("download-percent");
-            if (progressBar) progressBar.value = percent;
-            if (percentText) percentText.innerText = percent + "%";
+        const response = await fetch(ASSETS_URL, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+            const reader = response.body.getReader();
+            const contentLength = +response.headers.get('Content-Length') || 241000000;
+            let receivedLength = 0;
+
+            while(true) {
+                const {done, value} = await reader.read();
+                if (done) break;
+                receivedLength += value.length;
+                let percent = Math.round((receivedLength / contentLength) * 100);
+                
+                const progressBar = document.getElementById("download-progress");
+                const percentText = document.getElementById("download-percent");
+                if (progressBar) progressBar.value = percent;
+                if (percentText) percentText.innerText = percent + "%";
+            }
+            localStorage.setItem("assets_downloaded", "true");
+        } else {
+            throw new Error("Respon server gagal");
         }
-
-        localStorage.setItem("assets_downloaded", "true");
-        if (downloadContainer) downloadContainer.style.display = "none";
     } catch (err) {
-        const statusText = document.getElementById("download-status");
-        if (statusText) statusText.innerText = "Koneksi lambat, memuat aset standar...";
+        console.log("Menjalankan game dengan aset bawaan/lokal.");
+        localStorage.setItem("assets_downloaded", "true");
+    } finally {
+        if (downloadContainer) downloadContainer.style.display = "none";
     }
 }
 
-// Panggil Pengecekan Aset saat Game Dibuka
+// Jalankan Pengecekan Aset saat Aplikasi Buka
 checkAndDownloadAssets();
 
 try {
@@ -108,7 +115,7 @@ try {
         }
     }
     loadingManager.onLoad = () => finishLoading();
-    setTimeout(() => finishLoading(), 4500);
+    setTimeout(() => finishLoading(), 3500); // Otomatis masuk menu utama dalam 3.5 detik
 
     // BACA OTOMATIS KARAKTER DARI FILE MODELS.JSON
     const charSelectEl = document.getElementById('char-selector');
