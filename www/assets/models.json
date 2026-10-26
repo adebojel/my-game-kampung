@@ -1,548 +1,2190 @@
-[
-  "1994 Nissan 180MX.glb",
-  "2015 Dodge Challenger.glb",
-  "ATM.glb",
-  "Adventurer by Quaternius - 5EGWBMpuXq.glb",
-  "Adventurer.glb",
-  "Air conditioner.glb",
-  "Airplane.glb",
-  "Alpaca.glb",
-  "Ambulance.glb",
-  "Ammo Grenade Launcher.glb",
-  "Ammo Shotgun.glb",
-  "Ammo Sniper.glb",
-  "Animated Woman by Quaternius - nIItLV9nxS.glb",
-  "Animated Woman-nIItLV9nxS.glb",
-  "Animated Woman-qJ2gsTUBHL.glb",
-  "Animated Woman.glb",
-  "Apartment building.glb",
-  "Archery Building.glb",
-  "Archery Second Age Le.glb",
-  "Archery Towers-IA5qOjIAiT.glb",
-  "Archery Towers.glb",
-  "Archery Training Grounds-5dWpau7C3k.glb",
-  "Archery Training Grounds.glb",
-  "Arrow.glb",
-  "Assault Rifle Ammo Box.glb",
-  "Assault Rifle-Bgvuu4CUMV.glb",
-  "Assault Rifle-MdbcTe6hH3.glb",
-  "Assault Rifle-XGeBGFQxYg.glb",
-  "Assault Rifle-fpLucho45C.glb",
-  "Assault Rifle.glb",
-  "Axe.glb",
-  "Backpack.glb",
-  "Bakery by Poly by Google - 6BGhNQlUzRR.glb",
-  "Bar.glb",
-  "Barracks-UXCOwRBSxx.glb",
-  "Barracks-a1C1L8gJTX.glb",
-  "Barracks-dvlksXgxWc.glb",
-  "Barracks-lnyADheSvA.glb",
-  "Barracks-puD1kbV4kf.glb",
-  "Barracks.glb",
-  "Barrier Large by Quaternius - gLbBiYwt7l.glb",
-  "Base.glb",
-  "Baseball Bat.glb",
-  "Basic Semi-truck with spikes.glb",
-  "Battery-MYa3uWdwPU.glb",
-  "Battery.glb",
-  "Bayonet.glb",
-  "Bazooka.glb",
-  "Bear Trap.glb",
-  "Bench.glb",
-  "Bicycle.glb",
-  "Big Building.glb",
-  "Bike Warning Road Sign.glb",
-  "Billboard.glb",
-  "Bipod.glb",
-  "Black Smith Shop by Zsky - PrOdJaBrOu.glb",
-  "Blimp.glb",
-  "Boat.glb",
-  "Bomb.glb",
-  "Bonfire.glb",
-  "Bow.glb",
-  "Box B.glb",
-  "Box.glb",
-  "Brown Building.glb",
-  "Buggy.glb",
-  "Building B.glb",
-  "Building Green.glb",
-  "Building Red Corner.glb",
-  "Building Red.glb",
-  "Building by Kay Lousberg - EL3ePInr1N.glb",
-  "Building-7lMEpT2ICD.glb",
-  "Building-T3oyvK6VEU.glb",
-  "Building-bbH2Bg73qM.glb",
-  "Building-g15lpKh4li.glb",
-  "Building-otRsYa6pan.glb",
-  "Building-qOhhGLftam.glb",
-  "Building.glb",
-  "Bull.glb",
-  "Bulldozer.glb",
-  "Bullpup.glb",
-  "Bus Stop.glb",
-  "Bus stop sign.glb",
-  "Bus.glb",
-  "Bush with Flowers.glb",
-  "Bush.glb",
-  "Business Building.glb",
-  "Business Man.glb",
-  "Butcher Knife.glb",
-  "CAR Model(1).glb",
-  "CAR Model.glb",
-  "Cable Car.glb",
-  "Camaro SS LP.glb",
-  "Camaro ZL1 2017.glb",
-  "Can Broken.glb",
-  "Can Red.glb",
-  "Can.glb",
-  "Canoe.glb",
-  "Car Hatchback.glb",
-  "Car Radio - with tape player.glb",
-  "Car(1).glb",
-  "Car-Cz6yDaUcM9.glb",
-  "Car-unqqkULtRU.glb",
-  "Car.glb",
-  "Cargo Train Coal Conta.glb",
-  "Cargo Train Container.glb",
-  "Cargo Train Front.glb",
-  "Cargo Train Wagon.glb",
-  "Castle Fortress.glb",
-  "Castle Gate.glb",
-  "Castle-y15yE6kWLY.glb",
-  "Castle.glb",
-  "Casual Character.glb",
-  "Chainsaw pole.glb",
-  "Clover-u5SOgBFiut.glb",
-  "Clover.glb",
-  "Compass.glb",
-  "Cone.glb",
-  "Convertible by Poly by Google - dggOiBLYyuR.glb",
-  "Convertible(1).glb",
-  "Convertible(2).glb",
-  "Convertible-dggOiBLYyuR.glb",
-  "Convertible.glb",
-  "Cottage by CreativeTrio - YDGLLT0emC.glb",
-  "Cow.glb",
-  "Crane.glb",
-  "Crops.glb",
-  "Crossbow.glb",
-  "Crowbar.glb",
-  "Cruise ship.glb",
-  "Curved road by Poly by Google - 9r2Owu4oVHw.glb",
-  "Dagger.glb",
-  "Dead Tree-CD4edbPSGm.glb",
-  "Dead Tree-Mcd2zYqyww.glb",
-  "Dead Tree-MlmK5488ou.glb",
-  "Dead Tree-n8FhMgMldD.glb",
-  "Dead Tree.glb",
-  "Debris Papers.glb",
-  "Deer.glb",
-  "Dock-XViKoBh2UN.glb",
-  "Dock.glb",
-  "Docks.glb",
-  "Dodge Charger(1).glb",
-  "Dodge Charger.glb",
-  "Donkey.glb",
-  "Dump truck.glb",
-  "Dumpster.glb",
-  "Farm Dirt.glb",
-  "Farm house by Poly by Google - bHyQe5jzdiQ.glb",
-  "Farm-91wMLb9kKo.glb",
-  "Farm-O4wpTLSfIn.glb",
-  "Farm.glb",
-  "Fence End.glb",
-  "Fence Piece.glb",
-  "Fence.glb",
-  "Fern.glb",
-  "Fire Exit.glb",
-  "Fire hydrant.glb",
-  "First Aid Kit-wP00rePSRD.glb",
-  "First Aid Kit.glb",
-  "Flare Gun.glb",
-  "Floor Hole.glb",
-  "Flower Group-LqTljN6Wg2.glb",
-  "Flower Group.glb",
-  "Flower Petal-LqvxG9OBOU.glb",
-  "Flower Petal-eVE0j49ux9.glb",
-  "Flower Petal-niuBUEJdvM.glb",
-  "Flower Petal-tzG4JcqYWs.glb",
-  "Flower Petal.glb",
-  "Flower Pot-Kgt363WkKd.glb",
-  "Flower Pot.glb",
-  "Flower Single-GvfHo0roi3.glb",
-  "Flower Single.glb",
-  "Forklift.glb",
-  "Fortress.glb",
-  "Fox.glb",
-  "Garbage Lid Shield.glb",
-  "Gas Can.glb",
-  "Gasoline Bomb.glb",
-  "Gb Blank.glb",
-  "Glock.glb",
-  "Go kart.glb",
-  "Gold Rocks.glb",
-  "Gold rocks(1).glb",
-  "Golf Club.glb",
-  "Golf cart.glb",
-  "Gondola.glb",
-  "Grass Wispy-Msr9zx66VU.glb",
-  "Grass Wispy.glb",
-  "Grass.glb",
-  "Greenhouse.glb",
-  "Grenade Launcher.glb",
-  "Hand Grenade.glb",
-  "Hang glider.glb",
-  "Helicopter.glb",
-  "High Speed Front.glb",
-  "High Speed Wagon.glb",
-  "Hockey Stick.glb",
-  "Horse.glb",
-  "Hospital.glb",
-  "Hot air balloon.glb",
-  "Hotel Building.glb",
-  "House by Poly by Google - 75V_MLvKMqM.glb",
-  "House by Quaternius - HeHDd2rTpX.glb",
-  "House by Quaternius - roqiHdrpgc.glb",
-  "House with driveway.glb",
-  "House(1).glb",
-  "House-7VSVwAg2T3.glb",
-  "House-RSwoYSLblu.glb",
-  "House-YlADpCJU8U.glb",
-  "House-k6tP5nFUd2.glb",
-  "House-nihGGju7DW.glb",
-  "House-oJJIRwv6Bo.glb",
-  "House-vZ1CLbWmSx.glb",
-  "House.glb",
-  "Houses-gEjAC1UvVU.glb",
-  "Houses-vCoDG5hFyI.glb",
-  "Houses.glb",
-  "Hoverboard.glb",
-  "Hunters Knife.glb",
-  "Husky.glb",
-  "Hut-4MJWbyd6vw.glb",
-  "Hut-wxi3kAu5ey.glb",
-  "Hut.glb",
-  "Huts.glb",
-  "Iron Fence by Kay Lousberg - MDROOJeCSQ.glb",
-  "Japanese Train Station by Andrew-John Hickman - f2ZQl-lX0gM.glb",
-  "Jeep.glb",
-  "Jet.glb",
-  "Jetpack.glb",
-  "Katana.glb",
-  "Kayak.glb",
-  "Knife.glb",
-  "Large Building-ppwtREejXg.glb",
-  "Large Building.glb",
-  "Locomotive Front.glb",
-  "Locomotive Passenger Carriage.glb",
-  "Locomotive Wagon.glb",
-  "Log cabin by Poly by Google - f7uccD5iyz0.glb",
-  "Logs.glb",
-  "Low Poly Mini Cooper.glb",
-  "Low-poly landscape by sirkitree - bjsNFfddgOv.glb",
-  "M21 EBR.glb",
-  "MDR.glb",
-  "MK14.glb",
-  "MPX.glb",
-  "Machete.glb",
-  "Mailbox.glb",
-  "Man.glb",
-  "Manhole Cover.glb",
-  "Market Stalls Compact.glb",
-  "Market Stalls-4ZAhRv2tLG.glb",
-  "Market Stalls-OLd8vu6lPL.glb",
-  "Market Stalls-PUZZ5F91OE.glb",
-  "Market Stalls.glb",
-  "Match Burnt.glb",
-  "Match.glb",
-  "Matchbox.glb",
-  "Metal Fence by Quaternius - qWKhREFj7H.glb",
-  "Military Motorbike.glb",
-  "Mine.glb",
-  "Mitsubishi L200.glb",
-  "Molotov.glb",
-  "Mom_s Wrangler.glb",
-  "Motorcycle(1).glb",
-  "Motorcycle(2).glb",
-  "Motorcycle, Suzuki SV650.glb",
-  "Motorcycle-5_MTCnqfUTr.glb",
-  "Motorcycle.glb",
-  "Motorcycle_ Suzuki SV650.glb",
-  "Mountain Group.glb",
-  "Mountain-XY4ej3Zg3I.glb",
-  "Mountain.glb",
-  "Mountains.glb",
-  "Mpa.glb",
-  "Mpsd.glb",
-  "Mushroom Laetiporus.glb",
-  "Mushroom.glb",
-  "Nissan GTR by David Sirera - a_HKCtYAv2W.glb",
-  "Nissan GTR.glb",
-  "Nunchucks.glb",
-  "P226.glb",
-  "P320.glb",
-  "Pan.glb",
-  "Parachute.glb",
-  "Path Straight.glb",
-  "Pebble Round-KYtJ6JNXh2.glb",
-  "Pebble Round-icVsN3lmVy.glb",
-  "Pebble Round-kAMfq1uJUY.glb",
-  "Pebble Round-nMf8LHOsbM.glb",
-  "Pebble Round.glb",
-  "Pebble Square-2YtLzwgsWp.glb",
-  "Pebble Square-6juX57sLHe.glb",
-  "Pebble Square-Mm4RMgwNO8.glb",
-  "Pebble Square-l5XiYQj1oD.glb",
-  "Pebble Square-s71L3q1nXN.glb",
-  "Pebble Square.glb",
-  "Phone.glb",
-  "Pickaxe.glb",
-  "Pickup Truck by Quaternius - qn4grQgHm8.glb",
-  "Pickup Truck.glb",
-  "Pine Trees.glb",
-  "Pine-699sFuLCN2.glb",
-  "Pine-79gmlLnweB.glb",
-  "Pine-Zt62gceKXZ.glb",
-  "Pine-rfnxJv0Rqa.glb",
-  "Pine.glb",
-  "Pipe.glb",
-  "Pistol Ammo.glb",
-  "Pistol by Quaternius - J3i9KDQ3kt.glb",
-  "Pistol-52kQzphmeF.glb",
-  "Pistol-J3i9KDQ3kt.glb",
-  "Pistol-L1u7KkJzY2.glb",
-  "Pistol-M6RRKnpfim.glb",
-  "Pistol-Z7aOjJu583.glb",
-  "Pistol.glb",
-  "Pitchfork.glb",
-  "Pizza Corner.glb",
-  "Plant Big-MbhbP7JrTI.glb",
-  "Plant Big.glb",
-  "Plant-xH5gNlQxAZ.glb",
-  "Plant.glb",
-  "Planter & Bushes.glb",
-  "Poker.glb",
-  "Police Baton.glb",
-  "Police Car(1).glb",
-  "Police Car.glb",
-  "Police Shield.glb",
-  "Port-4sE6lmhGPF.glb",
-  "Port.glb",
-  "Pot-fyweVKYu0K.glb",
-  "Pot.glb",
-  "Power Box.glb",
-  "Precision Rifle Chassis.glb",
-  "Propane Tank.glb",
-  "Punk.glb",
-  "Quiver.glb",
-  "RB Blank.glb",
-  "RPG Launcher.glb",
-  "RV.glb",
-  "Radio.glb",
-  "Raft Paddle.glb",
-  "Raft.glb",
-  "Rails by dook - 5JTOJuMHJw.glb",
-  "Railway Track Curve by Quaternius - RO40sYGC65.glb",
-  "Railway Track Curve.glb",
-  "Railway Track Straight.glb",
-  "Resource Gold.glb",
-  "Revolver-9C26wSpMS0.glb",
-  "Revolver-AnsEmKwuu7.glb",
-  "Revolver-E9wrywgP9D.glb",
-  "Revolver-XrnLUz6kQj.glb",
-  "Revolver.glb",
-  "Rifle-yyW7pc4MG0.glb",
-  "Rifle.glb",
-  "Road Bits.glb",
-  "Rock Medium-JQxF95498B.glb",
-  "Rock Medium-s1OJ3bBzqc.glb",
-  "Rock Medium.glb",
-  "Rock Path Round Small-GMttpOEFKT.glb",
-  "Rock Path Round Small-yHEdadj5I0.glb",
-  "Rock Path Round Small.glb",
-  "Rock Path Round Thin.glb",
-  "Rock Path Round Wide.glb",
-  "Rock Path Square Smal-cI9XBpVijV.glb",
-  "Rock Path Square Smal-w4TKZMjjcw.glb",
-  "Rock Path Square Smal.glb",
-  "Rock Path Square Thin.glb",
-  "Rock Path Square Wide.glb",
-  "Rock band poster.glb",
-  "Rock-JmFMh7ztL9.glb",
-  "Rock-RtLRqYjfMs.glb",
-  "Rock.glb",
-  "Rocks.glb",
-  "Rolls Royce.glb",
-  "Roof Exit.glb",
-  "SR1MP.glb",
-  "SRSA1.glb",
-  "SUV.glb",
-  "SWAT by Quaternius - Btfn3G5Xv4.glb",
-  "Scifi AR.glb",
-  "Scifi Assault Rifle-JqdHbURERk.glb",
-  "Scifi Assault Rifle-RGtBoJNn3N.glb",
-  "Scifi Assault Rifle-j40c8VDdAQ.glb",
-  "Scifi Assault Rifle.glb",
-  "Scifi Grenade Launcher.glb",
-  "Scifi Grenade.glb",
-  "Scifi Pistol-U0Q1BrKL1y.glb",
-  "Scifi Pistol-uw4B33Mm0d.glb",
-  "Scifi Pistol.glb",
-  "Scifi Smg.glb",
-  "Scifi Sniper-46615JyFm7.glb",
-  "Scifi Sniper.glb",
-  "Scooter.glb",
-  "Scope.glb",
-  "Shack-HuzLJcbUd2.glb",
-  "Shack.glb",
-  "Shiba Inu.glb",
-  "Shipping Port-rDX8W8uqip.glb",
-  "Shipping Port.glb",
-  "Shop by Shaun Glowa - 5qD-9AvW0eh.glb",
-  "Shotgun Ammo.glb",
-  "Shotgun Double Barrel.glb",
-  "Shotgun Sawed Off.glb",
-  "Shotgun Serrated.glb",
-  "Shotgun Short Stock.glb",
-  "Shotgun-ZmPTnh7njL.glb",
-  "Shotgun-f54ZSBZZ8k.glb",
-  "Shotgun.glb",
-  "Shovel.glb",
-  "Sickle.glb",
-  "Skateboard.glb",
-  "Skyscraper.glb",
-  "Sled.glb",
-  "Sledge Hammer.glb",
-  "Small Farm.glb",
-  "Small Watch Tower.glb",
-  "Smg Ammo Box.glb",
-  "Sniper Ammo Box.glb",
-  "Sniper Rifle-ASOMZIErq3.glb",
-  "Sniper Rifle-TKaBjAEofL.glb",
-  "Sniper Rifle-ZkwSIy3JOV.glb",
-  "Sniper Rifle-i65hEldsw6.glb",
-  "Sniper Rifle.glb",
-  "Sniper.glb",
-  "Space Shuttle Orbiter.glb",
-  "Space Truck Trailer.glb",
-  "Spade.glb",
-  "Sports Car-1mkmFkAz5v.glb",
-  "Sports Car-Gzj704DXdr.glb",
-  "Sports Car.glb",
-  "Stag.glb",
-  "Stationwagon.glb",
-  "Stone Tower-dJLAD6p90F.glb",
-  "Stone Tower.glb",
-  "Stone Wall Towers.glb",
-  "Stone Wall.glb",
-  "Stop Sign Shield.glb",
-  "Stop sign.glb",
-  "Storage House.glb",
-  "Storage Hut.glb",
-  "Storage Shed.glb",
-  "Storage shed(1).glb",
-  "Storage shed-fkTsDdpQAA.glb",
-  "Street Light by Quaternius - nFwrlcLvM5.glb",
-  "Streetlight.glb",
-  "Submachine Gun-I9pqB6HWIC.glb",
-  "Submachine Gun-e66LWULNG4.glb",
-  "Submachine Gun-nsP3JukU73.glb",
-  "Submachine Gun-thBPAYTK5R.glb",
-  "Submachine Gun-wnFec6z9ii.glb",
-  "Submachine Gun.glb",
-  "Submarine.glb",
-  "Suit.glb",
-  "Tall Grass.glb",
-  "Tank.glb",
-  "Taxi(1).glb",
-  "Taxi.glb",
-  "Temple First Age Leve.glb",
-  "Temple-CE2Mn7lh6A.glb",
-  "Temple-nR264crTSr.glb",
-  "Temple-v36uJiErXS.glb",
-  "Temple.glb",
-  "Tent.glb",
-  "The Orange Racer.glb",
-  "Torch.glb",
-  "Tower House.glb",
-  "Town Center Second Age.glb",
-  "Town Center-76GTkSh4KM.glb",
-  "Town Center-CoERW5nFdE.glb",
-  "Town Center-cuQuFJEIfH.glb",
-  "Town Center.glb",
-  "Town House by Quaternius - imVkxz7oZD.glb",
-  "Town House.glb",
-  "Tractor.glb",
-  "Traffic Light.glb",
-  "Traffic light by Kay Lousberg - aYC3t5ymln.glb",
-  "Traffic light-Q6k7Izx6YD.glb",
-  "Traffic light.glb",
-  "Trafficlight B.glb",
-  "Train.glb",
-  "Tram.glb",
-  "Trash Can.glb",
-  "Tree-QVOop92WmG.glb",
-  "Tree-aVOxaHRPWe.glb",
-  "Tree-qZtx0AHhcy.glb",
-  "Tree-t9KbsfYdXz.glb",
-  "Tree.glb",
-  "Trees cut-zhm3D5KKRh.glb",
-  "Trees cut.glb",
-  "Trees.glb",
-  "Tripod.glb",
-  "Truck(1).glb",
-  "Truck.glb",
-  "Twisted Tree-7PDBpElkQr.glb",
-  "Twisted Tree-8oraKn9m0x.glb",
-  "Twisted Tree-9aWlx82xUf.glb",
-  "Twisted Tree-GVTsMmuzv7.glb",
-  "Twisted Tree.glb",
-  "Two story house-9N6ROCbmO1.glb",
-  "Two story house-QsF9E0PqyN.glb",
-  "Two story house-hmXhiLDf8D.glb",
-  "Two story house-htvFgnVP4d.glb",
-  "Two story house-sGgL4Nt7I7.glb",
-  "Two story house.glb",
-  "Unicycle.glb",
-  "Untitled.glb",
-  "VR-Mobil by Vladimir Ilic - 6XXj6DSBb08.glb",
-  "Van.glb",
-  "Village Market.glb",
-  "Wall Towers Door Seco.glb",
-  "Wall Towers.glb",
-  "Washing Line.glb",
-  "Watch Tower-VJZZW37Vsk.glb",
-  "Watch Tower-cMxuj2gt7D.glb",
-  "Watch Tower.glb",
-  "Water Bottle.glb",
-  "Watertower.glb",
-  "Wheelbarrow.glb",
-  "White Horse.glb",
-  "Windmill-jpHoi9xDLG.glb",
-  "Windmill.glb",
-  "Wodden Temple.glb",
-  "Wolf.glb",
-  "Woman.glb",
-  "Wonder First Age Leve.glb",
-  "Wood Log.glb",
-  "Wooden Encampment.glb",
-  "Wooden Fortress Gate.glb",
-  "Wooden Fortress.glb",
-  "Wooden Monument.glb",
-  "Wooden Torch.glb",
-  "Wooden Wall-L0TxLurnES.glb",
-  "Wooden Wall.glb",
-  "Wooden house tower.glb",
-  "Worker by Quaternius - Yg2bQZO6Hj.glb",
-  "Worker-Yg2bQZO6Hj.glb",
-  "Worker.glb",
-  "Wrench.glb",
-  "Yacht.glb",
-  "Yellow Post-it.glb",
-  "kawasaki_ninja_h2r.glb",
-  "nicoBellic_GTA_IV-v1.glb",
-  "nico_bellic.glb",
-  "old bike.glb",
-  "trah bag grey.glb",
-  "wagon.glb"
-]
+{
+  "characters": [
+    {
+      "name": "👤 Business Man",
+      "file": "assets/models/Business Man.glb"
+    },
+    {
+      "name": "👤 Casual Character",
+      "file": "assets/models/Casual Character.glb"
+    },
+    {
+      "name": "👤 Man",
+      "file": "assets/models/Man.glb"
+    },
+    {
+      "name": "👤 Woman",
+      "file": "assets/models/Woman.glb"
+    },
+    {
+      "name": "👤 Worker-Yg2bQZO6Hj",
+      "file": "assets/models/Worker-Yg2bQZO6Hj.glb"
+    },
+    {
+      "name": "👤 Worker",
+      "file": "assets/models/Worker.glb"
+    },
+    {
+      "name": "👤 Adventurer by Quaternius - 5EGWBMpuXq",
+      "file": "assets/models/Adventurer by Quaternius - 5EGWBMpuXq.glb"
+    },
+    {
+      "name": "👤 Animated Woman by Quaternius - nIItLV9nxS",
+      "file": "assets/models/Animated Woman by Quaternius - nIItLV9nxS.glb"
+    },
+    {
+      "name": "👤 Adventurer",
+      "file": "assets/models/Adventurer.glb"
+    },
+    {
+      "name": "👤 Animated Woman-nIItLV9nxS",
+      "file": "assets/models/Animated Woman-nIItLV9nxS.glb"
+    },
+    {
+      "name": "👤 SWAT by Quaternius - Btfn3G5Xv4",
+      "file": "assets/models/SWAT by Quaternius - Btfn3G5Xv4.glb"
+    },
+    {
+      "name": "👤 Worker by Quaternius - Yg2bQZO6Hj",
+      "file": "assets/models/Worker by Quaternius - Yg2bQZO6Hj.glb"
+    },
+    {
+      "name": "👤 Animated Woman-qJ2gsTUBHL",
+      "file": "assets/models/Animated Woman-qJ2gsTUBHL.glb"
+    },
+    {
+      "name": "👤 Manhole Cover",
+      "file": "assets/models/Manhole Cover.glb"
+    },
+    {
+      "name": "👤 Animated Woman",
+      "file": "assets/models/Animated Woman.glb"
+    },
+    {
+      "name": "👤 Japanese Train Station by Andrew-John Hickman - f2ZQl-lX0gM",
+      "file": "assets/models/Japanese Train Station by Andrew-John Hickman - f2ZQl-lX0gM.glb"
+    }
+  ],
+  "environment": [
+    {
+      "file": "assets/models/Car-unqqkULtRU.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Car.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Police Car.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/SUV.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Sports Car-1mkmFkAz5v.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Sports Car.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Taxi.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/1994 Nissan 180MX.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/2015 Dodge Challenger.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Apartment building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Bar.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bike Warning Road Sign.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Billboard.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Bus stop sign.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/CAR Model.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Convertible.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Hospital.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Hotel Building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House with driveway.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Large Building-ppwtREejXg.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Large Building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Mitsubishi L200.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Nissan GTR.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Path Straight.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Punk.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Road Bits.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Skyscraper.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Stop sign.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Suit.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Town House.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Traffic light-Q6k7Izx6YD.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Traffic light.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Car-Cz6yDaUcM9.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Dodge Charger.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Motorcycle, Suzuki SV650.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Motorcycle.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/kawasaki_ninja_h2r.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Assault Rifle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Assault Rifle-Bgvuu4CUMV.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Assault Rifle-fpLucho45C.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bayonet.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bipod.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bullpup.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pistol.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pistol-52kQzphmeF.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pistol-J3i9KDQ3kt.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pistol-Z7aOjJu583.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Revolver.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Revolver-9C26wSpMS0.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Revolver-XrnLUz6kQj.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scope.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shotgun.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shotgun-ZmPTnh7njL.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shotgun Sawed Off.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shotgun Short Stock.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sniper Rifle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sniper Rifle-ASOMZIErq3.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sniper Rifle-i65hEldsw6.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sniper Rifle-TKaBjAEofL.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Submachine Gun.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Tripod.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Submachine Gun-nsP3JukU73.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Buggy.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Camaro SS LP.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Camaro ZL1 2017.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/CAR Model(1).glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Car Radio - with tape player.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Convertible(1).glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Convertible-dggOiBLYyuR.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dodge Charger(1).glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Go kart.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Jeep.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Jetpack.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Low Poly Mini Cooper.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mom_s Wrangler.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Motorcycle(1).glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Motorcycle-5_MTCnqfUTr.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Motorcycle_ Suzuki SV650.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/old bike.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rolls Royce.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/The Orange Racer.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Truck.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Van.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Airplane.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Ambulance.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Basic Semi-truck with spikes.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Bicycle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Blimp.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Boat.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bulldozer.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bus.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Cable Car.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Canoe.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Car(1).glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Car Hatchback.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Convertible(2).glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Crane.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Cruise ship.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dump truck.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Forklift.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Golf cart.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Gondola.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Hang glider.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Helicopter.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Hot air balloon.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Hoverboard.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Jet.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Kayak.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Military Motorbike.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Motorcycle(2).glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Parachute.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Pickup Truck.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Police Car(1).glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Raft.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/RV.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scooter.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Skateboard.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sled.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Space Shuttle Orbiter.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Space Truck Trailer.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Submarine.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Tank.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Taxi(1).glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Tractor.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Train.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Tram.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Truck(1).glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Unicycle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/wagon.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wheelbarrow.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Yacht.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/nicoBellic_GTA_IV-v1.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Untitled.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/nico_bellic.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Convertible by Poly by Google - dggOiBLYyuR.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/House.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Barracks.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Nissan GTR by David Sirera - a_HKCtYAv2W.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pickup Truck by Quaternius - qn4grQgHm8.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/VR-Mobil by Vladimir Ilic - 6XXj6DSBb08.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Barrier Large by Quaternius - gLbBiYwt7l.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Black Smith Shop by Zsky - PrOdJaBrOu.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/House by Quaternius - HeHDd2rTpX.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House-7VSVwAg2T3.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Two story house-9N6ROCbmO1.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Two story house-htvFgnVP4d.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Two story house-QsF9E0PqyN.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Two story house-sGgL4Nt7I7.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Archery Building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Archery Second Age Le.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Archery Training Grounds-5dWpau7C3k.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Barracks-UXCOwRBSxx.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Barracks-dvlksXgxWc.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Barracks-puD1kbV4kf.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Crops.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Docks.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Farm-91wMLb9kKo.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Fortress.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Gold Rocks.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/House-RSwoYSLblu.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House-oJJIRwv6Bo.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House-vZ1CLbWmSx.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House(1).glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Houses-gEjAC1UvVU.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Houses.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Hut-wxi3kAu5ey.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Market Stalls Compact.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Market Stalls-4ZAhRv2tLG.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Market Stalls.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mine.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mountain-XY4ej3Zg3I.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mountain.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pine Trees.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Port-4sE6lmhGPF.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Resource Gold.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock-JmFMh7ztL9.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rocks.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shack-HuzLJcbUd2.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shipping Port-rDX8W8uqip.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shipping Port.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Small Farm.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Small Watch Tower.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Stone Wall.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Storage House.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Storage Shed.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Storage shed-fkTsDdpQAA.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Storage shed(1).glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Temple-v36uJiErXS.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Town Center-cuQuFJEIfH.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Trees cut.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Trees.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Windmill-jpHoi9xDLG.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wooden Encampment.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wooden Monument.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wooden Wall-L0TxLurnES.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Town Center Second Age.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wall Towers.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Watch Tower-VJZZW37Vsk.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Windmill.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wodden Temple.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wonder First Age Leve.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wooden Fortress Gate.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wooden Wall.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Air conditioner.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Ammo Grenade Launcher.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Ammo Shotgun.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Assault Rifle-XGeBGFQxYg.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Assault Rifle Ammo Box.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Axe.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bazooka.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bomb.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bow.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Brown Building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Building-bbH2Bg73qM.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Building-g15lpKh4li.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Building-T3oyvK6VEU.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Bush.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Bush with Flowers.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Compass.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dead Tree-MlmK5488ou.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Donkey.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Fence.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Fence End.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Fence Piece.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Fire Exit.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Floor Hole.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Flower Petal-eVE0j49ux9.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Flower Petal-LqvxG9OBOU.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Garbage Lid Shield.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Golf Club.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Horse.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Katana.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Locomotive Front.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mailbox.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Match Burnt.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Molotov.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mpsd.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mushroom Laetiporus.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Nunchucks.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/P320.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Round-kAMfq1uJUY.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Square-2YtLzwgsWp.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Square-l5XiYQj1oD.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Square-Mm4RMgwNO8.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pine-699sFuLCN2.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Pizza Corner.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Plant Big.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Pot-fyweVKYu0K.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Quiver.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Railway Track Curve.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Medium-JQxF95498B.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Round Wide.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Square Smal-cI9XBpVijV.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Assault Rifle-MdbcTe6hH3.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Battery-MYa3uWdwPU.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Box B.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Building-qOhhGLftam.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Cargo Train Coal Conta.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Cargo Train Container.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Cargo Train Wagon.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Bakery by Poly by Google - 6BGhNQlUzRR.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Building by Kay Lousberg - EL3ePInr1N.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Cottage by CreativeTrio - YDGLLT0emC.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Farm house by Poly by Google - bHyQe5jzdiQ.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House by Poly by Google - 75V_MLvKMqM.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House by Quaternius - roqiHdrpgc.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Iron Fence by Kay Lousberg - MDROOJeCSQ.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Log cabin by Poly by Google - f7uccD5iyz0.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Metal Fence by Quaternius - qWKhREFj7H.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shop by Shaun Glowa - 5qD-9AvW0eh.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Two story house.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Two story house-hmXhiLDf8D.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Archery Towers-IA5qOjIAiT.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Archery Towers.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Archery Training Grounds.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Barracks-a1C1L8gJTX.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Barracks-lnyADheSvA.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Business Building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Castle Gate.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Castle Fortress.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Castle-y15yE6kWLY.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Castle.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Dock-XViKoBh2UN.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dock.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Farm Dirt.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Farm-O4wpTLSfIn.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Farm.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Gold rocks(1).glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/House-YlADpCJU8U.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House-k6tP5nFUd2.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/House-nihGGju7DW.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Houses-vCoDG5hFyI.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Hut-4MJWbyd6vw.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Hut.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Huts.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Logs.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Market Stalls-OLd8vu6lPL.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Market Stalls-PUZZ5F91OE.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mountain Group.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mountains.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Port.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock-RtLRqYjfMs.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shack.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Stone Tower-dJLAD6p90F.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Stone Tower.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Stone Wall Towers.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Storage Hut.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Temple First Age Leve.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Temple-CE2Mn7lh6A.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Temple-nR264crTSr.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Temple.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Town Center-76GTkSh4KM.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Watch Tower.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Town Center-CoERW5nFdE.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Trees cut-zhm3D5KKRh.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Village Market.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wall Towers Door Seco.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Wooden house tower.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Tower House.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Town Center.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Watch Tower-cMxuj2gt7D.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Wooden Fortress.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Town House by Quaternius - imVkxz7oZD.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Ammo Sniper.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Arrow.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Backpack.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Baseball Bat.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bear Trap.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Big Building.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Bonfire.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Box.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Building-7lMEpT2ICD.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Building Green.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Building Red Corner.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Bull.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Can Broken.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Can Red.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Crossbow.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Debris Papers.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Fern.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/First Aid Kit-wP00rePSRD.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Flower Petal.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Flower Pot.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Flower Single.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Flower Single-GvfHo0roi3.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Gb Blank.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Grass Wispy-Msr9zx66VU.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/High Speed Front.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/High Speed Wagon.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Husky.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Locomotive Passenger Carriage.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Locomotive Wagon.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Low-poly landscape by sirkitree - bjsNFfddgOv.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Machete.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/MDR.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pan.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Round.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Round-icVsN3lmVy.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Square-6juX57sLHe.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pickaxe.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pine.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Pipe.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pistol-M6RRKnpfim.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pistol by Quaternius - J3i9KDQ3kt.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Poker.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Police Baton.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Police Shield.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pot.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Precision Rifle Chassis.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Railway Track Straight.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Revolver-AnsEmKwuu7.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rifle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rifle-yyW7pc4MG0.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock band poster.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Medium.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Round Small.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Round Small-GMttpOEFKT.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Clover.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Cow.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Crowbar.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Curved road by Poly by Google - 9r2Owu4oVHw.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dead Tree-n8FhMgMldD.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/First Aid Kit.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Flare Gun.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Flower Petal-niuBUEJdvM.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Fox.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Greenhouse.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Grenade Launcher.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Hunters Knife.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Matchbox.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mushroom.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/P226.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pine-Zt62gceKXZ.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Pistol Ammo.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pitchfork.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Power Box.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Propane Tank.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Radio.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rails by dook - 5JTOJuMHJw.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Medium-s1OJ3bBzqc.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Round Small-yHEdadj5I0.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Square Smal-w4TKZMjjcw.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi AR.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Grenade.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Sniper.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sniper.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sniper Ammo Box.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/SR1MP.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Stag.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Assault Rifle-JqdHbURERk.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Assault Rifle-RGtBoJNn3N.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sniper Rifle-ZkwSIy3JOV.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wolf.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Trafficlight B.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Twisted Tree-8oraKn9m0x.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Shotgun Double Barrel.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shovel.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Stationwagon.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Torch.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wrench.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Tree.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Tree-t9KbsfYdXz.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/ATM.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Bench.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Building B.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Can.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dead Tree-Mcd2zYqyww.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Flower Group.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Flower Petal-tzG4JcqYWs.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Gasoline Bomb.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Grass.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Grass Wispy.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Match.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Mpa.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Square.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Phone.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pistol-L1u7KkJzY2.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/RB Blank.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Revolver-E9wrywgP9D.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Square Smal.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/RPG Launcher.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Pistol.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Pistol-uw4B33Mm0d.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shotgun-f54ZSBZZ8k.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Grenade Launcher.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Smg.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Shotgun Ammo.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Traffic Light.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Twisted Tree-9aWlx82xUf.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Watertower.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/trah bag grey.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Tree-aVOxaHRPWe.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Tree-QVOop92WmG.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Tree-qZtx0AHhcy.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Twisted Tree.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Shiba Inu.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sickle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Submachine Gun-I9pqB6HWIC.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Twisted Tree-7PDBpElkQr.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Water Bottle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wooden Torch.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Chainsaw pole.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Deer.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dumpster.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Fire hydrant.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Flower Group-LqTljN6Wg2.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Hand Grenade.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/MPX.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Round-nMf8LHOsbM.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Square-s71L3q1nXN.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pine-79gmlLnweB.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Pine-rfnxJv0Rqa.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Plant Big-MbhbP7JrTI.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Planter & Bushes.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Railway Track Curve by Quaternius - RO40sYGC65.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Roof Exit.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Assault Rifle-j40c8VDdAQ.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Sniper-46615JyFm7.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/SRSA1.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Trash Can.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Square Thin.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Assault Rifle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Stop Sign Shield.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Submachine Gun-e66LWULNG4.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Traffic light by Kay Lousberg - aYC3t5ymln.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Yellow Post-it.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Square Wide.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Street Light by Quaternius - nFwrlcLvM5.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Submachine Gun-wnFec6z9ii.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Washing Line.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Rock Path Round Thin.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Alpaca.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Base.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Battery.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Building-otRsYa6pan.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Building Red.glb",
+      "scale": 3.0
+    },
+    {
+      "file": "assets/models/Bus Stop.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Butcher Knife.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Cargo Train Front.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Clover-u5SOgBFiut.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Cone.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dagger.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Dead Tree.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Dead Tree-CD4edbPSGm.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Flower Pot-Kgt363WkKd.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Gas Can.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Glock.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Hockey Stick.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Knife.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/M21 EBR.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/MK14.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Pebble Round-KYtJ6JNXh2.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Plant.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Plant-xH5gNlQxAZ.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Raft Paddle.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sledge Hammer.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Sports Car-Gzj704DXdr.glb",
+      "scale": 2.5
+    },
+    {
+      "file": "assets/models/Streetlight.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Shotgun Serrated.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Smg Ammo Box.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Tall Grass.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Twisted Tree-GVTsMmuzv7.glb",
+      "scale": 2.0
+    },
+    {
+      "file": "assets/models/Submachine Gun-thBPAYTK5R.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Scifi Pistol-U0Q1BrKL1y.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Spade.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Tent.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/Wood Log.glb",
+      "scale": 1.8
+    },
+    {
+      "file": "assets/models/White Horse.glb",
+      "scale": 1.8
+    }
+  ]
+}
